@@ -20,8 +20,8 @@ const BrandProductsPage = () => {
   const fetchBrandProducts = async () => {
     try {
       setLoading(true)
-      const response = await axios.get(`http://localhost:3001/api/products/brand/${brand}`)
-      setProducts(response.data.products)
+      const response = await axios.get(`http://localhost:3001/api/products/brand/${encodeURIComponent(decodedBrand)}`)
+      setProducts(response.data)
     } catch (error) {
       console.error('Error fetching brand products:', error)
       setError('Ndodhi një gabim gjatë ngarkimit të produkteve')
@@ -30,8 +30,18 @@ const BrandProductsPage = () => {
     }
   }
 
-  const handleAddToCart = (product) => {
-    addToCart(product)
+  const handleAddToCart = async (product) => {
+    try {
+      const result = await addToCart(product.id, 1);
+      if (result.success) {
+        alert('Produkti u shtua në shportë me sukses!');
+      } else {
+        alert('Gabim në shtimin e produktit në shportë');
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Gabim në shtimin e produktit në shportë');
+    }
   }
 
   if (loading) {

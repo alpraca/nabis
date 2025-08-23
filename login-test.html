@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        .code {
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Server Connection Test</h1>
+        
+        <div class="status success">
+            <h3>✅ Servers Status</h3>
+            <p><strong>Frontend:</strong> http://localhost:5173 - Running</p>
+            <p><strong>Backend:</strong> http://localhost:3001 - Running</p>
+        </div>
+
+        <div class="status info">
+            <h3>🧪 Test Login API Connection</h3>
+            <p>Click the button below to test if the login API is working:</p>
+            <button onclick="testConnection()">Test API Connection</button>
+            <button onclick="testLogin()">Test Admin Login</button>
+        </div>
+
+        <div id="result"></div>
+
+        <div class="status info">
+            <h3>📝 Admin Credentials</h3>
+            <p><strong>Email:</strong> <span class="code">admin@nabisfarmaci.al</span></p>
+            <p><strong>Password:</strong> <span class="code">Admin123!</span></p>
+        </div>
+
+        <div class="status info">
+            <h3>🔗 Quick Links</h3>
+            <p><a href="http://localhost:5173" target="_blank">Open Main Website</a></p>
+            <p><a href="http://localhost:5173/hyrje" target="_blank">Open Login Page</a></p>
+            <p><a href="http://localhost:3001/api/products" target="_blank">Test API Endpoint</a></p>
+        </div>
+    </div>
+
+    <script>
+        async function testConnection() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<p>🔄 Testing connection...</p>';
+            resultDiv.className = 'status info';
+
+            try {
+                const response = await fetch('http://localhost:3001/api/products');
+                if (response.ok) {
+                    resultDiv.innerHTML = '<p>✅ API Connection successful!</p>';
+                    resultDiv.className = 'status success';
+                } else {
+                    resultDiv.innerHTML = `<p>❌ API returned error: ${response.status}</p>`;
+                    resultDiv.className = 'status error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p>❌ Connection failed: ${error.message}</p>`;
+                resultDiv.className = 'status error';
+            }
+        }
+
+        async function testLogin() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<p>🔄 Testing admin login...</p>';
+            resultDiv.className = 'status info';
+
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@nabisfarmaci.al',
+                        password: 'Admin123!'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <p>✅ Login successful!</p>
+                        <p><strong>User:</strong> ${data.user.name}</p>
+                        <p><strong>Role:</strong> ${data.user.role}</p>
+                        <p><strong>Token received:</strong> Yes</p>
+                    `;
+                    resultDiv.className = 'status success';
+                } else {
+                    resultDiv.innerHTML = `<p>❌ Login failed: ${data.error}</p>`;
+                    resultDiv.className = 'status error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p>❌ Login test failed: ${error.message}</p>`;
+                resultDiv.className = 'status error';
+            }
+        }
+    </script>
+</body>
+</html>

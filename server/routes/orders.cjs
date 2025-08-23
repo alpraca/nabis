@@ -15,7 +15,7 @@ const generateOrderNumber = () => {
 
 // Create new order
 router.post('/', verifyToken, (req, res) => {
-  const { email, shipping_address, shipping_city, phone, notes = '' } = req.body
+  const { name, email, shipping_address, shipping_city, phone, notes = '' } = req.body
 
   if (!email || !shipping_address || !shipping_city || !phone) {
     return res.status(400).json({ error: 'Email-i, adresa, qyteti dhe telefoni janë të detyrueshëm' })
@@ -61,9 +61,9 @@ router.post('/', verifyToken, (req, res) => {
       // Create order
       db.run(
         `INSERT INTO orders (user_id, order_number, total_amount, shipping_address, 
-                           shipping_city, phone, notes, email, verification_code, verification_status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [req.user.id, orderNumber, totalAmount, shipping_address, shipping_city, phone, notes, email, verificationCode, 'pending'],
+                           shipping_city, phone, notes, email, verification_code, verification_status, name)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [req.user.id, orderNumber, totalAmount, shipping_address, shipping_city, phone, notes, email, verificationCode, 'pending', name || ''],
         function(err) {
           if (err) {
             db.run('ROLLBACK')

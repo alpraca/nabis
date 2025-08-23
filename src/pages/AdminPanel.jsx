@@ -60,16 +60,34 @@ const AdminPanel = () => {
   const loadStats = async () => {
     try {
       const response = await api.get('/orders/admin/stats')
-      setStats(response.data.stats)
+      console.log('Stats response:', response.data)
+      setStats(response.data || {
+        totalProducts: 0,
+        totalOrders: 0,
+        verifiedOrders: 0,
+        pendingOrders: 0,
+        totalUsers: 0,
+        totalRevenue: 0
+      })
     } catch (error) {
       console.error('Error loading stats:', error)
+      // Set default stats on error
+      setStats({
+        totalProducts: 0,
+        totalOrders: 0,
+        verifiedOrders: 0,
+        pendingOrders: 0,
+        totalUsers: 0,
+        totalRevenue: 0
+      })
     }
   }
 
   const loadOrders = async () => {
     try {
       const response = await api.get('/orders/admin/all?limit=all')
-      const allOrders = response.data.orders || []
+      console.log('Orders response:', response.data)
+      const allOrders = response.data || []
       // Only show verified orders, sorted by order number (newest first)
       const verifiedOrders = allOrders
         .filter(order => order.verification_status === 'verified')
@@ -79,6 +97,8 @@ const AdminPanel = () => {
       setFilteredOrders(verifiedOrders)
     } catch (error) {
       console.error('Error loading orders:', error)
+      setOrders([])
+      setFilteredOrders([])
     }
   }
 
@@ -222,7 +242,7 @@ const AdminPanel = () => {
                   <Package className="h-8 w-8 text-blue-600" />
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Produktet</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.totalProducts}</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats?.totalProducts || 0}</p>
                   </div>
                 </div>
               </div>
@@ -232,7 +252,7 @@ const AdminPanel = () => {
                   <ShoppingCart className="h-8 w-8 text-green-600" />
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Porosite e Verifikuara</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.verifiedOrders}</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats?.verifiedOrders || 0}</p>
                   </div>
                 </div>
               </div>
@@ -242,7 +262,7 @@ const AdminPanel = () => {
                   <Users className="h-8 w-8 text-purple-600" />
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Përdoruesit</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.totalUsers}</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats?.totalUsers || 0}</p>
                   </div>
                 </div>
               </div>
@@ -252,7 +272,7 @@ const AdminPanel = () => {
                   <TrendingUp className="h-8 w-8 text-yellow-600" />
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Të ardhurat</p>
-                    <p className="text-2xl font-bold text-gray-900">{parseFloat(stats.totalRevenue).toFixed(2)}€</p>
+                    <p className="text-2xl font-bold text-gray-900">{parseFloat(stats?.totalRevenue || 0).toFixed(2)}€</p>
                   </div>
                 </div>
               </div>

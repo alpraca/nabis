@@ -38,11 +38,11 @@ const OrderVerificationPage = () => {
 
     try {
       const response = await axios.post('http://localhost:3001/api/orders/verify', {
-        orderNumber: orderData.orderNumber,
-        verificationCode: verificationCode.trim()
+        email: orderData.email,
+        code: verificationCode.trim()
       });
 
-      if (response.data.verified) {
+      if (response.data.success) {
         setIsVerified(true);
         // Clear cart only after successful verification
         clearCart();

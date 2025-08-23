@@ -170,7 +170,7 @@ const LatestArticles = () => {
               Newsletter i Nabis Farmaci
             </h3>
             <p className="text-gray-600 mb-6">
-              Bashkohuni me komunitetin e Nabis Farmaci dhe merrni këshilla për shëndetin dhe bukurinë direkt në email-in tuaj, plus 15% zbritje në blerjen e parë.
+              Bashkohuni me komunitetin e Nabis Farmaci dhe merrni këshilla për shëndetin dhe bukurinë direkt në email-in tuaj, plus 10% zbritje në blerjen e parë.
             </p>
             
             <form className="space-y-4">

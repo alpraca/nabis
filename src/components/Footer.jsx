@@ -32,7 +32,6 @@ const Footer = () => {
   const categories = [
     { name: 'Dermokozmetikë', href: '/kategori/dermokozmetike' },
     { name: 'Higjena', href: '/kategori/higjena' },
-    { name: 'Farmaci', href: '/kategori/farmaci' },
     { name: 'Mama dhe Bebat', href: '/kategori/mama-bebat' },
     { name: 'Suplemente', href: '/kategori/suplemente' }
   ]

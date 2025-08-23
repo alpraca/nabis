@@ -34,18 +34,33 @@ export const AuthProvider = ({ children }) => {
   // Check if user is logged in on app start
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if (token) {
-      // Verify token with backend
-      api.get('/auth/verify')
-        .then(response => {
-          setUser(response.data.user)
-        })
-        .catch(() => {
-          localStorage.removeItem('token')
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
+    const savedUser = localStorage.getItem('user')
+    
+    if (token && savedUser) {
+      try {
+        // Try to parse saved user data
+        const userData = JSON.parse(savedUser)
+        
+        // Verify token with backend
+        api.get('/auth/verify')
+          .then(response => {
+            // Token is valid, restore user data
+            setUser(userData)
+          })
+          .catch(() => {
+            // Token is invalid, clear everything
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+          })
+          .finally(() => {
+            setIsLoading(false)
+          })
+      } catch (error) {
+        // Error parsing user data, clear everything
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        setIsLoading(false)
+      }
     } else {
       setIsLoading(false)
     }
@@ -55,8 +70,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.post('/auth/login', { email, password })
       
-      if (response.data.token) {
+      if (response.data.token && response.data.user) {
         localStorage.setItem('token', response.data.token)
+        localStorage.setItem('user', JSON.stringify(response.data.user))
         setUser(response.data.user)
         return { success: true, user: response.data.user }
       }

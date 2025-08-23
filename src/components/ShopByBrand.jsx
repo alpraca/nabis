@@ -1,79 +1,85 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
 
 const ShopByBrand = () => {
-  const brands = [
-    {
-      id: 1,
-      name: 'Roche',
+  const [brandsData, setBrandsData] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  // Static brand info with logos and descriptions
+  const staticBrandInfo = {
+    'Roche': {
       logo: '🏥',
-      description: 'Produkte farmaceutike të certifikuara',
-      productCount: 45
+      description: 'Produkte farmaceutike të certifikuara'
     },
-    {
-      id: 2,
-      name: 'La Roche-Posay',
+    'La Roche-Posay': {
       logo: '💎',
-      description: 'Dermokozmetikë për lëkurë të ndjeshme',
-      productCount: 67
+      description: 'Dermokozmetikë për lëkurë të ndjeshme'
     },
-    {
-      id: 3,
-      name: 'Vichy',
+    'Vichy': {
       logo: '🌊',
-      description: 'Kujdes i përditshëm për lëkurën',
-      productCount: 52
+      description: 'Kujdes i përditshëm për lëkurën'
     },
-    {
-      id: 4,
-      name: 'Avène',
+    'Avène': {
       logo: '🌸',
-      description: 'Produkte të buta për lëkurë të irrituar',
-      productCount: 38
+      description: 'Produkte të buta për lëkurë të irrituar'
     },
-    {
-      id: 5,
-      name: 'Eucerin',
+    'Eucerin': {
       logo: '🧴',
-      description: 'Shkencë për lëkurën tuaj',
-      productCount: 41
+      description: 'Shkencë për lëkurën tuaj'
     },
-    {
-      id: 6,
-      name: 'Bioderma',
+    'Bioderma': {
       logo: '💧',
-      description: 'Biologji në shërbim të dermatologjisë',
-      productCount: 29
+      description: 'Biologji në shërbim të dermatologjisë'
     },
-    {
-      id: 7,
-      name: 'Nuxe',
+    'Nuxe': {
       logo: '🌿',
-      description: 'Bukuria natyrore franceze',
-      productCount: 33
+      description: 'Bukuria natyrore franceze'
     },
-    {
-      id: 8,
-      name: 'Ducray',
+    'Ducray': {
       logo: '🌱',
-      description: 'Specialistë për flokët dhe lëkurën',
-      productCount: 22
+      description: 'Specialistë për flokët dhe lëkurën'
     },
-    {
-      id: 9,
-      name: 'Uriage',
+    'Uriage': {
       logo: '💙',
-      description: 'Uji termal për shëndetin e lëkurës',
-      productCount: 35
+      description: 'Uji termal për shëndetin e lëkurës'
     },
-    {
-      id: 10,
-      name: 'Mustela',
-      logo: '👶',
-      description: 'Kujdes i specializuar për bebat',
-      productCount: 28
+    'Mustela': {
+      logo: '�',
+      description: 'Kujdes i specializuar për bebat'
     }
-  ]
+  }
+
+  useEffect(() => {
+    fetchBrandsData()
+  }, [])
+
+  const fetchBrandsData = async () => {
+    try {
+      setLoading(true)
+      const response = await axios.get('http://localhost:3001/api/products/brands')
+      
+      // Combine API data with static info
+      const combinedData = response.data
+        .filter(brand => staticBrandInfo[brand.brand]) // Only show brands we have static info for
+        .map((brand, index) => ({
+          id: index + 1,
+          name: brand.brand,
+          productCount: brand.product_count,
+          logo: staticBrandInfo[brand.brand]?.logo || '🏢',
+          description: staticBrandInfo[brand.brand]?.description || 'Produkte të cilësisë së lartë'
+        }))
+        .slice(0, 10) // Show only first 10 brands
+
+      setBrandsData(combinedData)
+    } catch (error) {
+      console.error('Error fetching brands data:', error)
+      // Fallback to static data if API fails
+      setBrandsData([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <section className="py-16 bg-white">
@@ -88,38 +94,50 @@ const ShopByBrand = () => {
           </p>
         </div>
 
-        {/* Brands Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {brands.map((brand) => (
-            <Link
-              key={brand.id}
-              to={`/marka/${brand.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
-              className="group"
-            >
-              <div className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 group-hover:border-primary-300">
-                {/* Brand Logo */}
-                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {brand.logo}
+        {loading ? (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Duke ngarkuar markat...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {brandsData.map((brand) => (
+              <Link
+                key={brand.id}
+                to={`/brand/${encodeURIComponent(brand.name)}`}
+                className="group"
+              >
+                <div className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 group-hover:border-primary-300">
+                  {/* Brand Logo */}
+                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                    {brand.logo}
+                  </div>
+
+                  {/* Brand Name */}
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors duration-300">
+                    {brand.name}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    {brand.description}
+                  </p>
+
+                  {/* Product Count */}
+                  <p className="text-xs text-gray-500">
+                    {brand.productCount} produkte
+                  </p>
                 </div>
+              </Link>
+            ))}
+          </div>
+        )}
 
-                {/* Brand Name */}
-                <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors duration-300">
-                  {brand.name}
-                </h3>
-
-                {/* Description */}
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                  {brand.description}
-                </p>
-
-                {/* Product Count */}
-                <p className="text-xs text-gray-500">
-                  {brand.productCount} produkte
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {!loading && brandsData.length === 0 && (
+          <div className="text-center py-8">
+            <p className="text-gray-600">Nuk ka marka të disponueshme aktualisht.</p>
+          </div>
+        )}
 
         {/* Featured Brands Section */}
         <div className="mt-16">
@@ -137,7 +155,7 @@ const ShopByBrand = () => {
                   Lider botëror në inovacionin farmaceutik me mbi 125 vjet përvojë
                 </p>
                 <Link
-                  to="/marka/roche"
+                  to="/brand/Roche"
                   className="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors duration-300"
                 >
                   Eksploro Produktet
@@ -154,7 +172,7 @@ const ShopByBrand = () => {
                   Dermokozmetikë e rekomanduar nga dermatologët për lëkurë të ndjeshme
                 </p>
                 <Link
-                  to="/marka/la-roche-posay"
+                  to="/brand/La Roche-Posay"
                   className="inline-flex items-center justify-center px-4 py-2 bg-secondary-600 text-white rounded-md hover:bg-secondary-700 transition-colors duration-300"
                 >
                   Eksploro Produktet
@@ -171,7 +189,7 @@ const ShopByBrand = () => {
                   Kujdes i specializuar dhe i sigurt për lëkurën delikate të bebit
                 </p>
                 <Link
-                  to="/marka/mustela"
+                  to="/brand/Mustela"
                   className="inline-flex items-center justify-center px-4 py-2 bg-accent-600 text-white rounded-md hover:bg-accent-700 transition-colors duration-300"
                 >
                   Eksploro Produktet

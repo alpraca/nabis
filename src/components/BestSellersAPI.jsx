@@ -15,15 +15,15 @@ const BestSellersAPI = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${API_URL}/products`);
-      console.log('API Response:', response.data); // Debug log
+      const response = await axios.get(`${API_URL}/products/best-sellers`);
+      console.log('Best Sellers API Response:', response.data); // Debug log
       // Backend returns { products: [...] }
       const productsArray = response.data.products || [];
-      setProducts(productsArray.slice(0, 8)); // First 8 products as best sellers
+      setProducts(productsArray); // Use all best sellers returned
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching products:', error);
-      setError('Nuk mund të ngarkohen produktet');
+      console.error('Error fetching best sellers:', error);
+      setError('Nuk mund të ngarkohen produktet më të shitura');
       setLoading(false);
     }
   };
@@ -132,7 +132,7 @@ const BestSellersAPI = () => {
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section id="produktet" className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex items-center justify-between mb-12">

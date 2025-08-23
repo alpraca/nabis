@@ -104,12 +104,17 @@ const HowItWorks = () => {
             <p className="text-gray-600 mb-6">
               Bashkohuni me mijëra klientë të kënaqur që besojnë tek Nabis Farmaci
             </p>
-            <a
-              href="/kategori/farmaci"
+            <button
+              onClick={() => {
+                const productsElement = document.getElementById('produktet')
+                if (productsElement) {
+                  productsElement.scrollIntoView({ behavior: 'smooth' })
+                }
+              }}
               className="inline-flex items-center justify-center px-8 py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors duration-300 btn-hover"
             >
               Filloni Blerjen
-            </a>
+            </button>
           </div>
         </div>
       </div>

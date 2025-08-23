@@ -11,6 +11,7 @@ const CheckoutPage = () => {
   const { user } = useAuth();
   
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     shippingAddress: '',
     shippingCity: '',
@@ -28,8 +29,23 @@ const CheckoutPage = () => {
     }
   }, [cartItems, navigate]);
 
+  // Initialize form with user data
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name || '',
+        email: user.email || ''
+      }));
+    }
+  }, [user]);
+
   const validateForm = () => {
     const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Emri është i nevojshëm';
+    }
 
     if (!formData.email.trim()) {
       newErrors.email = 'Email-i është i nevojshëm';
@@ -82,11 +98,16 @@ const CheckoutPage = () => {
 
     try {
       const orderData = {
-        email: formData.email.trim(),
-        shipping_address: formData.shippingAddress.trim(),
-        shipping_city: formData.shippingCity.trim(),
-        phone: formData.phone.trim(),
-        notes: formData.notes.trim()
+        customerInfo: {
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          shipping_address: formData.shippingAddress.trim(),
+          shipping_city: formData.shippingCity.trim(),
+          phone: formData.phone.trim(),
+          notes: formData.notes.trim()
+        },
+        items: cartItems,
+        total: finalTotal
       };
 
       const response = await axios.post('http://localhost:3001/api/orders', orderData, {
@@ -102,11 +123,10 @@ const CheckoutPage = () => {
         // Redirect to verification page with cart items for reference
         navigate('/order-verification', { 
           state: { 
-            orderNumber: response.data.orderNumber,
-            totalAmount: response.data.totalAmount,
+            orderId: response.data.orderId,
             email: formData.email,
-            verificationRequired: response.data.verificationRequired,
-            cartItems: cartItems // Pass cart items to verification page
+            cartItems: cartItems,
+            total: finalTotal
           }
         });
       }
@@ -152,17 +172,24 @@ const CheckoutPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Emri
+                    Emri *
                   </label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <input
                       type="text"
-                      value={user?.name || ''}
-                      disabled
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder="Emri juaj i plotë"
+                      className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+                        errors.name ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     />
                   </div>
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                  )}
                 </div>
                 
                 <div>

@@ -9,6 +9,13 @@ const Hero = () => {
     }
   }
 
+  const scrollToProducts = () => {
+    const productsElement = document.getElementById('produktet')
+    if (productsElement) {
+      productsElement.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <section className="bg-gradient-to-r from-primary-50 to-secondary-50 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -26,12 +33,12 @@ const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                to="/kategori/farmaci"
+              <button
+                onClick={scrollToProducts}
                 className="btn-hover bg-primary-600 text-white px-8 py-3 rounded-md font-semibold text-center"
               >
                 Shiko Produktet
-              </Link>
+              </button>
               <button
                 onClick={scrollToFooter}
                 className="btn-hover border border-primary-600 text-primary-600 px-8 py-3 rounded-md font-semibold text-center hover:bg-primary-600 hover:text-white transition-colors duration-300"

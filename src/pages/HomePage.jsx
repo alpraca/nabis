@@ -2,7 +2,6 @@ import React from 'react';
 import Hero from '../components/Hero';
 import BestSellersAPI from '../components/BestSellersAPI';
 import ShopByBrand from '../components/ShopByBrand';
-import HowItWorks from '../components/HowItWorks';
 import LatestArticles from '../components/LatestArticles';
 
 const HomePage = () => {
@@ -11,7 +10,6 @@ const HomePage = () => {
       <Hero />
       <BestSellersAPI />
       <ShopByBrand />
-      <HowItWorks />
       <LatestArticles />
     </div>
   );
