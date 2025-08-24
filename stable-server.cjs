@@ -575,12 +575,18 @@ app.post('/api/orders', async (req, res) => {
     const verificationCode = generateVerificationCode();
     const expires = Date.now() + 15 * 60 * 1000; // 15 minutes
 
-    // Store order verification data
+    // Store order verification data with proper timestamp
     verificationCodes.set(customerInfo.email, {
       code: verificationCode,
       expires,
       type: 'order',
-      data: { orderId, customerInfo, items, total }
+      data: { 
+        orderId, 
+        customerInfo, 
+        items, 
+        total,
+        created_at: new Date().toISOString() // Add proper timestamp
+      }
     });
 
     // Send verification email
@@ -639,10 +645,10 @@ app.post('/api/orders/verify', async (req, res) => {
     const orderResult = await new Promise((resolve, reject) => {
       const stmt = db.prepare(`
         INSERT INTO orders (
-          order_number, customer_name, customer_email, customer_phone,
+          order_number, name, email, phone,
           shipping_address, shipping_city, notes, total_amount,
-          status, created_at, verified_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          verification_status, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
       `);
       
       stmt.run(
@@ -655,36 +661,42 @@ app.post('/api/orders/verify', async (req, res) => {
         orderData.customerInfo.notes || '',
         orderData.total,
         'verified',
-        new Date(orderData.created_at).toISOString(),
-        new Date().toISOString()
+        function(err) {
+          if (err) reject(err);
+          else resolve({ orderId: orderData.orderId, dbOrderId: this.lastID });
+        }
       );
       
-      stmt.finalize((err) => {
-        if (err) reject(err);
-        else resolve({ orderId: orderData.orderId });
-      });
+      stmt.finalize();
     });
 
-    // Insert order items
+    // Insert order items using the database order ID
     for (const item of orderData.items) {
       await new Promise((resolve, reject) => {
         const stmt = db.prepare(`
           INSERT INTO order_items (
-            order_number, product_id, quantity, price
-          ) VALUES (?, ?, ?, ?)
+            order_id, product_id, quantity, price, total
+          ) VALUES (?, ?, ?, ?, ?)
         `);
         
+        // Ensure we have valid price data
+        const itemPrice = item.product?.price || 0;
+        const itemQuantity = parseInt(item.quantity) || 1;
+        const itemTotal = itemQuantity * itemPrice;
+        
         stmt.run(
-          orderData.orderId,
+          orderResult.dbOrderId,
           item.product_id,
-          item.quantity,
-          item.product.price
+          itemQuantity,
+          itemPrice,
+          itemTotal,
+          function(err) {
+            if (err) reject(err);
+            else resolve();
+          }
         );
         
-        stmt.finalize((err) => {
-          if (err) reject(err);
-          else resolve();
-        });
+        stmt.finalize();
       });
     }
     
