@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, ShoppingCart, User, Menu, X, ChevronDown, LogOut } from 'lucide-react'
-import { useCart } from '../context/CartContext'
+import { useCart } from '../hooks/useCart'
 import { useAuth } from '../context/AuthContext'
 
 const Header = () => {

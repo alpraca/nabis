@@ -61,7 +61,7 @@ const AdminPanel = () => {
     try {
       const response = await api.get('/orders/admin/stats')
       console.log('Stats response:', response.data)
-      setStats(response.data || {
+      setStats(response.data.stats || {
         totalProducts: 0,
         totalOrders: 0,
         verifiedOrders: 0,
@@ -87,14 +87,21 @@ const AdminPanel = () => {
     try {
       const response = await api.get('/orders/admin/all?limit=all')
       console.log('Orders response:', response.data)
-      const allOrders = response.data || []
-      // Only show verified orders, sorted by order number (newest first)
-      const verifiedOrders = allOrders
-        .filter(order => order.verification_status === 'verified')
-        .sort((a, b) => b.order_number.localeCompare(a.order_number))
       
-      setOrders(verifiedOrders)
-      setFilteredOrders(verifiedOrders)
+      // Handle different response formats
+      let allOrders = []
+      if (response.data && Array.isArray(response.data)) {
+        allOrders = response.data
+      } else if (response.data && response.data.orders && Array.isArray(response.data.orders)) {
+        allOrders = response.data.orders
+      }
+      
+      // Show ALL orders, not just verified ones, sorted by order number (newest first)
+      const sortedOrders = allOrders.filter ? allOrders
+        .sort((a, b) => b.order_number.localeCompare(a.order_number)) : []
+      
+      setOrders(sortedOrders)
+      setFilteredOrders(sortedOrders)
     } catch (error) {
       console.error('Error loading orders:', error)
       setOrders([])
@@ -118,7 +125,13 @@ const AdminPanel = () => {
 
     // Apply status filter
     if (orderFilter !== 'all') {
-      filtered = filtered.filter(order => order.status === orderFilter)
+      if (orderFilter === 'pending' || orderFilter === 'verified') {
+        // Filter by verification_status for pending/verified
+        filtered = filtered.filter(order => order.verification_status === orderFilter)
+      } else {
+        // Filter by regular status for other options
+        filtered = filtered.filter(order => order.status === orderFilter)
+      }
     }
 
     setFilteredOrders(filtered)
@@ -284,7 +297,7 @@ const AdminPanel = () => {
         {activeTab === 'orders' && (
           <div>
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Porosite e Verifikuara</h2>
+              <h2 className="text-xl font-bold text-gray-900">Të gjitha Porosite</h2>
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-600">
                   Gjithsej: {filteredOrders.length} / {orders.length} porosi
@@ -327,7 +340,8 @@ const AdminPanel = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
                   >
                     <option value="all">Të gjitha</option>
-                    <option value="pending">Në pritje</option>
+                    <option value="pending">Në pritje (pa u verifikuar)</option>
+                    <option value="verified">E verifikuar</option>
                     <option value="processing">Duke u përpunuar</option>
                     <option value="shipped">Dërguar</option>
                     <option value="delivered">Dorëzuar</option>
@@ -899,7 +913,7 @@ const ProductForm = ({ product, onSave, onCancel }) => {
     in_stock: product?.in_stock !== false
   })
   const [selectedFiles, setSelectedFiles] = useState([])
-  const [existingImages, setExistingImages] = useState(product?.images || [])
+  const [existingImages] = useState(product?.images || [])
   const [imageUrls, setImageUrls] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   
@@ -912,8 +926,8 @@ const ProductForm = ({ product, onSave, onCancel }) => {
   useEffect(() => {
     const loadBrands = async () => {
       try {
-        const response = await api.get('/brands')
-        setAllBrands(response.data.brands || [])
+        const response = await api.get('/products/brands')
+        setAllBrands(response.data || [])
       } catch (error) {
         console.error('Error loading brands:', error)
       }

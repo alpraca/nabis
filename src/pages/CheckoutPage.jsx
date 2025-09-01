@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Truck, CreditCard, MapPin, Phone, User, Mail } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../hooks/useCart';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 
@@ -98,16 +98,12 @@ const CheckoutPage = () => {
 
     try {
       const orderData = {
-        customerInfo: {
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          shipping_address: formData.shippingAddress.trim(),
-          shipping_city: formData.shippingCity.trim(),
-          phone: formData.phone.trim(),
-          notes: formData.notes.trim()
-        },
-        items: cartItems,
-        total: finalTotal
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        shipping_address: formData.shippingAddress.trim(),
+        shipping_city: formData.shippingCity.trim(),
+        phone: formData.phone.trim(),
+        notes: formData.notes.trim()
       };
 
       const response = await axios.post('http://localhost:3001/api/orders', orderData, {

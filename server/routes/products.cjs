@@ -69,6 +69,37 @@ router.get('/categories/list', (req, res) => {
   )
 })
 
+// Get best-selling products (public)
+router.get('/best-sellers', (req, res) => {
+  const query = `
+    SELECT p.*, 
+           GROUP_CONCAT(pi.image_url) as images
+    FROM products p
+    LEFT JOIN product_images pi ON p.id = pi.product_id
+    WHERE p.in_stock = 1
+    GROUP BY p.id 
+    ORDER BY p.created_at DESC
+    LIMIT 8
+  `
+
+  db.all(query, [], (err, products) => {
+    if (err) {
+      return res.status(500).json({ error: 'Gabim në marrjen e produkteve më të shitura' })
+    }
+
+    // Process images
+    const processedProducts = products.map(product => ({
+      ...product,
+      images: product.images ? product.images.split(',') : [],
+      is_new: Boolean(product.is_new),
+      on_sale: Boolean(product.on_sale),
+      in_stock: Boolean(product.in_stock)
+    }))
+
+    res.json({ products: processedProducts })
+  })
+})
+
 // Get product brands (public)
 router.get('/brands', (req, res) => {
   db.all(

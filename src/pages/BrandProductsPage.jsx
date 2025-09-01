@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { ShoppingCart, Heart, Star } from 'lucide-react'
-import { useCart } from '../context/CartContext'
+import { useCart } from '../hooks/useCart'
 
 const BrandProductsPage = () => {
   const { brand } = useParams()
@@ -21,7 +21,8 @@ const BrandProductsPage = () => {
     try {
       setLoading(true)
       const response = await axios.get(`http://localhost:3001/api/products/brand/${encodeURIComponent(decodedBrand)}`)
-      setProducts(response.data)
+      // Backend returns { products: [...], brand }
+      setProducts(response.data.products || [])
     } catch (error) {
       console.error('Error fetching brand products:', error)
       setError('Ndodhi një gabim gjatë ngarkimit të produkteve')

@@ -15,10 +15,14 @@ const generateOrderNumber = () => {
 
 // Create new order
 router.post('/', verifyToken, (req, res) => {
+  console.log('Order request body:', req.body)
+  console.log('User:', req.user)
+  
   const { name, email, shipping_address, shipping_city, phone, notes = '' } = req.body
 
-  if (!email || !shipping_address || !shipping_city || !phone) {
-    return res.status(400).json({ error: 'Email-i, adresa, qyteti dhe telefoni janë të detyrueshëm' })
+  if (!name || !email || !shipping_address || !shipping_city || !phone) {
+    console.log('Missing fields:', { name, email, shipping_address, shipping_city, phone })
+    return res.status(400).json({ error: 'Emri, email-i, adresa, qyteti dhe telefoni janë të detyrueshëm' })
   }
 
   // Get user's cart
@@ -284,7 +288,7 @@ router.get('/admin/stats', verifyToken, requireAdmin, (req, res) => {
     verifiedOrders: 'SELECT COUNT(*) as count FROM orders WHERE verification_status = "verified"',
     totalRevenue: 'SELECT COALESCE(SUM(total_amount), 0) as total FROM orders WHERE verification_status = "verified"',
     totalProducts: 'SELECT COUNT(*) as count FROM products',
-    totalUsers: 'SELECT COUNT(*) as count FROM users WHERE role != "admin"'
+    totalUsers: 'SELECT COUNT(*) as count FROM users'
   }
 
   const results = {}
@@ -320,16 +324,28 @@ router.get('/admin/stats', verifyToken, requireAdmin, (req, res) => {
 
 // Verify order with verification code
 router.post('/verify', (req, res) => {
-  const { orderNumber, verificationCode } = req.body
+  const { orderNumber, verificationCode, email, code } = req.body
 
-  if (!orderNumber || !verificationCode) {
-    return res.status(400).json({ error: 'Numri i porosisë dhe kodi i verifikimit janë të nevojshëm' })
+  // Support both orderNumber+verificationCode and email+code formats
+  const finalOrderNumber = orderNumber
+  const finalCode = verificationCode || code
+
+  // Check if we have either format
+  if ((!finalOrderNumber && !email) || !finalCode) {
+    return res.status(400).json({ error: 'Email/Order number and verification code are required' })
   }
 
-  // Find order with verification code
-  db.get(
-    'SELECT * FROM orders WHERE order_number = ? AND verification_status = ?',
-    [orderNumber, 'pending'],
+  // Find order - either by order number or email
+  let query, params
+  if (finalOrderNumber) {
+    query = 'SELECT * FROM orders WHERE order_number = ? AND verification_status = ?'
+    params = [finalOrderNumber, 'pending']
+  } else {
+    query = 'SELECT * FROM orders WHERE email = ? AND verification_status = ? ORDER BY created_at DESC LIMIT 1'
+    params = [email, 'pending']
+  }
+
+  db.get(query, params,
     (err, order) => {
       if (err) {
         return res.status(500).json({ error: 'Gabim në server' })
@@ -345,7 +361,7 @@ router.post('/verify', (req, res) => {
       }
 
       // Check if verification code is correct
-      if (order.verification_code !== verificationCode) {
+      if (order.verification_code !== finalCode) {
         // Increment verification attempts
         const newAttempts = (order.verification_attempts || 0) + 1
         const maxAttempts = 3
@@ -454,6 +470,7 @@ router.post('/verify', (req, res) => {
           }
 
           res.json({
+            success: true,
             message: 'Porosia u verifikua me sukses!',
             orderNumber: order.order_number,
             verified: true

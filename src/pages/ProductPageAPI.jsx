@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Star, Heart, ShoppingCart, Shield, Truck, RefreshCw } from 'lucide-react';
 import axios from 'axios';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../hooks/useCart';
 
 const ProductPageAPI = () => {
   const { id } = useParams();

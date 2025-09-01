@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { CheckCircle, Mail, ArrowLeft } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../hooks/useCart';
 import axios from 'axios';
 
 const OrderVerificationPage = () => {

@@ -1,39 +1,30 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
-import axios from 'axios';
 
-const CartContext = createContext();
-
-export const useCart = () => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
-  }
-  return context;
-};
+export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const { user, api } = useAuth();
 
-  // Load cart when component mounts or user changes
-  useEffect(() => {
-    loadCart();
-  }, [user]);
+  const loadCart = useCallback(async () => {
+    // Only load cart if user is authenticated
+    if (!user) {
+      setCartItems([]);
+      return;
+    }
 
-  const loadCart = async () => {
     try {
       setLoading(true);
-      const headers = user ? { 'user-id': user.id } : {};
-      const response = await axios.get('http://localhost:3001/api/cart', { headers });
+      const response = await api.get('/cart');
       const cartItemsFromAPI = response.data.cartItems || [];
       
       // For each cart item, fetch product details
       const cartItemsWithProducts = await Promise.all(
         cartItemsFromAPI.map(async (item) => {
           try {
-            const productResponse = await axios.get(`http://localhost:3001/api/products/${item.product_id}`);
+            const productResponse = await api.get(`/products/${item.product_id}`);
             return {
               ...item,
               product: productResponse.data
@@ -54,16 +45,18 @@ export const CartProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, api]);
+
+  // Load cart when component mounts or user changes
+  useEffect(() => {
+    loadCart();
+  }, [loadCart]);
 
   const addToCart = async (productId, quantity = 1) => {
     try {
-      const headers = user ? { 'user-id': user.id } : {};
-      
-      // Add to backend cart (works for both users and guests)
-      await axios.post('http://localhost:3001/api/cart/add', 
-        { product_id: productId, quantity },
-        { headers }
+      // Add to backend cart (requires authentication)
+      await api.post('/cart/add', 
+        { product_id: productId, quantity }
       );
       
       // Reload cart to get updated data
@@ -78,12 +71,10 @@ export const CartProvider = ({ children }) => {
 
   const updateQuantity = async (itemId, quantity) => {
     try {
-      const headers = user ? { 'user-id': user.id } : {};
-      
       if (quantity <= 0) {
-        await axios.delete(`http://localhost:3001/api/cart/${itemId}`, { headers });
+        await api.delete(`/cart/${itemId}`);
       } else {
-        await axios.put(`http://localhost:3001/api/cart/${itemId}`, { quantity }, { headers });
+        await api.put(`/cart/${itemId}`, { quantity });
       }
       
       await loadCart();
@@ -96,9 +87,7 @@ export const CartProvider = ({ children }) => {
 
   const removeFromCart = async (itemId) => {
     try {
-      const headers = user ? { 'user-id': user.id } : {};
-      
-      await axios.delete(`http://localhost:3001/api/cart/${itemId}`, { headers });
+      await api.delete(`/cart/${itemId}`);
       await loadCart();
       
       return { success: true };
@@ -110,9 +99,7 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = async () => {
     try {
-      const headers = user ? { 'user-id': user.id } : {};
-      
-      await axios.delete('http://localhost:3001/api/cart', { headers });
+      await api.delete('/cart');
       setCartItems([]);
       
       return { success: true };
