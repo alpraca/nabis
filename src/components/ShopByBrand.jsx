@@ -59,7 +59,7 @@ const ShopByBrand = () => {
       setLoading(true)
       const response = await axios.get('http://localhost:3001/api/products/brands')
       
-      // Use all brands from API, just limit to first 6 for landing page
+      // Use all brands from API, just limit to first 5 for landing page
       const combinedData = response.data
         .map((brand, index) => ({
           id: index + 1,
@@ -68,7 +68,7 @@ const ShopByBrand = () => {
           logo: staticBrandInfo[brand.brand]?.logo || '🏢',
           description: staticBrandInfo[brand.brand]?.description || 'Produkte të cilësisë së lartë'
         }))
-        .slice(0, 6) // Show only first 6 brands on landing page
+        .slice(0, 5) // Show only first 5 brands on landing page
 
       setBrandsData(combinedData)
     } catch (error) {
@@ -99,7 +99,7 @@ const ShopByBrand = () => {
             <p className="mt-4 text-gray-600">Duke ngarkuar markat...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {brandsData.map((brand) => (
               <Link
                 key={brand.id}
