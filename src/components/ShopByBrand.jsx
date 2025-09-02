@@ -59,9 +59,8 @@ const ShopByBrand = () => {
       setLoading(true)
       const response = await axios.get('http://localhost:3001/api/products/brands')
       
-      // Combine API data with static info
+      // Use all brands from API, just limit to first 6 for landing page
       const combinedData = response.data
-        .filter(brand => staticBrandInfo[brand.brand]) // Only show brands we have static info for
         .map((brand, index) => ({
           id: index + 1,
           name: brand.brand,
@@ -69,7 +68,7 @@ const ShopByBrand = () => {
           logo: staticBrandInfo[brand.brand]?.logo || '🏢',
           description: staticBrandInfo[brand.brand]?.description || 'Produkte të cilësisë së lartë'
         }))
-        .slice(0, 10) // Show only first 10 brands
+        .slice(0, 6) // Show only first 6 brands on landing page
 
       setBrandsData(combinedData)
     } catch (error) {
