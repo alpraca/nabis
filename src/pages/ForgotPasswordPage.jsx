@@ -58,12 +58,17 @@ const ForgotPasswordPage = () => {
 
       setMessage({ type: 'success', text: 'Hyrja e suksesshme!' })
       
-      // Store token
+      // Store token AND user data (same as regular login)
       localStorage.setItem('token', response.data.token)
+      localStorage.setItem('user', JSON.stringify(response.data.user))
       
-      // Redirect to home page after a short delay
+      // Redirect based on user role (same logic as regular login)
       setTimeout(() => {
-        window.location.href = '/'
+        if (response.data.user.role === 'admin') {
+          window.location.href = '/nabis-admin-panel-2024'
+        } else {
+          window.location.href = '/'
+        }
       }, 1500)
       
     } catch (error) {
