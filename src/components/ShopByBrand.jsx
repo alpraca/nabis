@@ -99,31 +99,31 @@ const ShopByBrand = () => {
             <p className="mt-4 text-gray-600">Duke ngarkuar markat...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {brandsData.map((brand) => (
               <Link
                 key={brand.id}
                 to={`/brand/${encodeURIComponent(brand.name)}`}
-                className="group"
+                className="group h-full"
               >
-                <div className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 group-hover:border-primary-300">
+                <div className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 group-hover:border-primary-300 h-full flex flex-col justify-between min-h-[200px]">
                   {/* Brand Logo */}
                   <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                     {brand.logo}
                   </div>
 
                   {/* Brand Name */}
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors duration-300">
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors duration-300 text-center">
                     {brand.name}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  <p className="text-sm text-gray-600 mb-3 flex-1 text-center">
                     {brand.description}
                   </p>
 
                   {/* Product Count */}
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 mt-auto">
                     {brand.productCount} produkte
                   </p>
                 </div>
