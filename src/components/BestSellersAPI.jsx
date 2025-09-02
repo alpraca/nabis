@@ -16,7 +16,6 @@ const BestSellersAPI = () => {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`${API_URL}/products/best-sellers`);
-      console.log('Best Sellers API Response:', response.data); // Debug log
       // Backend returns { products: [...] }
       const productsArray = response.data.products || [];
       setProducts(productsArray); // Use all best sellers returned

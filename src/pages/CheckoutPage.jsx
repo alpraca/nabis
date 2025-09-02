@@ -112,8 +112,6 @@ const CheckoutPage = () => {
         }
       });
 
-      console.log('Order response:', response.data); // Debug log
-
       if (response.data) {
         // Don't clear cart yet - only clear after verification
         // Redirect to verification page with cart items for reference

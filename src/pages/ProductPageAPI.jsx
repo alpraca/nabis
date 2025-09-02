@@ -21,7 +21,6 @@ const ProductPageAPI = () => {
   const fetchProduct = async () => {
     try {
       const response = await axios.get(`http://localhost:3001/api/products/${id}`);
-      console.log('Product API Response:', response.data); // Debug log
       // Handle both direct product and object responses
       const productData = response.data.product || response.data;
       setProduct(productData);

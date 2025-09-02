@@ -17,7 +17,6 @@ const CategoryPageAPI = () => {
   const fetchProducts = async () => {
     try {
       const response = await axios.get('http://localhost:3001/api/products');
-      console.log('API Response:', response.data); // Debug log
       // Backend returns { products: [...] }
       const productsArray = response.data.products || [];
       
@@ -25,11 +24,9 @@ const CategoryPageAPI = () => {
       let filteredProducts = productsArray;
       if (category && category !== 'te-gjitha') {
         const categoryParam = decodeURIComponent(category).toLowerCase();
-        console.log('Filtering by category:', categoryParam); // Debug log
         
         filteredProducts = productsArray.filter(product => {
           const productCategory = product.category?.toLowerCase() || '';
-          console.log('Product category:', productCategory); // Debug log
           
           // Check different matching patterns:
           // 1. Exact match (e.g., "suplemente")
@@ -40,8 +37,6 @@ const CategoryPageAPI = () => {
                  productCategory.startsWith(`${categoryParam}/`) ||
                  productCategory.split('/').includes(categoryParam);
         });
-        
-        console.log('Filtered products:', filteredProducts.length); // Debug log
       }
       
       setProducts(filteredProducts);
