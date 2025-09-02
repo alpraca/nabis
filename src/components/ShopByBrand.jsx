@@ -138,66 +138,6 @@ const ShopByBrand = () => {
           </div>
         )}
 
-        {/* Featured Brands Section */}
-        <div className="mt-16">
-          <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-            Markat e Zgjedhura
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Featured Brand 1 */}
-            <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg p-6">
-              <div className="text-center">
-                <div className="text-5xl mb-4">🏥</div>
-                <h4 className="text-xl font-bold text-gray-900 mb-2">Roche</h4>
-                <p className="text-gray-600 mb-4">
-                  Lider botëror në inovacionin farmaceutik me mbi 125 vjet përvojë
-                </p>
-                <Link
-                  to="/brand/Roche"
-                  className="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors duration-300"
-                >
-                  Eksploro Produktet
-                </Link>
-              </div>
-            </div>
-
-            {/* Featured Brand 2 */}
-            <div className="bg-gradient-to-br from-secondary-50 to-secondary-100 rounded-lg p-6">
-              <div className="text-center">
-                <div className="text-5xl mb-4">💎</div>
-                <h4 className="text-xl font-bold text-gray-900 mb-2">La Roche-Posay</h4>
-                <p className="text-gray-600 mb-4">
-                  Dermokozmetikë e rekomanduar nga dermatologët për lëkurë të ndjeshme
-                </p>
-                <Link
-                  to="/brand/La Roche-Posay"
-                  className="inline-flex items-center justify-center px-4 py-2 bg-secondary-600 text-white rounded-md hover:bg-secondary-700 transition-colors duration-300"
-                >
-                  Eksploro Produktet
-                </Link>
-              </div>
-            </div>
-
-            {/* Featured Brand 3 */}
-            <div className="bg-gradient-to-br from-accent-50 to-accent-100 rounded-lg p-6">
-              <div className="text-center">
-                <div className="text-5xl mb-4">👶</div>
-                <h4 className="text-xl font-bold text-gray-900 mb-2">Mustela</h4>
-                <p className="text-gray-600 mb-4">
-                  Kujdes i specializuar dhe i sigurt për lëkurën delikate të bebit
-                </p>
-                <Link
-                  to="/brand/Mustela"
-                  className="inline-flex items-center justify-center px-4 py-2 bg-accent-600 text-white rounded-md hover:bg-accent-700 transition-colors duration-300"
-                >
-                  Eksploro Produktet
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* View All Brands */}
         <div className="text-center mt-12">
           <Link
