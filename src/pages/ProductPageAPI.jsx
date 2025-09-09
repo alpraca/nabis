@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Star, Heart, ShoppingCart, Shield, Truck, RefreshCw } from 'lucide-react';
 import axios from 'axios';
 import { useCart } from '../hooks/useCart';
+import { API_URL, API_BASE_URL } from '../config/api';
 
 const ProductPageAPI = () => {
   const { id } = useParams();
@@ -14,13 +15,9 @@ const ProductPageAPI = () => {
   const [addingToCart, setAddingToCart] = useState(false);
   const { addToCart: addProductToCart } = useCart();
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/products/${id}`);
+      const response = await axios.get(`${API_URL}/products/${id}`);
       // Handle both direct product and object responses
       const productData = response.data.product || response.data;
       setProduct(productData);
@@ -30,7 +27,11 @@ const ProductPageAPI = () => {
       setError('Produkti nuk u gjet');
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]);
 
   const handleAddToCart = async () => {
     setAddingToCart(true);
@@ -100,41 +101,98 @@ const ProductPageAPI = () => {
         <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
           {/* Image gallery */}
           <div className="flex flex-col-reverse">
-            {/* Image selector */}
+            {/* Image selector - Mobile scrollable */}
             {product.images && product.images.length > 1 && (
-              <div className="hidden mt-6 w-full max-w-2xl mx-auto sm:block lg:max-w-none">
-                <div className="grid grid-cols-4 gap-6">
-                  {product.images.map((image, index) => (
-                    <button
-                      key={index}
-                      className={`relative h-24 bg-white rounded-md flex items-center justify-center text-sm font-medium uppercase text-gray-900 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring focus:ring-offset-4 focus:ring-primary-500 ${
-                        index === selectedImageIndex ? 'ring-2 ring-primary-500' : ''
-                      }`}
-                      onClick={() => setSelectedImageIndex(index)}
-                    >
-                      <img
-                        src={`http://localhost:3001${image}`}
-                        alt={`${product.name} ${index + 1}`}
-                        className="h-full w-full object-cover rounded-md"
-                      />
-                    </button>
-                  ))}
+              <div className="mt-6 w-full">
+                {/* Mobile horizontal scroll */}
+                <div className="sm:hidden">
+                  <div className="flex space-x-3 overflow-x-auto pb-3">
+                    {product.images.map((image, index) => (
+                      <button
+                        key={index}
+                        className={`flex-shrink-0 w-20 h-20 bg-white rounded-md overflow-hidden border-2 ${
+                          index === selectedImageIndex ? 'border-primary-500' : 'border-gray-200'
+                        }`}
+                        onClick={() => setSelectedImageIndex(index)}
+                      >
+                        <img
+                          src={`${API_BASE_URL}${image}`}
+                          alt={`${product.name} ${index + 1}`}
+                          className="h-full w-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Desktop grid */}
+                <div className="hidden sm:block">
+                  <div className="grid grid-cols-4 gap-4 max-w-lg">
+                    {product.images.map((image, index) => (
+                      <button
+                        key={index}
+                        className={`relative h-24 bg-white rounded-md overflow-hidden border-2 transition-all duration-200 ${
+                          index === selectedImageIndex 
+                            ? 'border-primary-500 ring-2 ring-primary-200' 
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                        onClick={() => setSelectedImageIndex(index)}
+                      >
+                        <img
+                          src={`${API_BASE_URL}${image}`}
+                          alt={`${product.name} ${index + 1}`}
+                          className="h-full w-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Main image */}
-            <div className="w-full aspect-square">
+            {/* Main image with navigation */}
+            <div className="w-full aspect-square relative group">
               <div className="h-full w-full bg-gray-100 rounded-lg overflow-hidden">
                 {product.images && product.images.length > 0 ? (
-                  <img
-                    src={`http://localhost:3001${product.images[selectedImageIndex]}`}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="24">📦 Nuk ka foto</text></svg>';
-                    }}
-                  />
+                  <>
+                    <img
+                      src={`${API_BASE_URL}${product.images[selectedImageIndex]}`}
+                      alt={product.name}
+                      className="w-full h-full object-cover cursor-zoom-in"
+                      onError={(e) => {
+                        e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="24">📦 Nuk ka foto</text></svg>';
+                      }}
+                    />
+                    
+                    {/* Navigation arrows */}
+                    {product.images.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => setSelectedImageIndex(selectedImageIndex === 0 ? product.images.length - 1 : selectedImageIndex - 1)}
+                          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => setSelectedImageIndex(selectedImageIndex === product.images.length - 1 ? 0 : selectedImageIndex + 1)}
+                          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                      </>
+                    )}
+                    
+                    {/* Image counter */}
+                    {product.images.length > 1 && (
+                      <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
+                        {selectedImageIndex + 1} / {product.images.length}
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-6xl text-gray-400">
                     📦

@@ -10,15 +10,19 @@ const BestSellersAPI = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchProducts();
+    fetchBestSellers();
   }, []);
 
-  const fetchProducts = async () => {
+  const fetchBestSellers = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`${API_URL}/products/best-sellers`);
-      // Backend returns { products: [...] }
-      const productsArray = response.data.products || [];
-      setProducts(productsArray); // Use all best sellers returned
+      
+      if (response.data && response.data.products) {
+        setProducts(response.data.products);
+      } else {
+        setProducts([]);
+      }
       setLoading(false);
     } catch (error) {
       console.error('Error fetching best sellers:', error);
@@ -30,9 +34,9 @@ const BestSellersAPI = () => {
   const ProductCard = ({ product }) => (
     <div className="product-card bg-white rounded-lg shadow-md overflow-hidden group max-w-sm mx-auto w-full">
       {/* Product Image */}
-      <div className="relative bg-gray-50 h-48 sm:h-64 flex items-center justify-center">
+      <div className="relative bg-gray-50 h-48 sm:h-64 flex items-center justify-center overflow-hidden">
         {/* Wishlist Button */}
-        <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
           <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
         </button>
 
@@ -47,7 +51,7 @@ const BestSellersAPI = () => {
             }}
           />
         ) : (
-          <div className="text-6xl text-gray-400">📦</div>
+          <div className="text-6xl text-gray-400 flex items-center justify-center h-full">📦</div>
         )}
       </div>
 
@@ -152,17 +156,23 @@ const BestSellersAPI = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4 sm:px-0">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+          {products.length > 0 ? (
+            products.slice(0, 8).map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-500">Nuk ka produkte të disponueshme</p>
+            </div>
+          )}
         </div>
 
-        {/* Mobile View All Button */}
-        <div className="mt-8 text-center md:hidden">
+        {/* View All Button - Mobile */}
+        <div className="mt-12 text-center md:hidden">
           <Link
             to="/kategoria/me-te-shitura"
-            className="inline-flex items-center justify-center px-6 py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors duration-300"
+            className="inline-flex items-center justify-center px-6 py-3 border border-primary-600 text-primary-600 rounded-md hover:bg-primary-600 hover:text-white transition-colors duration-300"
           >
             Shiko të Gjitha
           </Link>

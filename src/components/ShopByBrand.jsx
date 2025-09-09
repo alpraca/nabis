@@ -1,60 +1,56 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+
+// Static brand info with logos and descriptions
+const staticBrandInfo = {
+  'Roche': {
+    logo: '🏥',
+    description: 'Produkte farmaceutike të certifikuara'
+  },
+  'La Roche-Posay': {
+    logo: '💎',
+    description: 'Dermokozmetikë për lëkurë të ndjeshme'
+  },
+  'Vichy': {
+    logo: '🌊',
+    description: 'Kujdes i përditshëm për lëkurën'
+  },
+  'Avène': {
+    logo: '🌸',
+    description: 'Produkte të buta për lëkurë të irrituar'
+  },
+  'Eucerin': {
+    logo: '🧴',
+    description: 'Shkencë për lëkurën tuaj'
+  },
+  'Bioderma': {
+    logo: '💧',
+    description: 'Biologji në shërbim të dermatologjisë'
+  },
+  'Nuxe': {
+    logo: '🌿',
+    description: 'Bukuria natyrore franceze'
+  },
+  'Ducray': {
+    logo: '🌱',
+    description: 'Specialistë për flokët dhe lëkurën'
+  },
+  'Uriage': {
+    logo: '💙',
+    description: 'Uji termal për shëndetin e lëkurës'
+  },
+  'Mustela': {
+    logo: '👶',
+    description: 'Kujdes i specializuar për bebat'
+  }
+}
 
 const ShopByBrand = () => {
   const [brandsData, setBrandsData] = useState([])
   const [loading, setLoading] = useState(true)
 
-  // Static brand info with logos and descriptions
-  const staticBrandInfo = {
-    'Roche': {
-      logo: '🏥',
-      description: 'Produkte farmaceutike të certifikuara'
-    },
-    'La Roche-Posay': {
-      logo: '💎',
-      description: 'Dermokozmetikë për lëkurë të ndjeshme'
-    },
-    'Vichy': {
-      logo: '🌊',
-      description: 'Kujdes i përditshëm për lëkurën'
-    },
-    'Avène': {
-      logo: '🌸',
-      description: 'Produkte të buta për lëkurë të irrituar'
-    },
-    'Eucerin': {
-      logo: '🧴',
-      description: 'Shkencë për lëkurën tuaj'
-    },
-    'Bioderma': {
-      logo: '💧',
-      description: 'Biologji në shërbim të dermatologjisë'
-    },
-    'Nuxe': {
-      logo: '🌿',
-      description: 'Bukuria natyrore franceze'
-    },
-    'Ducray': {
-      logo: '🌱',
-      description: 'Specialistë për flokët dhe lëkurën'
-    },
-    'Uriage': {
-      logo: '💙',
-      description: 'Uji termal për shëndetin e lëkurës'
-    },
-    'Mustela': {
-      logo: '�',
-      description: 'Kujdes i specializuar për bebat'
-    }
-  }
-
-  useEffect(() => {
-    fetchBrandsData()
-  }, [])
-
-  const fetchBrandsData = async () => {
+  const fetchBrandsData = useCallback(async () => {
     try {
       setLoading(true)
       const response = await axios.get('http://localhost:3001/api/products/brands')
@@ -78,8 +74,12 @@ const ShopByBrand = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, []) // Empty dependency array is fine since staticBrandInfo is now a constant outside component
 
+  useEffect(() => {
+    fetchBrandsData()
+  }, [fetchBrandsData])
+ 
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

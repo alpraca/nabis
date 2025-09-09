@@ -292,6 +292,15 @@ router.put('/profile', verifyToken, async (req, res) => {
   }
 })
 
+// Health check endpoint (no auth required)
+router.get('/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Auth service is running',
+    timestamp: new Date().toISOString()
+  })
+})
+
 // Verify token (for frontend to check if user is still logged in)
 router.get('/verify', verifyToken, (req, res) => {
   res.json({ valid: true, user: req.user })

@@ -5,6 +5,29 @@ const { uploadProductImages, handleUploadError } = require('../middleware/upload
 
 const router = express.Router()
 
+// Debug route - temporary (must be before /:id route)
+router.get('/debug/product/:id', (req, res) => {
+  const productQuery = 'SELECT * FROM products WHERE id = ?'
+  const imagesQuery = 'SELECT * FROM product_images WHERE product_id = ? ORDER BY sort_order'
+  
+  db.get(productQuery, [req.params.id], (err, product) => {
+    if (err) return res.status(500).json({ error: err.message })
+    
+    db.all(imagesQuery, [req.params.id], (err, images) => {
+      if (err) return res.status(500).json({ error: err.message })
+      
+      res.json({ 
+        product, 
+        images,
+        debug: {
+          productId: req.params.id,
+          imagesCount: images.length
+        }
+      })
+    })
+  })
+})
+
 // Get all products (public)
 router.get('/', (req, res) => {
   const { category, search, page = 1, limit = 20 } = req.query
@@ -162,6 +185,10 @@ router.get('/brand/:brand', (req, res) => {
 // Create new product (admin only)
 router.post('/', verifyToken, requireAdmin, uploadProductImages, handleUploadError, (req, res) => {
   try {
+    console.log('=== Product Creation Debug ===')
+    console.log('Request body:', req.body)
+    console.log('Uploaded files:', req.files)
+    
     const {
       name, brand, category, description, price, original_price,
       stock_quantity, is_new, on_sale, in_stock
@@ -185,42 +212,69 @@ router.post('/', verifyToken, requireAdmin, uploadProductImages, handleUploadErr
       ],
       function(err) {
         if (err) {
+          console.error('Database error:', err)
           return res.status(500).json({ error: 'Gabim në krijimin e produktit' })
         }
 
         const productId = this.lastID
+        console.log('Product created with ID:', productId)
 
-        // Insert images if uploaded
+        // Process uploaded images
         if (req.files && req.files.length > 0) {
+          console.log('Processing', req.files.length, 'uploaded files')
+          
           const imageQueries = req.files.map((file, index) => {
             return new Promise((resolve, reject) => {
+              const imageUrl = `/uploads/products/${file.filename}`
+              console.log('Saving image:', imageUrl)
+              
               db.run(
-                'INSERT INTO product_images (product_id, image_url, is_primary, sort_order) VALUES (?, ?, ?, ?)',
-                [productId, `/uploads/products/${file.filename}`, index === 0, index],
-                (err) => err ? reject(err) : resolve()
+                'INSERT INTO product_images (product_id, image_url, sort_order) VALUES (?, ?, ?)',
+                [productId, imageUrl, index + 1],
+                (err) => {
+                  if (err) {
+                    console.error('Error saving image:', err)
+                    reject(err)
+                  } else {
+                    console.log('Image saved:', imageUrl)
+                    resolve()
+                  }
+                }
               )
             })
           })
 
           Promise.all(imageQueries)
             .then(() => {
+              console.log('All images processed successfully')
               res.status(201).json({
                 message: 'Produkti u krijua me sukses',
-                productId: productId
+                productId: productId,
+                debug: {
+                  filesUploaded: req.files.length,
+                  fileDetails: req.files.map(f => f.filename)
+                }
               })
             })
-            .catch(() => {
-              res.status(500).json({ error: 'Gabim në ruajtjen e fotove' })
+            .catch((err) => {
+              console.error('Error processing images:', err)
+              res.status(500).json({ error: 'Produkti u krijua por pati gabim në ruajtjen e fotove' })
             })
         } else {
+          console.log('No files uploaded')
           res.status(201).json({
             message: 'Produkti u krijua me sukses',
-            productId: productId
+            productId: productId,
+            debug: {
+              filesUploaded: 0,
+              fileDetails: []
+            }
           })
         }
       }
     )
   } catch (error) {
+    console.error('Server error:', error)
     res.status(500).json({ error: 'Gabim në server' })
   }
 })

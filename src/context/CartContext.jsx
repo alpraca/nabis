@@ -1,7 +1,6 @@
-import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { useAuth } from './AuthContext';
-
-export const CartContext = createContext();
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { CartContext } from './CartContextDefinition';
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);

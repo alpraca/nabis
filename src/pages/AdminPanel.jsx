@@ -5,7 +5,7 @@ import {
   ShoppingCart, TrendingUp, LogOut, User as UserIcon, Search,
   Clock, Truck, Check
 } from 'lucide-react'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -36,7 +36,8 @@ const AdminPanel = () => {
     loadBannerText()
     loadStats()
     loadOrders()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Only run once on mount - these functions are stable
 
   // Load functions
   const loadProducts = async () => {
@@ -579,7 +580,8 @@ const AdminPanel = () => {
                     setEditingProduct(null)
                   } catch (error) {
                     console.error('Error saving product:', error)
-                    alert('Gabim në ruajtjen e produktit')
+                    console.error('Error response:', error.response?.data)
+                    alert(`Gabim në ruajtjen e produktit: ${error.response?.data?.error || error.message}`)
                   }
                 }}
                 onCancel={() => {
@@ -941,7 +943,7 @@ const ProductForm = ({ product, onSave, onCancel }) => {
     
     if (value.length > 0) {
       const filtered = allBrands.filter(brand => 
-        brand.name.toLowerCase().includes(value.toLowerCase())
+        brand.brand && brand.brand.toLowerCase().includes(value.toLowerCase())
       )
       setBrandSuggestions(filtered)
       setShowBrandSuggestions(filtered.length > 0)
@@ -990,6 +992,16 @@ const ProductForm = ({ product, onSave, onCancel }) => {
     setIsSubmitting(true)
 
     try {
+      // Validate required fields
+      const requiredFields = ['name', 'brand', 'category', 'description', 'price']
+      const missingFields = requiredFields.filter(field => !formData[field] || formData[field].toString().trim() === '')
+      
+      if (missingFields.length > 0) {
+        alert(`Fushat e mëposhtme janë të detyrueshme: ${missingFields.join(', ')}`)
+        setIsSubmitting(false)
+        return
+      }
+
       const submitData = new FormData()
       
       // Add form fields
@@ -1002,6 +1014,8 @@ const ProductForm = ({ product, onSave, onCancel }) => {
         submitData.append('images', file)
       })
 
+      // TODO: Add image URL handling later
+      /*
       // Add image URLs if provided
       if (imageUrls.trim()) {
         const urls = imageUrls.split(',').map(url => url.trim()).filter(url => url)
@@ -1009,6 +1023,7 @@ const ProductForm = ({ product, onSave, onCancel }) => {
           submitData.append('imageUrls', url)
         })
       }
+      */
 
       await onSave(submitData)
     } catch (error) {
@@ -1051,7 +1066,7 @@ const ProductForm = ({ product, onSave, onCancel }) => {
               onFocus={() => {
                 if (formData.brand.length > 0) {
                   const filtered = allBrands.filter(brand => 
-                    brand.name.toLowerCase().includes(formData.brand.toLowerCase())
+                    brand.brand.toLowerCase().includes(formData.brand.toLowerCase())
                   )
                   setBrandSuggestions(filtered)
                   setShowBrandSuggestions(filtered.length > 0)
@@ -1069,11 +1084,11 @@ const ProductForm = ({ product, onSave, onCancel }) => {
                   <button
                     key={index}
                     type="button"
-                    onClick={() => selectBrand(brand.name)}
+                    onClick={() => selectBrand(brand.brand)}
                     className="w-full text-left px-3 py-2 hover:bg-gray-100 text-sm border-b border-gray-100 last:border-b-0"
                   >
-                    <div className="font-medium">{brand.name}</div>
-                    <div className="text-xs text-gray-500">Produktet: {brand.productCount || 0}</div>
+                    <div className="font-medium">{brand.brand}</div>
+                    <div className="text-xs text-gray-500">Produktet: {brand.product_count || 0}</div>
                   </button>
                 ))}
               </div>

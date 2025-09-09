@@ -29,7 +29,7 @@ const ForgotPasswordPage = () => {
     setMessage({ type: '', text: '' })
 
     try {
-      const response = await axios.post('http://localhost:3001/api/auth/request-temp-login', {
+      await axios.post('http://localhost:3001/api/auth/request-temp-login', {
         email: formData.email
       })
 

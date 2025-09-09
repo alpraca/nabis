@@ -1,31 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
-import axios from 'axios'
-import { API_URL } from '../config/api'
-
-const AuthContext = createContext()
-
-// Configure axios
-const api = axios.create({
-  baseURL: API_URL,
-  withCredentials: true
-})
-
-// Add token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
-
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-  return context
-}
+import React, { useState, useEffect } from 'react'
+import { authApi } from '../config/auth'
+import { AuthContext } from './AuthContextDefinition'
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
@@ -42,23 +17,27 @@ export const AuthProvider = ({ children }) => {
         const userData = JSON.parse(savedUser)
         
         // Verify token with backend
-        api.get('/auth/verify')
-          .then(response => {
+        authApi.get('/auth/verify')
+          .then(() => {
             // Token is valid, restore user data
             setUser(userData)
           })
-          .catch(() => {
+          .catch((error) => {
             // Token is invalid, clear everything
+            console.warn('Token verification failed:', error.response?.data?.error)
             localStorage.removeItem('token')
             localStorage.removeItem('user')
+            setUser(null)
           })
           .finally(() => {
             setIsLoading(false)
           })
       } catch (error) {
         // Error parsing user data, clear everything
+        console.error('Error parsing user data:', error)
         localStorage.removeItem('token')
         localStorage.removeItem('user')
+        setUser(null)
         setIsLoading(false)
       }
     } else {
@@ -68,7 +47,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await api.post('/auth/login', { email, password })
+      const response = await authApi.post('/auth/login', { email, password })
       
       if (response.data.token && response.data.user) {
         localStorage.setItem('token', response.data.token)
@@ -98,7 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const response = await api.post('/auth/register', userData)
+      await authApi.post('/auth/register', userData)
       
       // Registration successful, but user needs to verify email
       // Don't automatically log in, just return success
@@ -116,6 +95,9 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null)
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    // Optionally redirect to home page
+    window.location.href = '/'
   }
 
   const isAdmin = () => {
@@ -128,9 +110,9 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = async (profileData) => {
     try {
-      await api.put('/auth/profile', profileData)
+      await authApi.put('/auth/profile', profileData)
       // Refresh user data
-      const response = await api.get('/auth/profile')
+      const response = await authApi.get('/auth/profile')
       setUser(response.data.user)
       return { success: true }
     } catch (error) {
@@ -148,7 +130,7 @@ export const AuthProvider = ({ children }) => {
     isLoggedIn,
     isLoading,
     updateProfile,
-    api // Export api instance for use in other components
+    api: authApi // Export api instance for use in other components
   }
 
   return (

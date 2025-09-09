@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Filter, Star, Heart } from 'lucide-react';
 import axios from 'axios';
+import { API_URL, API_BASE_URL } from '../config/api';
 
 const CategoryPageAPI = () => {
   const { category } = useParams();
@@ -10,13 +11,9 @@ const CategoryPageAPI = () => {
   const [error, setError] = useState(null);
   const [sortBy, setSortBy] = useState('name');
 
-  useEffect(() => {
-    fetchProducts();
-  }, [category]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/products');
+      const response = await axios.get(`${API_URL}/products`);
       // Backend returns { products: [...] }
       const productsArray = response.data.products || [];
       
@@ -46,7 +43,11 @@ const CategoryPageAPI = () => {
       setError('Nuk mund të ngarkohen produktet');
       setLoading(false);
     }
-  };
+  }, [category]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [category, fetchProducts]);
 
   const sortedProducts = [...products].sort((a, b) => {
     switch (sortBy) {
@@ -68,49 +69,54 @@ const CategoryPageAPI = () => {
     ).join(' ');
   };
 
-  const ProductCard = ({ product }) => (
-    <div className="product-card bg-white rounded-lg shadow-md overflow-hidden group max-w-sm mx-auto w-full">
-      {/* Product Image */}
-      <div className="relative bg-gray-50 h-48 sm:h-64 flex items-center justify-center">
+  const ProductCard = ({ product }) => {
+    return (
+    <div className="product-card bg-white rounded-lg shadow-md overflow-hidden group max-w-sm mx-auto w-full h-full flex flex-col">
+      {/* Product Image - Fixed height */}
+      <div className="relative bg-gray-50 h-48 sm:h-64 flex items-center justify-center overflow-hidden flex-shrink-0">
         {/* Wishlist Button */}
-        <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
           <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
         </button>
 
         {/* Product Image */}
         {product.images && product.images.length > 0 ? (
           <img
-            src={`http://localhost:3001${product.images[0]}`}
+            src={`${API_BASE_URL}${product.images[0]}`}
             alt={product.name}
             className="h-full w-full object-cover"
             onError={(e) => {
+              console.error(`❌ Image failed to load: ${product.images[0]}`);
+              console.error('Full image URL:', e.target.src);
               e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="16">📦 Nuk ka foto</text></svg>';
             }}
           />
         ) : (
-          <div className="text-6xl text-gray-400">📦</div>
+          <div className="text-6xl text-gray-400 flex items-center justify-center h-full">📦</div>
         )}
       </div>
 
-      {/* Product Info */}
-      <div className="p-3 sm:p-4">
-        {/* Brand */}
-        <p className="text-xs sm:text-sm text-gray-500 mb-1">{product.brand}</p>
+      {/* Product Info - Flexible content area */}
+      <div className="p-3 sm:p-4 flex flex-col flex-grow">
+        {/* Brand - Fixed height */}
+        <p className="text-xs sm:text-sm text-gray-500 mb-1 h-5 flex items-center">{product.brand}</p>
 
-        {/* Product Name */}
-        <h3 className="font-semibold text-sm sm:text-base text-gray-900 mb-2 line-clamp-2 leading-tight">
+        {/* Product Name - Fixed height with line clamping */}
+        <h3 className="font-semibold text-sm sm:text-base text-gray-900 mb-2 line-clamp-2 leading-tight h-10 overflow-hidden">
           {product.name}
         </h3>
 
-        {/* Description */}
-        {product.description && (
-          <p className="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-2">
-            {product.description}
-          </p>
-        )}
+        {/* Description - Fixed height with line clamping */}
+        <div className="mb-3 h-10 overflow-hidden">
+          {product.description && (
+            <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
+              {product.description}
+            </p>
+          )}
+        </div>
 
-        {/* Rating - placeholder */}
-        <div className="flex items-center space-x-1 mb-3">
+        {/* Rating - Fixed height */}
+        <div className="flex items-center space-x-1 mb-3 h-6">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <Star
@@ -126,23 +132,27 @@ const CategoryPageAPI = () => {
           <span className="text-xs sm:text-sm text-gray-600">4.0 (0)</span>
         </div>
 
-        {/* Price */}
-        <div className="flex items-center space-x-2 mb-4">
+        {/* Spacer to push price and button to bottom */}
+        <div className="flex-grow"></div>
+
+        {/* Price - Fixed height */}
+        <div className="flex items-center space-x-2 mb-4 h-6">
           <span className="text-base sm:text-lg font-bold text-gray-900">
             {product.price}€
           </span>
         </div>
 
-        {/* Add to Cart Button */}
+        {/* Add to Cart Button - Fixed at bottom */}
         <Link
           to={`/produkti/${product.id}`}
-          className="w-full bg-primary-600 text-white py-2 px-3 sm:px-4 rounded-md hover:bg-primary-700 transition-colors duration-300 text-center block text-sm sm:text-base"
+          className="w-full bg-primary-600 text-white py-2 px-3 sm:px-4 rounded-md hover:bg-primary-700 transition-colors duration-300 text-center block text-sm sm:text-base mt-auto"
         >
           Shiko Detajet
         </Link>
       </div>
     </div>
-  );
+    );
+  };
 
   if (loading) {
     return (
@@ -217,7 +227,7 @@ const CategoryPageAPI = () => {
 
         {/* Products Grid */}
         {sortedProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 sm:px-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 sm:px-0 auto-rows-fr">
             {sortedProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Truck, CreditCard, MapPin, Phone, User, Mail } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import axios from 'axios';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
-  const { cartItems, getCartTotal, clearCart } = useCart();
+  const { cartItems, getCartTotal } = useCart();
   const { user } = useAuth();
   
   const [formData, setFormData] = useState({
