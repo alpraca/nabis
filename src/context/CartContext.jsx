@@ -52,6 +52,11 @@ export const CartProvider = ({ children }) => {
   }, [loadCart]);
 
   const addToCart = async (productId, quantity = 1) => {
+    // Check if user is authenticated before making the request
+    if (!user) {
+      return { success: false, error: 'Ju duhet të jeni të kyçur për të shtuar produktet në shportë' };
+    }
+
     try {
       // Add to backend cart (requires authentication)
       await api.post('/cart/add', 
@@ -64,7 +69,13 @@ export const CartProvider = ({ children }) => {
       return { success: true };
     } catch (error) {
       console.error('Error adding to cart:', error);
-      return { success: false, error: 'Gabim në shtimin në shportë' };
+      
+      // Handle authentication errors specifically
+      if (error.response?.status === 401) {
+        return { success: false, error: 'Ju duhet të jeni të kyçur për të shtuar produktet në shportë' };
+      }
+      
+      return { success: false, error: error.response?.data?.error || 'Gabim në shtimin në shportë' };
     }
   };
 

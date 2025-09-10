@@ -102,7 +102,7 @@ const Header = () => {
 
   const otherMenuItems = [
     { name: 'Kontakt', id: 'kontakt', scrollTo: true },
-    { name: 'Brandë', id: 'brande' }
+    { name: 'Brande', id: 'brande' }
   ]
 
   const scrollToFooter = () => {

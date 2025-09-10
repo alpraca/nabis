@@ -129,9 +129,9 @@ const BrandProductsPage = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
               {products.map((product) => (
-                <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
                   {/* Product Image */}
                   <div className="relative">
                     <Link to={`/produkti/${product.id}`}>
@@ -166,7 +166,7 @@ const BrandProductsPage = () => {
                   </div>
 
                   {/* Product Info */}
-                  <div className="p-4">
+                  <div className="p-4 flex flex-col flex-grow">
                     <div className="mb-2">
                       <Link 
                         to={`/brand/${encodeURIComponent(product.brand)}`}
@@ -182,8 +182,17 @@ const BrandProductsPage = () => {
                       </h3>
                     </Link>
 
+                    {/* Description */}
+                    <div className="flex-grow">
+                      {product.description && (
+                        <p className="text-xs text-gray-600 mb-2 line-clamp-3 min-h-[3rem]">
+                          {product.description}
+                        </p>
+                      )}
+                    </div>
+
                     {/* Rating (placeholder) */}
-                    <div className="flex items-center mb-2">
+                    <div className="flex items-center mb-2 mt-auto">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} className="h-3 w-3 fill-current text-yellow-400" />
                       ))}
@@ -208,7 +217,7 @@ const BrandProductsPage = () => {
                     <button
                       onClick={() => handleAddToCart(product)}
                       disabled={!product.in_stock}
-                      className={`w-full flex items-center justify-center space-x-2 py-2 px-4 rounded text-sm font-medium transition-colors duration-200 ${
+                      className={`w-full flex items-center justify-center space-x-2 py-2 px-4 rounded text-sm font-medium transition-colors duration-200 mt-auto ${
                         product.in_stock
                           ? 'bg-primary-600 text-white hover:bg-primary-700'
                           : 'bg-gray-300 text-gray-500 cursor-not-allowed'

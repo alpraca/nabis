@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, Heart, ShoppingCart, Shield, Truck, RefreshCw } from 'lucide-react';
 import axios from 'axios';
 import { useCart } from '../hooks/useCart';
+import { useAuth } from '../hooks/useAuth';
 import { API_URL, API_BASE_URL } from '../config/api';
 
 const ProductPageAPI = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,6 +16,7 @@ const ProductPageAPI = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [addingToCart, setAddingToCart] = useState(false);
   const { addToCart: addProductToCart } = useCart();
+  const { user, isLoggedIn } = useAuth();
 
   const fetchProduct = useCallback(async () => {
     try {
@@ -34,6 +37,17 @@ const ProductPageAPI = () => {
   }, [fetchProduct]);
 
   const handleAddToCart = async () => {
+    // Check if user is logged in
+    if (!isLoggedIn()) {
+      const shouldLogin = window.confirm(
+        'Ju duhet të jeni të kyçur për të shtuar produktet në shportë.\n\nDëshironi të kyçeni tani?'
+      );
+      if (shouldLogin) {
+        navigate('/login', { state: { from: `/product/${id}` } });
+      }
+      return;
+    }
+
     setAddingToCart(true);
     const result = await addProductToCart(product.id, quantity);
     

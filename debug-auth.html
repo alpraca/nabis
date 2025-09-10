@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Authentication</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { margin: 10px; padding: 10px 20px; }
+        .result { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <h1>Authentication Test</h1>
+    
+    <div>
+        <button onclick="testLoginStatus()">Check Login Status</button>
+        <button onclick="testAddToCart()">Test Add to Cart (No Auth)</button>
+        <button onclick="testAddToCartWithAuth()">Test Add to Cart (With Auth)</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        const API_URL = 'http://localhost:3001/api';
+        
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> ${message}`;
+            results.appendChild(div);
+            results.scrollTop = results.scrollHeight;
+        }
+        
+        async function testLoginStatus() {
+            try {
+                const response = await fetch(`${API_URL}/auth/verify`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token') || 'no-token'}`
+                    }
+                });
+                
+                if (response.ok) {
+                    log('✅ User is authenticated', 'success');
+                } else {
+                    const error = await response.json();
+                    log(`❌ User not authenticated: ${error.error}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Error checking auth: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAddToCart() {
+            try {
+                const response = await fetch(`${API_URL}/cart/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ product_id: 1, quantity: 1 })
+                });
+                
+                if (response.ok) {
+                    log('✅ Added to cart successfully', 'success');
+                } else {
+                    const error = await response.json();
+                    log(`❌ Cart add failed: ${error.error}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Error adding to cart: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAddToCartWithAuth() {
+            const token = prompt('Enter authentication token:');
+            if (!token) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/cart/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ product_id: 1, quantity: 1 })
+                });
+                
+                if (response.ok) {
+                    log('✅ Added to cart with auth successfully', 'success');
+                } else {
+                    const error = await response.json();
+                    log(`❌ Cart add with auth failed: ${error.error}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Error adding to cart with auth: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-test on load
+        window.onload = () => {
+            log('🔍 Testing authentication system...');
+            testLoginStatus();
+            setTimeout(() => testAddToCart(), 1000);
+        };
+    </script>
+</body>
+</html>

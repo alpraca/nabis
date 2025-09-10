@@ -72,8 +72,8 @@ const CategoryPageAPI = () => {
   const ProductCard = ({ product }) => {
     return (
     <div className="product-card bg-white rounded-lg shadow-md overflow-hidden group max-w-sm mx-auto w-full h-full flex flex-col">
-      {/* Product Image - Fixed height */}
-      <div className="relative bg-gray-50 h-48 sm:h-64 flex items-center justify-center overflow-hidden flex-shrink-0">
+      {/* Product Image */}
+      <div className="relative bg-gray-50 h-48 sm:h-64 flex items-center justify-center overflow-hidden">
         {/* Wishlist Button */}
         <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
           <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
@@ -96,27 +96,27 @@ const CategoryPageAPI = () => {
         )}
       </div>
 
-      {/* Product Info - Flexible content area */}
+      {/* Product Info */}
       <div className="p-3 sm:p-4 flex flex-col flex-grow">
-        {/* Brand - Fixed height */}
-        <p className="text-xs sm:text-sm text-gray-500 mb-1 h-5 flex items-center">{product.brand}</p>
+        {/* Brand */}
+        <p className="text-xs sm:text-sm text-gray-500 mb-1">{product.brand}</p>
 
-        {/* Product Name - Fixed height with line clamping */}
-        <h3 className="font-semibold text-sm sm:text-base text-gray-900 mb-2 line-clamp-2 leading-tight h-10 overflow-hidden">
+        {/* Product Name */}
+        <h3 className="font-semibold text-sm sm:text-base text-gray-900 mb-2 line-clamp-2 leading-tight">
           {product.name}
         </h3>
 
-        {/* Description - Fixed height with line clamping */}
-        <div className="mb-3 h-10 overflow-hidden">
+        {/* Description */}
+        <div className="flex-grow">
           {product.description && (
-            <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
+            <p className="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-3 min-h-[3rem]">
               {product.description}
             </p>
           )}
         </div>
 
-        {/* Rating - Fixed height */}
-        <div className="flex items-center space-x-1 mb-3 h-6">
+        {/* Rating - placeholder */}
+        <div className="flex items-center space-x-1 mb-3 mt-auto">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <Star
@@ -132,17 +132,14 @@ const CategoryPageAPI = () => {
           <span className="text-xs sm:text-sm text-gray-600">4.0 (0)</span>
         </div>
 
-        {/* Spacer to push price and button to bottom */}
-        <div className="flex-grow"></div>
-
-        {/* Price - Fixed height */}
-        <div className="flex items-center space-x-2 mb-4 h-6">
+        {/* Price */}
+        <div className="flex items-center space-x-2 mb-4">
           <span className="text-base sm:text-lg font-bold text-gray-900">
             {product.price}€
           </span>
         </div>
 
-        {/* Add to Cart Button - Fixed at bottom */}
+        {/* Add to Cart Button */}
         <Link
           to={`/produkti/${product.id}`}
           className="w-full bg-primary-600 text-white py-2 px-3 sm:px-4 rounded-md hover:bg-primary-700 transition-colors duration-300 text-center block text-sm sm:text-base mt-auto"
@@ -227,7 +224,7 @@ const CategoryPageAPI = () => {
 
         {/* Products Grid */}
         {sortedProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 sm:px-0 auto-rows-fr">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 sm:px-0 items-stretch">
             {sortedProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
