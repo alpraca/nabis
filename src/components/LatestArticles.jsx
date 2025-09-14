@@ -12,7 +12,8 @@ const LatestArticles = () => {
       date: '22 Korrik, 2025',
       image: '🔬',
       category: 'Dermatologji',
-      readTime: '5 min lexim'
+      readTime: '5 min lexim',
+      externalUrl: 'https://www.healthline.com/health/melasma-vs-hyperpigmentation'
     },
     {
       id: 2,
@@ -22,7 +23,8 @@ const LatestArticles = () => {
       date: '17 Qershor, 2025',
       image: '💡',
       category: 'Teknologji',
-      readTime: '7 min lexim'
+      readTime: '7 min lexim',
+      externalUrl: 'https://www.byrdie.com/led-light-therapy-at-home'
     },
     {
       id: 3,
@@ -32,7 +34,8 @@ const LatestArticles = () => {
       date: '5 Qershor, 2025',
       image: '🧴',
       category: 'Kujdes Trupi',
-      readTime: '6 min lexim'
+      readTime: '6 min lexim',
+      externalUrl: 'https://www.allure.com/story/body-care-routine-tips'
     },
     {
       id: 4,
@@ -42,7 +45,8 @@ const LatestArticles = () => {
       date: '6 Shkurt, 2025',
       image: '🧬',
       category: 'Skincare',
-      readTime: '8 min lexim'
+      readTime: '8 min lexim',
+      externalUrl: 'https://www.dermstore.com/blog/ingredient-breakdown/peptides/'
     },
     {
       id: 5,
@@ -52,7 +56,8 @@ const LatestArticles = () => {
       date: '20 Tetor, 2024',
       image: '📋',
       category: 'Edukative',
-      readTime: '4 min lexim'
+      readTime: '4 min lexim',
+      externalUrl: 'https://www.paulaschoice.com/expert-advice/skincare-advice/basic-skin-care-tips/skin-concerns-vs-skin-conditions.html'
     },
     {
       id: 6,
@@ -62,7 +67,8 @@ const LatestArticles = () => {
       date: '15 Mars, 2025',
       image: '💊',
       category: 'Shëndet',
-      readTime: '6 min lexim'
+      readTime: '6 min lexim',
+      externalUrl: 'https://www.mayoclinic.org/healthy-lifestyle/nutrition-and-healthy-eating/in-depth/vitamins/art-20045943'
     }
   ]
 
@@ -103,9 +109,9 @@ const LatestArticles = () => {
 
         {/* Title */}
         <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-300">
-          <Link to={`/blog/${article.id}`} className="line-clamp-2">
+          <a href={article.externalUrl} target="_blank" rel="noopener noreferrer" className="line-clamp-2">
             {article.title}
-          </Link>
+          </a>
         </h3>
 
         {/* Excerpt */}
@@ -114,13 +120,15 @@ const LatestArticles = () => {
         </p>
 
         {/* Read More */}
-        <Link
-          to={`/blog/${article.id}`}
+        <a
+          href={article.externalUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-flex items-center space-x-2 text-primary-600 hover:text-primary-700 font-medium group-hover:underline"
         >
           <span>Lexo më shumë</span>
           <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-        </Link>
+        </a>
       </div>
     </article>
   )
@@ -132,7 +140,7 @@ const LatestArticles = () => {
         <div className="flex items-center justify-between mb-12">
           <div>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Artikujt tanë më të Fundit
+              Artikujt më të Fundit
             </h2>
             <p className="text-lg text-gray-600">
               Këshilla profesionale dhe informacion i dobishëm për shëndetin dhe bukurinë tuaj

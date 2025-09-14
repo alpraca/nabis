@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, Mail, Lock, User, Phone, CheckCircle } from 'lucide-react'
-import { useAuth } from '../hooks/useAuth'
+import { Link } from 'react-router-dom'
+import { Eye, EyeOff, Mail, Lock, User, Phone, Check, ArrowLeft, Loader2, CheckCircle } from 'lucide-react'
 import axios from 'axios'
 
 const api = axios.create({
@@ -9,8 +8,6 @@ const api = axios.create({
 })
 
 const SignupPage = () => {
-  const navigate = useNavigate()
-  const { register } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)

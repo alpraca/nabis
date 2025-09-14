@@ -71,52 +71,54 @@ const CategoryPageAPI = () => {
 
   const ProductCard = ({ product }) => {
     return (
-    <div className="product-card bg-white rounded-lg shadow-md overflow-hidden group max-w-sm mx-auto w-full h-full flex flex-col">
-      {/* Product Image */}
-      <div className="relative bg-gray-50 h-48 sm:h-64 flex items-center justify-center overflow-hidden">
-        {/* Wishlist Button */}
-        <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-          <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
-        </button>
+    <div className="product-card bg-white rounded-lg shadow-md overflow-hidden group max-w-sm mx-auto w-full h-full">
+      {/* Fixed Grid Layout for Uniform Heights */}
+      <div className="h-[420px] grid grid-rows-[200px_1fr_auto_auto_auto] gap-2">
+        
+        {/* Product Image - Fixed Height */}
+        <div className="relative bg-gray-50 flex items-center justify-center overflow-hidden">
+          {/* Wishlist Button */}
+          <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+            <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
+          </button>
 
-        {/* Product Image */}
-        {product.images && product.images.length > 0 ? (
-          <img
-            src={`${API_BASE_URL}${product.images[0]}`}
-            alt={product.name}
-            className="h-full w-full object-cover"
-            onError={(e) => {
-              console.error(`❌ Image failed to load: ${product.images[0]}`);
-              console.error('Full image URL:', e.target.src);
-              e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="16">📦 Nuk ka foto</text></svg>';
-            }}
-          />
-        ) : (
-          <div className="text-6xl text-gray-400 flex items-center justify-center h-full">📦</div>
-        )}
-      </div>
+          {/* Product Image */}
+          {product.images && product.images.length > 0 ? (
+            <img
+              src={`${API_BASE_URL}${product.images[0]}`}
+              alt={product.name}
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                console.error(`❌ Image failed to load: ${product.images[0]}`);
+                console.error('Full image URL:', e.target.src);
+                e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="16">📦 Nuk ka foto</text></svg>';
+              }}
+            />
+          ) : (
+            <div className="text-6xl text-gray-400 flex items-center justify-center h-full">📦</div>
+          )}
+        </div>
 
-      {/* Product Info */}
-      <div className="p-3 sm:p-4 flex flex-col flex-grow">
-        {/* Brand */}
-        <p className="text-xs sm:text-sm text-gray-500 mb-1">{product.brand}</p>
+        {/* Product Info Container - Flexible */}
+        <div className="p-3 sm:p-4 flex flex-col min-h-0">
+          {/* Brand */}
+          <p className="text-xs sm:text-sm text-gray-500 mb-1">{product.brand}</p>
 
-        {/* Product Name */}
-        <h3 className="font-semibold text-sm sm:text-base text-gray-900 mb-2 line-clamp-2 leading-tight">
-          {product.name}
-        </h3>
+          {/* Product Name - Fixed Height (2 lines) */}
+          <h3 className="font-semibold text-sm sm:text-base text-gray-900 mb-2 line-clamp-2 leading-tight h-10 overflow-hidden">
+            {product.name}
+          </h3>
 
-        {/* Description */}
-        <div className="flex-grow">
+          {/* Description - Fixed Height (3 lines) */}
           {product.description && (
-            <p className="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-3 min-h-[3rem]">
+            <p className="text-xs sm:text-sm text-gray-600 line-clamp-3 h-12 overflow-hidden leading-4 mb-2">
               {product.description}
             </p>
           )}
         </div>
 
-        {/* Rating - placeholder */}
-        <div className="flex items-center space-x-1 mb-3 mt-auto">
+        {/* Rating - Fixed Position */}
+        <div className="px-3 sm:px-4 py-2 flex items-center space-x-1">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <Star
@@ -132,20 +134,23 @@ const CategoryPageAPI = () => {
           <span className="text-xs sm:text-sm text-gray-600">4.0 (0)</span>
         </div>
 
-        {/* Price */}
-        <div className="flex items-center space-x-2 mb-4">
+        {/* Price - Fixed Position */}
+        <div className="px-3 sm:px-4 py-2">
           <span className="text-base sm:text-lg font-bold text-gray-900">
             {product.price}€
           </span>
         </div>
 
-        {/* Add to Cart Button */}
-        <Link
-          to={`/produkti/${product.id}`}
-          className="w-full bg-primary-600 text-white py-2 px-3 sm:px-4 rounded-md hover:bg-primary-700 transition-colors duration-300 text-center block text-sm sm:text-base mt-auto"
-        >
-          Shiko Detajet
-        </Link>
+        {/* Add to Cart Button - Always at Bottom */}
+        <div className="px-3 sm:px-4 pb-3 sm:pb-4">
+          <Link
+            to={`/produkti/${product.id}`}
+            className="w-full bg-primary-600 text-white py-2 px-3 sm:px-4 rounded-md hover:bg-primary-700 transition-colors duration-300 text-center block text-sm sm:text-base"
+          >
+            Shiko Detajet
+          </Link>
+        </div>
+
       </div>
     </div>
     );

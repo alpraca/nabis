@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { ShoppingCart, Heart, Star } from 'lucide-react'
@@ -15,9 +15,9 @@ const BrandProductsPage = () => {
 
   useEffect(() => {
     fetchBrandProducts()
-  }, [brand])
+  }, [brand, fetchBrandProducts])
 
-  const fetchBrandProducts = async () => {
+  const fetchBrandProducts = useCallback(async () => {
     try {
       setLoading(true)
       const response = await axios.get(`http://localhost:3001/api/products/brand/${encodeURIComponent(decodedBrand)}`)
@@ -29,7 +29,7 @@ const BrandProductsPage = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [decodedBrand])
 
   const handleAddToCart = async (product) => {
     try {
@@ -131,76 +131,80 @@ const BrandProductsPage = () => {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
               {products.map((product) => (
-                <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                  {/* Product Image */}
-                  <div className="relative">
-                    <Link to={`/produkti/${product.id}`}>
-                      <img
-                        src={product.images && product.images.length > 0 
-                          ? `http://localhost:3001${product.images[0]}`
-                          : '/api/placeholder/300/300'
-                        }
-                        alt={product.name}
-                        className="w-full h-48 object-cover"
-                      />
-                    </Link>
+                <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full">
+                  {/* Fixed Grid Layout for Uniform Heights */}
+                  <div className="h-[420px] grid grid-rows-[200px_1fr_auto_auto_auto] gap-2">
                     
-                    {/* Badges */}
-                    <div className="absolute top-2 left-2 flex flex-col space-y-1">
-                      {product.is_new && (
-                        <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">
-                          E re
-                        </span>
-                      )}
-                      {product.on_sale && (
-                        <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">
-                          Ofertë
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Wishlist button */}
-                    <button className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-50">
-                      <Heart className="h-4 w-4 text-gray-600" />
-                    </button>
-                  </div>
-
-                  {/* Product Info */}
-                  <div className="p-4 flex flex-col flex-grow">
-                    <div className="mb-2">
-                      <Link 
-                        to={`/brand/${encodeURIComponent(product.brand)}`}
-                        className="text-xs text-primary-600 hover:text-primary-700 font-medium"
-                      >
-                        {product.brand}
+                    {/* Product Image - Fixed Height */}
+                    <div className="relative bg-gray-50 flex items-center justify-center overflow-hidden">
+                      <Link to={`/produkti/${product.id}`}>
+                        <img
+                          src={product.images && product.images.length > 0 
+                            ? `http://localhost:3001${product.images[0]}`
+                            : '/api/placeholder/300/300'
+                          }
+                          alt={product.name}
+                          className="h-full w-full object-cover"
+                        />
                       </Link>
-                    </div>
-                    
-                    <Link to={`/produkti/${product.id}`}>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2 hover:text-primary-600 line-clamp-2">
-                        {product.name}
-                      </h3>
-                    </Link>
+                      
+                      {/* Badges */}
+                      <div className="absolute top-2 left-2 flex flex-col space-y-1">
+                        {product.is_new && (
+                          <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">
+                            E re
+                          </span>
+                        )}
+                        {product.on_sale && (
+                          <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">
+                            Ofertë
+                          </span>
+                        )}
+                      </div>
 
-                    {/* Description */}
-                    <div className="flex-grow">
+                      {/* Wishlist button */}
+                      <button className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                        <Heart className="h-4 w-4 text-gray-600" />
+                      </button>
+                    </div>
+
+                    {/* Product Info Container - Flexible */}
+                    <div className="p-4 flex flex-col min-h-0">
+                      {/* Brand */}
+                      <div className="mb-1">
+                        <Link 
+                          to={`/brand/${encodeURIComponent(product.brand)}`}
+                          className="text-xs text-primary-600 hover:text-primary-700 font-medium"
+                        >
+                          {product.brand}
+                        </Link>
+                      </div>
+                      
+                      {/* Product Name - Fixed Height (2 lines) */}
+                      <Link to={`/produkti/${product.id}`}>
+                        <h3 className="text-sm font-medium text-gray-900 mb-2 hover:text-primary-600 line-clamp-2 h-10 overflow-hidden leading-tight">
+                          {product.name}
+                        </h3>
+                      </Link>
+
+                      {/* Description - Fixed Height (3 lines) */}
                       {product.description && (
-                        <p className="text-xs text-gray-600 mb-2 line-clamp-3 min-h-[3rem]">
+                        <p className="text-xs text-gray-600 line-clamp-3 h-12 overflow-hidden leading-4 mb-2">
                           {product.description}
                         </p>
                       )}
                     </div>
 
-                    {/* Rating (placeholder) */}
-                    <div className="flex items-center mb-2 mt-auto">
+                    {/* Rating - Fixed Position */}
+                    <div className="px-4 py-2 flex items-center">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} className="h-3 w-3 fill-current text-yellow-400" />
                       ))}
                       <span className="text-xs text-gray-500 ml-1">(0)</span>
                     </div>
 
-                    {/* Price */}
-                    <div className="flex items-center justify-between mb-3">
+                    {/* Price - Fixed Position */}
+                    <div className="px-4 py-2">
                       <div className="flex items-center space-x-2">
                         <span className="text-lg font-bold text-gray-900">
                           {product.price}€
@@ -213,19 +217,22 @@ const BrandProductsPage = () => {
                       </div>
                     </div>
 
-                    {/* Add to Cart Button */}
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      disabled={!product.in_stock}
-                      className={`w-full flex items-center justify-center space-x-2 py-2 px-4 rounded text-sm font-medium transition-colors duration-200 mt-auto ${
-                        product.in_stock
-                          ? 'bg-primary-600 text-white hover:bg-primary-700'
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      }`}
-                    >
-                      <ShoppingCart className="h-4 w-4" />
-                      <span>{product.in_stock ? 'Shto në shportë' : 'Pa stok'}</span>
-                    </button>
+                    {/* Add to Cart Button - Always at Bottom */}
+                    <div className="px-4 pb-4">
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        disabled={!product.in_stock}
+                        className={`w-full flex items-center justify-center space-x-2 py-2 px-4 rounded text-sm font-medium transition-colors duration-200 ${
+                          product.in_stock
+                            ? 'bg-primary-600 text-white hover:bg-primary-700'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
+                      >
+                        <ShoppingCart className="h-4 w-4" />
+                        <span>{product.in_stock ? 'Shto në shportë' : 'Pa stok'}</span>
+                      </button>
+                    </div>
+
                   </div>
                 </div>
               ))}

@@ -16,7 +16,7 @@ const ProductPageAPI = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [addingToCart, setAddingToCart] = useState(false);
   const { addToCart: addProductToCart } = useCart();
-  const { user, isLoggedIn } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   const fetchProduct = useCallback(async () => {
     try {
