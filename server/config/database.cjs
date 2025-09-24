@@ -43,6 +43,7 @@ const initializeDatabase = async () => {
           name TEXT NOT NULL,
           brand TEXT NOT NULL,
           category TEXT NOT NULL,
+          subcategory TEXT,
           description TEXT NOT NULL,
           price DECIMAL(10,2) NOT NULL,
           original_price DECIMAL(10,2),

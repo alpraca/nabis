@@ -6,6 +6,7 @@ import {
   Clock, Truck, Check
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import { formatPrice } from '../utils/currency'
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -286,7 +287,7 @@ const AdminPanel = () => {
                   <TrendingUp className="h-8 w-8 text-yellow-600" />
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Të ardhurat</p>
-                    <p className="text-2xl font-bold text-gray-900">{parseFloat(stats?.totalRevenue || 0).toFixed(2)}€</p>
+                    <p className="text-2xl font-bold text-gray-900">{formatPrice(stats?.totalRevenue || 0)}</p>
                   </div>
                 </div>
               </div>
@@ -412,7 +413,7 @@ const AdminPanel = () => {
                               <div className="text-sm text-gray-900">{order.email || order.user_email}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm font-medium text-gray-900">{parseFloat(order.total_amount).toFixed(2)}€</div>
+                              <div className="text-sm font-medium text-gray-900">{formatPrice(order.total_amount)}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-600">{order.item_count} produkt(e)</div>
@@ -445,7 +446,7 @@ const AdminPanel = () => {
                               <div className="flex items-center space-x-2">
                                 <button
                                   onClick={() => {
-                                    const message = `Detajet e porosisë ${order.order_number}:\n\nKlienti: ${order.user_name}\nEmail: ${order.email || order.user_email}\nTotali: ${parseFloat(order.total_amount).toFixed(2)}€\nProduktet: ${order.item_count}\nAdresa: ${order.shipping_address}, ${order.shipping_city}\nTelefoni: ${order.phone}\nShënime: ${order.notes || 'Asnjë'}\nData: ${new Date(order.created_at).toLocaleString('sq-AL')}`
+                                    const message = `Detajet e porosisë ${order.order_number}:\n\nKlienti: ${order.user_name}\nEmail: ${order.email || order.user_email}\nTotali: ${formatPrice(order.total_amount)}\nProduktet: ${order.item_count}\nAdresa: ${order.shipping_address}, ${order.shipping_city}\nTelefoni: ${order.phone}\nShënime: ${order.notes || 'Asnjë'}\nData: ${new Date(order.created_at).toLocaleString('sq-AL')}`
                                     alert(message)
                                   }}
                                   className="text-blue-600 hover:text-blue-900 p-1 rounded"
@@ -494,7 +495,7 @@ const AdminPanel = () => {
                               <div className="text-xs text-gray-500">{order.email || order.user_email}</div>
                             </div>
                             <div className="text-right">
-                              <div className="font-medium text-gray-900">{parseFloat(order.total_amount).toFixed(2)}€</div>
+                              <div className="font-medium text-gray-900">{formatPrice(order.total_amount)}</div>
                               <div className="text-xs text-gray-500">{order.item_count} produkt(e)</div>
                             </div>
                           </div>
@@ -523,7 +524,7 @@ const AdminPanel = () => {
                           <div className="flex justify-end space-x-2 pt-2">
                             <button
                               onClick={() => {
-                                const message = `Detajet e porosisë ${order.order_number}:\n\nKlienti: ${order.user_name}\nEmail: ${order.email || order.user_email}\nTotali: ${parseFloat(order.total_amount).toFixed(2)}€\nProduktet: ${order.item_count}\nAdresa: ${order.shipping_address}, ${order.shipping_city}\nTelefoni: ${order.phone}\nShënime: ${order.notes || 'Asnjë'}\nData: ${new Date(order.created_at).toLocaleString('sq-AL')}`
+                                const message = `Detajet e porosisë ${order.order_number}:\n\nKlienti: ${order.user_name}\nEmail: ${order.email || order.user_email}\nTotali: ${formatPrice(order.total_amount)}\nProduktet: ${order.item_count}\nAdresa: ${order.shipping_address}, ${order.shipping_city}\nTelefoni: ${order.phone}\nShënime: ${order.notes || 'Asnjë'}\nData: ${new Date(order.created_at).toLocaleString('sq-AL')}`
                                 alert(message)
                               }}
                               className="text-blue-600 hover:text-blue-900 p-2 rounded"
@@ -655,10 +656,10 @@ const AdminPanel = () => {
                               <div className="text-sm text-gray-900">{product.category}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">{parseFloat(product.price).toFixed(2)}€</div>
+                              <div className="text-sm text-gray-900">{formatPrice(product.price)}</div>
                               {product.original_price && parseFloat(product.original_price) > parseFloat(product.price) && (
                                 <div className="text-sm text-gray-500 line-through">
-                                  {parseFloat(product.original_price).toFixed(2)}€
+                                  {formatPrice(product.original_price)}
                                 </div>
                               )}
                             </td>
@@ -756,10 +757,10 @@ const AdminPanel = () => {
                           
                           <div className="flex justify-between items-center">
                             <div>
-                              <div className="text-sm font-medium text-gray-900">{parseFloat(product.price).toFixed(2)}€</div>
+                              <div className="text-sm font-medium text-gray-900">{formatPrice(product.price)}</div>
                               {product.original_price && parseFloat(product.original_price) > parseFloat(product.price) && (
                                 <div className="text-xs text-gray-500 line-through">
-                                  {parseFloat(product.original_price).toFixed(2)}€
+                                  {formatPrice(product.original_price)}
                                 </div>
                               )}
                               <div className="text-xs text-gray-600">Stoku: {product.stock_quantity}</div>

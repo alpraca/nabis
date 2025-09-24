@@ -1,22 +1,46 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { Search, Package, TrendingUp } from 'lucide-react'
 import axios from 'axios'
+import { formatPrice } from '../utils/currency'
 
 const BrandPage = () => {
   const [brands, setBrands] = useState([])
+  const [filteredBrands, setFilteredBrands] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
     fetchBrands()
   }, [])
 
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredBrands(brands)
+    } else {
+      const filtered = brands.filter(brand =>
+        brand.brand.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      setFilteredBrands(filtered)
+    }
+  }, [searchTerm, brands])
+
   const fetchBrands = async () => {
     try {
       setLoading(true)
-      const response = await axios.get('http://localhost:3001/api/products/brands')
-      setBrands(response.data)
+      // Try the new brands endpoint first, fallback to products/brands
+      try {
+        const response = await axios.get('http://localhost:3001/api/brands')
+        setBrands(response.data.brands || [])
+        setFilteredBrands(response.data.brands || [])
+      } catch {
+        // Fallback to old endpoint
+        const response = await axios.get('http://localhost:3001/api/products/brands')
+        setBrands(response.data || [])
+        setFilteredBrands(response.data || [])
+      }
     } catch (error) {
       console.error('Error fetching brands:', error)
       setError('Ndodhi një gabim gjatë ngarkimit të brandeve')
@@ -34,7 +58,7 @@ const BrandPage = () => {
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
             <p className="mt-4 text-gray-600">Duke ngarkuar brandët...</p>
           </div>
         </div>
@@ -50,7 +74,7 @@ const BrandPage = () => {
             <p className="text-red-600">{error}</p>
             <button 
               onClick={fetchBrands}
-              className="mt-4 bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700"
+              className="mt-4 bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700"
             >
               Provo sërish
             </button>
@@ -61,55 +85,89 @@ const BrandPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Brandët</h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-4">
-            Zbuloni produktet tona nga brandët më të njohura në botën e farmacisë dhe kozmetikës
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Brandet</h1>
+          <p className="text-gray-600 mb-6">
+            Zbuloni të gjitha markat e disponueshme në Nabis Farmaci
           </p>
+
+          {/* Search */}
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Kërkoni një markë..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            />
+          </div>
         </div>
 
-        {/* Breadcrumb */}
-        <nav className="flex mb-8" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1 md:space-x-3">
-            <li className="inline-flex items-center">
-              <Link 
-                to="/" 
-                className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary-600"
-              >
-                Kreu
-              </Link>
-            </li>
-            <li>
-              <div className="flex items-center">
-                <span className="mx-2 text-gray-400">/</span>
-                <span className="text-sm font-medium text-gray-500">Brandët</span>
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="flex items-center">
+              <Package className="w-8 h-8 text-teal-600 mr-3" />
+              <div>
+                <p className="text-sm text-gray-600">Gjithsej Marka</p>
+                <p className="text-2xl font-bold text-gray-900">{brands.length}</p>
               </div>
-            </li>
-          </ol>
-        </nav>
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="flex items-center">
+              <TrendingUp className="w-8 h-8 text-green-600 mr-3" />
+              <div>
+                <p className="text-sm text-gray-600">Produktet Totale</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {brands.reduce((acc, brand) => acc + (brand.product_count || 0), 0)}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="flex items-center">
+              <Search className="w-8 h-8 text-blue-600 mr-3" />
+              <div>
+                <p className="text-sm text-gray-600">Rezultatet</p>
+                <p className="text-2xl font-bold text-gray-900">{filteredBrands.length}</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Brands Grid */}
-        {brands.length > 0 ? (
+        {filteredBrands.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {brands.map((brand, index) => (
+            {filteredBrands.map((brand, index) => (
               <div
                 key={index}
                 onClick={() => handleBrandClick(brand.brand)}
-                className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg transition-shadow duration-300 cursor-pointer hover:border-primary-300 group"
+                className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg transition-shadow duration-300 cursor-pointer hover:border-teal-300 group"
               >
-                <div className="flex items-center justify-center h-24 mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary-600 transition-colors duration-300">
-                    {brand.brand}
-                  </h3>
+                <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-xl mx-auto mb-4">
+                  {brand.brand.charAt(0).toUpperCase()}
                 </div>
+                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-teal-600 transition-colors duration-300 mb-2">
+                  {brand.brand}
+                </h3>
                 <p className="text-sm text-gray-500 mb-4">
-                  {brand.product_count} {brand.product_count === 1 ? 'produkt' : 'produkte'}
+                  {brand.product_count || 0} {(brand.product_count || 0) === 1 ? 'produkt' : 'produkte'}
                 </p>
-                <div className="w-full h-px bg-gray-200 group-hover:bg-primary-300 transition-colors duration-300"></div>
-                <p className="text-xs text-gray-400 mt-3 group-hover:text-primary-500 transition-colors duration-300">
+                {brand.min_price && brand.max_price && (
+                  <div className="mt-3 pt-3 border-t border-gray-100">
+                    <p className="text-xs text-gray-500">Çmimet nga</p>
+                    <p className="text-sm font-medium text-teal-600">
+                      {formatPrice(brand.min_price)} - {formatPrice(brand.max_price)}
+                    </p>
+                  </div>
+                )}
+                <div className="w-full h-px bg-gray-200 group-hover:bg-teal-300 transition-colors duration-300 mt-3"></div>
+                <p className="text-xs text-gray-400 mt-3 group-hover:text-teal-500 transition-colors duration-300">
                   Kliko për të parë produktet
                 </p>
               </div>
@@ -118,12 +176,12 @@ const BrandPage = () => {
         ) : (
           <div className="text-center py-12">
             <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
+              <Package className="mx-auto h-16 w-16" />
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">Nuk ka brandë të disponueshme</h3>
-            <p className="text-gray-500">Brandët do të shfaqen kur të shtohen produkte.</p>
+            <p className="text-gray-500">
+              {searchTerm ? 'Provoni një term tjetër kërkimi.' : 'Brandët do të shfaqen kur të shtohen produkte.'}
+            </p>
           </div>
         )}
       </div>

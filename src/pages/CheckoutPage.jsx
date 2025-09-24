@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Truck, CreditCard, MapPin, Phone, User, Mail } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
+import { formatPrice } from '../utils/currency';
 import axios from 'axios';
 
 const CheckoutPage = () => {
@@ -131,10 +132,6 @@ const CheckoutPage = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const formatPrice = (price) => {
-    return parseFloat(price).toFixed(2);
   };
 
   const cartTotal = getCartTotal();
@@ -342,7 +339,7 @@ const CheckoutPage = () => {
                     Duke përpunuar...
                   </div>
                 ) : (
-                  `Porosit Tani - ${formatPrice(finalTotal)}€`
+                  `Porosit Tani - ${formatPrice(finalTotal)}`
                 )}
               </button>
             </div>
@@ -385,7 +382,7 @@ const CheckoutPage = () => {
                         Sasia: {item.quantity}
                       </span>
                       <span className="text-sm font-medium text-gray-900">
-                        {formatPrice(item.product?.price * item.quantity)}€
+                        {formatPrice(item.product?.price * item.quantity)}
                       </span>
                     </div>
                   </div>
@@ -397,26 +394,26 @@ const CheckoutPage = () => {
             <div className="border-t border-gray-200 pt-4 space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Nëntotali</span>
-                <span className="font-medium">{formatPrice(cartTotal)}€</span>
+                <span className="font-medium">{formatPrice(cartTotal)}</span>
               </div>
               
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Transporti</span>
                 <span className="font-medium">
-                  {shippingCost === 0 ? 'Falas' : `${formatPrice(shippingCost)}€`}
+                  {shippingCost === 0 ? 'Falas' : `${formatPrice(shippingCost)}`}
                 </span>
               </div>
               
               <div className="flex justify-between text-lg font-medium pt-2 border-t border-gray-200">
                 <span>Totali</span>
-                <span className="text-primary-600">{formatPrice(finalTotal)}€</span>
+                <span className="text-primary-600">{formatPrice(finalTotal)}</span>
               </div>
             </div>
 
             {cartTotal < 30 && (
               <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                 <p className="text-blue-700 text-sm">
-                  💡 Shtoni {formatPrice(30 - cartTotal)}€ më shumë për transport falas!
+                  💡 Shtoni {formatPrice(30 - cartTotal)} më shumë për transport falas!
                 </p>
               </div>
             )}

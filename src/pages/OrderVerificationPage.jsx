@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { CheckCircle, Mail, ArrowLeft } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
+import { formatPrice } from '../utils/currency';
 import axios from 'axios';
 
 const OrderVerificationPage = () => {
@@ -162,7 +163,7 @@ const OrderVerificationPage = () => {
             </div>
             <div className="text-sm mt-2">
               <p className="text-gray-600">Totali:</p>
-              <p className="font-semibold text-gray-900">{orderData.totalAmount}€</p>
+              <p className="font-semibold text-gray-900">{formatPrice(orderData.totalAmount)}</p>
             </div>
           </div>
 

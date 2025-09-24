@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
+import { formatPrice } from '../utils/currency';
 
 const CartPage = () => {
   const { cartItems, updateQuantity, removeFromCart, getCartTotal, loading } = useCart();
@@ -14,10 +15,6 @@ const CartPage = () => {
     } else {
       await updateQuantity(item.id, newQuantity);
     }
-  };
-
-  const formatPrice = (price) => {
-    return parseFloat(price).toFixed(2);
   };
 
   if (loading) {
@@ -117,7 +114,7 @@ const CartPage = () => {
                                 {item.product?.brand}
                               </p>
                               <p className="text-lg font-medium text-gray-900 mt-2">
-                                {formatPrice(item.product?.price)}€
+                                {formatPrice(item.product?.price)}
                               </p>
                             </div>
 
@@ -167,7 +164,7 @@ const CartPage = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Nëntotali</span>
-                    <span className="font-medium">{formatPrice(getCartTotal())}€</span>
+                    <span className="font-medium">{formatPrice(getCartTotal())}</span>
                   </div>
                   
                   <div className="flex justify-between">
@@ -181,7 +178,7 @@ const CartPage = () => {
                     <div className="flex justify-between text-lg font-medium">
                       <span>Totali</span>
                       <span>
-                        {formatPrice(getCartTotal() + (getCartTotal() >= 30 ? 0 : 3))}€
+                        {formatPrice(getCartTotal() + (getCartTotal() >= 30 ? 0 : 3))}
                       </span>
                     </div>
                   </div>

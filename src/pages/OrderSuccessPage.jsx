@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, Link, Navigate } from 'react-router-dom';
 import { CheckCircle, Truck, Mail, Phone, ArrowLeft } from 'lucide-react';
+import { formatPrice } from '../utils/currency';
 
 const OrderSuccessPage = () => {
   const location = useLocation();
@@ -47,7 +48,7 @@ const OrderSuccessPage = () => {
               <div>
                 <p className="text-sm text-gray-600">Totali i Paguar</p>
                 <p className="text-lg font-medium text-primary-600">
-                  {parseFloat(totalAmount).toFixed(2)}€
+                  {formatPrice(totalAmount)}
                 </p>
               </div>
             </div>

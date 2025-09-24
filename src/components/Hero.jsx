@@ -33,12 +33,12 @@ const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={scrollToProducts}
+              <Link
+                to="/produktet"
                 className="btn-hover bg-primary-600 text-white px-8 py-3 rounded-md font-semibold text-center"
               >
-                Shiko Produktet
-              </button>
+                Shiko Të Gjitha Produktet
+              </Link>
               <button
                 onClick={scrollToFooter}
                 className="btn-hover border border-primary-600 text-primary-600 px-8 py-3 rounded-md font-semibold text-center hover:bg-primary-600 hover:text-white transition-colors duration-300"

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, Heart } from 'lucide-react';
+import { Star, Heart, ShoppingCart } from 'lucide-react';
 import axios from 'axios';
 import { API_BASE_URL, API_URL } from '../config/api';
+import { formatPrice } from '../utils/currency';
+import { useCart } from '../hooks/useCart';
 
 const BestSellersAPI = () => {
+  const { addToCart } = useCart();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,6 +31,20 @@ const BestSellersAPI = () => {
       console.error('Error fetching best sellers:', error);
       setError('Nuk mund të ngarkohen produktet më të shitura');
       setLoading(false);
+    }
+  };
+
+  const handleAddToCart = async (product) => {
+    try {
+      const result = await addToCart(product.id, 1);
+      if (result.success) {
+        alert(`${product.name} u shtua në shportë!`);
+      } else {
+        alert(result.error || 'Gabim në shtimin në shportë');
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Gabim në shtimin në shportë');
     }
   };
 
@@ -94,17 +111,23 @@ const BestSellersAPI = () => {
         {/* Price */}
         <div className="flex items-center space-x-2 mb-4">
           <span className="text-base sm:text-lg font-bold text-gray-900">
-            {product.price}€
+            {formatPrice(product.price)}
           </span>
         </div>
 
         {/* Add to Cart Button */}
-        <Link
-          to={`/produkti/${product.id}`}
-          className="w-full bg-primary-600 text-white py-2 px-3 sm:px-4 rounded-md hover:bg-primary-700 transition-colors duration-300 text-center block text-sm sm:text-base"
+        <button
+          onClick={() => handleAddToCart(product)}
+          disabled={!product.in_stock}
+          className={`w-full flex items-center justify-center space-x-2 py-2 px-3 sm:px-4 rounded-md text-sm sm:text-base font-medium transition-colors duration-200 ${
+            product.in_stock
+              ? 'bg-primary-600 text-white hover:bg-primary-700'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
         >
-          Shto në Shportë
-        </Link>
+          <ShoppingCart className="h-4 w-4" />
+          <span>{product.in_stock ? 'Shto në Shportë' : 'Pa stok'}</span>
+        </button>
       </div>
     </div>
   );
@@ -148,7 +171,7 @@ const BestSellersAPI = () => {
             </p>
           </div>
           <Link
-            to="/kategoria/me-te-shitura"
+            to="/kategori/me-te-shitura"
             className="hidden md:inline-flex items-center justify-center px-6 py-3 border border-primary-600 text-primary-600 rounded-md hover:bg-primary-600 hover:text-white transition-colors duration-300"
           >
             Shiko të Gjitha
@@ -171,7 +194,7 @@ const BestSellersAPI = () => {
         {/* View All Button - Mobile */}
         <div className="mt-12 text-center md:hidden">
           <Link
-            to="/kategoria/me-te-shitura"
+            to="/kategori/me-te-shitura"
             className="inline-flex items-center justify-center px-6 py-3 border border-primary-600 text-primary-600 rounded-md hover:bg-primary-600 hover:text-white transition-colors duration-300"
           >
             Shiko të Gjitha

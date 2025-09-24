@@ -14,6 +14,7 @@ import Footer from './components/Footer'
 import HomePage from './pages/HomePage'
 import ProductPageAPI from './pages/ProductPageAPI'
 import CategoryPageAPI from './pages/CategoryPageAPI'
+import AllProductsPage from './pages/AllProductsPage'
 import BrandPage from './pages/BrandPage'
 import BrandProductsPage from './pages/BrandProductsPage'
 import LoginPage from './pages/LoginPage'
@@ -37,6 +38,7 @@ function App() {
             <Routes>
             {/* Public routes */}
             <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
+            <Route path="/produktet" element={<PublicLayout><AllProductsPage /></PublicLayout>} />
             <Route path="/kategori/:category" element={<PublicLayout><CategoryPageAPI /></PublicLayout>} />
             <Route path="/termat" element={<PublicLayout><CategoryPageAPI /></PublicLayout>} />
             <Route path="/brande" element={<PublicLayout><BrandPage /></PublicLayout>} />

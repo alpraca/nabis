@@ -51,6 +51,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 // Routes with rate limiting
 app.use('/api/auth', authLimiter, require('./routes/auth.cjs'))
 app.use('/api/products', require('./routes/products.cjs'))
+app.use('/api/brands', require('./routes/brands.cjs'))
 app.use('/api/cart', require('./routes/cart.cjs'))
 app.use('/api/orders', require('./routes/orders.cjs'))
 

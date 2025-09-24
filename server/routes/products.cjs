@@ -30,50 +30,115 @@ router.get('/debug/product/:id', (req, res) => {
 
 // Get all products (public)
 router.get('/', (req, res) => {
-  const { category, search, page = 1, limit = 20 } = req.query
+  const { category, search, page = 1, limit = 24, brand } = req.query
   
   let query = `
     SELECT p.*, 
-           GROUP_CONCAT(pi.image_url) as images
+           GROUP_CONCAT(DISTINCT pi.image_url ORDER BY pi.sort_order) as images
     FROM products p
     LEFT JOIN product_images pi ON p.id = pi.product_id
     WHERE 1=1
   `
   const params = []
+  let countQuery = 'SELECT COUNT(DISTINCT p.id) as total FROM products p WHERE 1=1'
+  const countParams = []
 
-  if (category) {
-    query += ' AND p.category = ?'
-    params.push(category)
+  // Enhanced category filtering with hierarchical support
+  if (category && category !== 'te-gjitha') {
+    const categoryParam = decodeURIComponent(category).toLowerCase()
+    
+    // First check if it's a subcategory
+    query += ` AND (
+      LOWER(p.subcategory) = ? OR 
+      LOWER(p.category) = ? OR 
+      LOWER(p.category) LIKE ? OR 
+      LOWER(p.category) LIKE ? OR 
+      LOWER(p.category) LIKE ?
+    )`
+    params.push(
+      categoryParam,
+      categoryParam,
+      `%/${categoryParam}`,
+      `${categoryParam}/%`,
+      `%/${categoryParam}/%`
+    )
+    
+    countQuery += ` AND (
+      LOWER(p.subcategory) = ? OR 
+      LOWER(p.category) = ? OR 
+      LOWER(p.category) LIKE ? OR 
+      LOWER(p.category) LIKE ? OR 
+      LOWER(p.category) LIKE ?
+    )`
+    countParams.push(
+      categoryParam,
+      categoryParam,
+      `%/${categoryParam}`,
+      `${categoryParam}/%`,
+      `%/${categoryParam}/%`
+    )
+  }
+
+  if (brand) {
+    query += ' AND LOWER(p.brand) = ?'
+    params.push(brand.toLowerCase())
+    countQuery += ' AND LOWER(p.brand) = ?'
+    countParams.push(brand.toLowerCase())
   }
 
   if (search) {
-    query += ' AND (p.name LIKE ? OR p.brand LIKE ? OR p.description LIKE ?)'
-    params.push(`%${search}%`, `%${search}%`, `%${search}%`)
+    query += ' AND (LOWER(p.name) LIKE ? OR LOWER(p.brand) LIKE ? OR LOWER(p.description) LIKE ?)'
+    const searchTerm = `%${search.toLowerCase()}%`
+    params.push(searchTerm, searchTerm, searchTerm)
+    countQuery += ' AND (LOWER(p.name) LIKE ? OR LOWER(p.brand) LIKE ? OR LOWER(p.description) LIKE ?)'
+    countParams.push(searchTerm, searchTerm, searchTerm)
   }
 
-  query += ' GROUP BY p.id ORDER BY p.created_at DESC'
-  
-  if (limit !== 'all') {
-    const offset = (page - 1) * limit
-    query += ' LIMIT ? OFFSET ?'
-    params.push(parseInt(limit), offset)
-  }
-
-  db.all(query, params, (err, products) => {
+  // First get total count for pagination
+  db.get(countQuery, countParams, (err, countResult) => {
     if (err) {
-      return res.status(500).json({ error: 'Gabim në marrjen e produkteve' })
+      return res.status(500).json({ error: 'Gabim në numërimin e produkteve' })
     }
 
-    // Process images
-    const processedProducts = products.map(product => ({
-      ...product,
-      images: product.images ? product.images.split(',') : [],
-      is_new: Boolean(product.is_new),
-      on_sale: Boolean(product.on_sale),
-      in_stock: Boolean(product.in_stock)
-    }))
+    const totalProducts = countResult.total
+    const pageNum = parseInt(page)
+    const limitNum = parseInt(limit)
+    const totalPages = Math.ceil(totalProducts / limitNum)
 
-    res.json({ products: processedProducts })
+    query += ' GROUP BY p.id ORDER BY p.created_at DESC'
+    
+    if (limit !== 'all') {
+      const offset = (pageNum - 1) * limitNum
+      query += ' LIMIT ? OFFSET ?'
+      params.push(limitNum, offset)
+    }
+
+    db.all(query, params, (err, products) => {
+      if (err) {
+        return res.status(500).json({ error: 'Gabim në marrjen e produkteve' })
+      }
+
+      // Process images and ensure no duplicates
+      const processedProducts = products.map(product => ({
+        ...product,
+        images: product.images ? product.images.split(',').filter(Boolean) : [],
+        is_new: Boolean(product.is_new),
+        on_sale: Boolean(product.on_sale),
+        in_stock: Boolean(product.in_stock)
+      }))
+
+      res.json({ 
+        products: processedProducts,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total: totalProducts,
+          totalPages: totalPages,
+          hasNext: pageNum < totalPages,
+          hasPrev: pageNum > 1
+        }
+      })
+    })
   })
 })
 
@@ -94,32 +159,61 @@ router.get('/categories/list', (req, res) => {
 
 // Get best-selling products (public)
 router.get('/best-sellers', (req, res) => {
-  const query = `
-    SELECT p.*, 
-           GROUP_CONCAT(pi.image_url) as images
+  const { page = 1, limit = 24 } = req.query
+  
+  // First get total count
+  const countQuery = `
+    SELECT COUNT(*) as total 
     FROM products p
-    LEFT JOIN product_images pi ON p.id = pi.product_id
     WHERE p.in_stock = 1
-    GROUP BY p.id 
-    ORDER BY p.created_at DESC
-    LIMIT 8
   `
-
-  db.all(query, [], (err, products) => {
+  
+  db.get(countQuery, [], (err, countResult) => {
     if (err) {
-      return res.status(500).json({ error: 'Gabim në marrjen e produkteve më të shitura' })
+      return res.status(500).json({ error: 'Gabim në numërimin e produkteve më të shitura' })
     }
 
-    // Process images
-    const processedProducts = products.map(product => ({
-      ...product,
-      images: product.images ? product.images.split(',') : [],
-      is_new: Boolean(product.is_new),
-      on_sale: Boolean(product.on_sale),
-      in_stock: Boolean(product.in_stock)
-    }))
+    const totalProducts = countResult.total
+    const pageNum = parseInt(page)
+    const limitNum = parseInt(limit)
+    const totalPages = Math.ceil(totalProducts / limitNum)
+    const offset = (pageNum - 1) * limitNum
 
-    res.json({ products: processedProducts })
+    const query = `
+      SELECT p.id, p.name, p.brand, p.price, p.in_stock,
+             GROUP_CONCAT(pi.image_url ORDER BY pi.sort_order) as images
+      FROM products p
+      LEFT JOIN product_images pi ON p.id = pi.product_id
+      WHERE p.in_stock = 1
+      GROUP BY p.id 
+      ORDER BY p.created_at DESC
+      LIMIT ? OFFSET ?
+    `
+
+    db.all(query, [limitNum, offset], (err, products) => {
+      if (err) {
+        return res.status(500).json({ error: 'Gabim në marrjen e produkteve më të shitura' })
+      }
+
+      // Process images
+      const processedProducts = products.map(product => ({
+        ...product,
+        images: product.images ? product.images.split(',') : [],
+        in_stock: Boolean(product.in_stock)
+      }))
+
+      res.json({ 
+        products: processedProducts,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total: totalProducts,
+          totalPages: totalPages,
+          hasNext: pageNum < totalPages,
+          hasPrev: pageNum > 1
+        }
+      })
+    })
   })
 })
 

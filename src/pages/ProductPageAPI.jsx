@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import { API_URL, API_BASE_URL } from '../config/api';
+import { formatPrice } from '../utils/currency';
 
 const ProductPageAPI = () => {
   const { id } = useParams();
@@ -37,13 +38,19 @@ const ProductPageAPI = () => {
   }, [fetchProduct]);
 
   const handleAddToCart = async () => {
+    // Check if product is in stock
+    if (!product.in_stock || product.stock_quantity <= 0) {
+      alert('❌ Ky produkt nuk është në stok momentalisht.');
+      return;
+    }
+
     // Check if user is logged in
     if (!isLoggedIn()) {
       const shouldLogin = window.confirm(
         'Ju duhet të jeni të kyçur për të shtuar produktet në shportë.\n\nDëshironi të kyçeni tani?'
       );
       if (shouldLogin) {
-        navigate('/login', { state: { from: `/product/${id}` } });
+        navigate('/hyrje', { state: { from: `/produkti/${id}` } });
       }
       return;
     }
@@ -58,6 +65,22 @@ const ProductPageAPI = () => {
     }
     
     setAddingToCart(false);
+  };
+
+  const handleAddToFavorites = () => {
+    // Check if user is logged in first
+    if (!isLoggedIn()) {
+      const shouldLogin = window.confirm(
+        'Ju duhet të jeni të kyçur për të shtuar produktet në listën e dëshirave.\n\nDëshironi të kyçeni tani?'
+      );
+      if (shouldLogin) {
+        navigate('/hyrje', { state: { from: `/produkti/${id}` } });
+      }
+      return;
+    }
+
+    // For now, just show a message since favorites functionality isn't implemented yet
+    alert(`${product.name} u shtua në listën e dëshirave!`);
   };
 
   if (loading) {
@@ -246,7 +269,7 @@ const ProductPageAPI = () => {
 
             <div className="mt-6">
               <p className="text-3xl tracking-tight text-gray-900">
-                {product.price}€
+                {formatPrice(product.price)}
               </p>
             </div>
 
@@ -283,15 +306,25 @@ const ProductPageAPI = () => {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  disabled={addingToCart}
-                  className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-primary-600 px-8 py-3 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={addingToCart || !product.in_stock || product.stock_quantity <= 0}
+                  className={`flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent px-8 py-3 text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full disabled:opacity-50 disabled:cursor-not-allowed ${
+                    !product.in_stock || product.stock_quantity <= 0
+                      ? 'bg-gray-400 text-gray-200'
+                      : 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500'
+                  }`}
                 >
                   <ShoppingCart className="h-5 w-5 mr-2" />
-                  {addingToCart ? 'Duke shtuar...' : 'Shto në shportë'}
+                  {!product.in_stock || product.stock_quantity <= 0 
+                    ? 'Pa stok' 
+                    : addingToCart 
+                      ? 'Duke shtuar...' 
+                      : 'Shto në shportë'
+                  }
                 </button>
 
                 <button
                   type="button"
+                  onClick={handleAddToFavorites}
                   className="ml-4 flex items-center justify-center rounded-md px-3 py-3 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
                 >
                   <Heart className="h-6 w-6" />
