@@ -16,6 +16,7 @@ const BrandProductsPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [pagination, setPagination] = useState({})
   const [brandStats, setBrandStats] = useState(null)
+  
   const { addToCart } = useCart()
 
   const decodedBrand = decodeURIComponent(brand)
