@@ -31,33 +31,70 @@ const Header = () => {
       name: 'Dermokozmetikë',
       id: 'dermokozmetike',
       subcategories: [
-        { name: 'Fytyre', id: 'fytyre' },
-        { name: 'Flokët', id: 'floket' },
-        { name: 'Trupi', id: 'trupi' },
-        { name: 'SPF', id: 'spf' }
+        { name: 'Kujdes për fytyren', id: 'fytyre' },
+        { name: 'Kujdes për flokët', id: 'floket' },
+        { name: 'Kujdes për trupin', id: 'trupi' },
+        { name: 'Mbrojtje diellore', id: 'spf' },
+        { name: 'Anti-aging', id: 'anti-aging' },
+        { name: 'Akne dhe probleme', id: 'akne' }
       ]
     },
     {
-      name: 'Farmaci',
-      id: 'farmaci',
+      name: 'Gratë Shtatzëna',
+      id: 'grate-shtatzena',
       subcategories: [
-        { name: 'OTC (pa recetë)', id: 'otc' },
+        { name: 'Vitamina për shtatzëni', id: 'vitamina-shtatzeni' },
+        { name: 'Kujdes për lëkurën', id: 'kujdes-lekure-shtatzeni' },
+        { name: 'Suplemente të nevojshme', id: 'suplemente-shtatzeni' },
+        { name: 'Kujdes gjiri', id: 'kujdes-gjiri' }
+      ]
+    },
+    {
+      name: 'Fëmijët dhe Bebet',
+      id: 'femijet-bebet',
+      subcategories: [
+        { name: 'Vitamina për fëmijë', id: 'vitamina-femije' },
+        { name: 'Kujdes për bebet', id: 'kujdes-bebe' },
+        { name: 'Ushqim për bebe', id: 'ushqim-bebe' },
+        { name: 'Higjienë fëmijësh', id: 'higjiene-femije' },
+        { name: 'Aksesorë bebesh', id: 'aksesor-bebe' }
+      ]
+    },
+    {
+      name: 'Vitamina & Suplemente',
+      id: 'vitamina-suplemente',
+      subcategories: [
+        { name: 'Multivitamina', id: 'multivitamina' },
+        { name: 'Vitamina C', id: 'vitamina-c' },
+        { name: 'Vitamina D', id: 'vitamina-d' },
+        { name: 'Omega 3', id: 'omega-3' },
+        { name: 'Magneziu', id: 'magneziu' },
+        { name: 'Kalsium', id: 'kalsium' },
+        { name: 'Hekur', id: 'hekur' },
+        { name: 'Suplemente sportive', id: 'suplemente-sportive' }
+      ]
+    },
+    {
+      name: 'Farmaci & Mjekësi',
+      id: 'farmaci-mjekesi',
+      subcategories: [
+        { name: 'Ilaçe pa recetë', id: 'otc' },
         { name: 'Aparat mjekësore', id: 'aparat-mjeksore' },
-        { name: 'Ortopedike', id: 'ortopedike' }
+        { name: 'Ortopedike', id: 'ortopedike' },
+        { name: 'Teste shtëpie', id: 'teste-shtepi' },
+        { name: 'Dezinfektues', id: 'dezinfektues' }
       ]
     },
     {
-      name: 'Mama dhe Bebat',
-      id: 'mama-bebat',
+      name: 'Higjienë dhe Kujdes',
+      id: 'higjiene-kujdes',
       subcategories: [
-        { name: 'Kujdesi ndaj nënës', id: 'kujdesi-nenes' },
-        { name: 'Kujdesi ndaj bebit', id: 'kujdesi-bebit' },
-        { name: 'Aksesorë për beba', id: 'aksesor-beba' }
+        { name: 'Higjienë orale', id: 'higjiene-orale' },
+        { name: 'Higjienë personale', id: 'higjiene-personale' },
+        { name: 'Deodorantë', id: 'deodorante' },
+        { name: 'Shampo dhe balsam', id: 'shampo-balsam' },
+        { name: 'Sapunë dhe gel', id: 'sapun-gel' }
       ]
-    },
-    {
-      name: 'Suplemente',
-      id: 'suplemente'
     }
   ]
 
