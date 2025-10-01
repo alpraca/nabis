@@ -34,7 +34,19 @@ const Header = () => {
         { name: 'Fytyre', id: 'fytyre' },
         { name: 'Flokët', id: 'floket' },
         { name: 'Trupi', id: 'trupi' },
-        { name: 'SPF', id: 'spf' }
+        { name: 'SPF', id: 'spf' },
+        { name: 'Tanning', id: 'tanning' },
+        { name: 'Makeup', id: 'makeup' }
+      ]
+    },
+    {
+      name: 'Higjena',
+      id: 'higjena',
+      subcategories: [
+        { name: 'Depilim dhe Intime', id: 'depilim-intime' },
+        { name: 'Goja', id: 'goja' },
+        { name: 'Këmbët', id: 'kembet' },
+        { name: 'Trupi', id: 'trupi-higjena' }
       ]
     },
     {
@@ -42,7 +54,9 @@ const Header = () => {
       id: 'farmaci',
       subcategories: [
         { name: 'OTC (pa recetë)', id: 'otc' },
+        { name: 'Mirëqenia seksuale', id: 'mireqenia-seksuale' },
         { name: 'Aparat mjekësore', id: 'aparat-mjeksore' },
+        { name: 'First Aid (Ndihmë e Parë)', id: 'first-aid' },
         { name: 'Ortopedike', id: 'ortopedike' }
       ]
     },
@@ -50,14 +64,45 @@ const Header = () => {
       name: 'Mama dhe Bebat',
       id: 'mama-bebat',
       subcategories: [
-        { name: 'Kujdesi ndaj nënës', id: 'kujdesi-nenes' },
-        { name: 'Kujdesi ndaj bebit', id: 'kujdesi-bebit' },
-        { name: 'Aksesorë për beba', id: 'aksesor-beba' }
+        { 
+          name: 'Kujdesi ndaj Nënës', 
+          id: 'kujdesi-nenes',
+          subsubcategories: [
+            { name: 'Shtatzëni', id: 'shtatzeni' },
+            { name: 'Ushqyerje me Gji', id: 'ushqyerje-gji' }
+          ]
+        },
+        { 
+          name: 'Kujdesi ndaj Bebit', 
+          id: 'kujdesi-bebit',
+          subsubcategories: [
+            { name: 'Pelena', id: 'pelena' },
+            { name: 'Higjena', id: 'higjena-bebe' },
+            { name: 'SPF', id: 'spf-bebe' },
+            { name: 'Suplementa', id: 'suplementa-bebe' }
+          ]
+        },
+        { name: 'Aksesore për Beba', id: 'aksesor-beba' },
+        { name: 'Planifikim Familjar', id: 'planifikim-familjar' }
+      ]
+    },
+    {
+      name: 'Produkte Shtesë',
+      id: 'produkte-shtese',
+      subcategories: [
+        { name: 'Sete', id: 'sete' },
+        { name: 'Vajra Esencial', id: 'vajra-esencial' }
       ]
     },
     {
       name: 'Suplemente',
-      id: 'suplemente'
+      id: 'suplemente',
+      subcategories: [
+        { name: 'Vitaminat dhe Mineralet', id: 'vitaminat-dhe-mineralet' },
+        { name: 'Çajra Mjekësore', id: 'cajra-mjekesore' },
+        { name: 'Proteinë dhe Fitness', id: 'proteine-dhe-fitness' },
+        { name: 'Suplementet Natyrore', id: 'suplementet-natyrore' }
+      ]
     }
   ]
 
@@ -105,19 +150,40 @@ const Header = () => {
                 {/* Dropdown Menu */}
                 {item.subcategories && activeDropdown === item.id && (
                   <div
-                    className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50"
+                    className="absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-50"
                     onMouseEnter={() => setActiveDropdown(item.id)}
                     onMouseLeave={() => setActiveDropdown(null)}
                   >
                     <div className="py-2">
                       {item.subcategories.map((subcat) => (
-                        <Link
-                          key={subcat.id}
-                          to={`/kategori/${subcat.id}`}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600"
-                        >
-                          {subcat.name}
-                        </Link>
+                        <div key={subcat.id} className="relative group/sub">
+                          <Link
+                            to={`/kategori/${subcat.id}`}
+                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600 flex items-center justify-between"
+                          >
+                            <span>{subcat.name}</span>
+                            {subcat.subsubcategories && (
+                              <ChevronDown className="h-3 w-3 rotate-270" />
+                            )}
+                          </Link>
+                          
+                          {/* Sub-subcategories dropdown */}
+                          {subcat.subsubcategories && (
+                            <div className="absolute left-full top-0 ml-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-60 opacity-0 group-hover/sub:opacity-100 pointer-events-none group-hover/sub:pointer-events-auto transition-opacity duration-200">
+                              <div className="py-2">
+                                {subcat.subsubcategories.map((subsub) => (
+                                  <Link
+                                    key={subsub.id}
+                                    to={`/kategori/${subsub.id}`}
+                                    className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-primary-600"
+                                  >
+                                    {subsub.name}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -245,14 +311,30 @@ const Header = () => {
                   {item.subcategories && activeDropdown === item.id && (
                     <div className="pl-6 space-y-1">
                       {item.subcategories.map((subcat) => (
-                        <Link
-                          key={subcat.id}
-                          to={`/kategori/${subcat.id}`}
-                          className="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          {subcat.name}
-                        </Link>
+                        <div key={subcat.id}>
+                          <Link
+                            to={`/kategori/${subcat.id}`}
+                            className="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            {subcat.name}
+                          </Link>
+                          {/* Sub-subcategories for mobile */}
+                          {subcat.subcategories && (
+                            <div className="pl-4 space-y-1 mt-1">
+                              {subcat.subcategories.map((subsubcat) => (
+                                <Link
+                                  key={subsubcat.id}
+                                  to={`/kategori/${subsubcat.id}`}
+                                  className="block px-3 py-2 text-xs text-gray-500 hover:text-primary-600 hover:bg-gray-50 rounded-md border-l-2 border-gray-200"
+                                  onClick={() => setIsMenuOpen(false)}
+                                >
+                                  {subsubcat.name}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </div>
                   )}

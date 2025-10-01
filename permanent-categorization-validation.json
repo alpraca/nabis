@@ -1,0 +1,29 @@
+{
+  "timestamp": "2025-09-29T17:40:37.328Z",
+  "totalProducts": 1227,
+  "productsWithImages": 1218,
+  "imagesCoverage": 99,
+  "categoryDistribution": {
+    "dermokozmetike-fytyre": 692,
+    "farmaci-otc-pa-recete": 10,
+    "dermokozmetike-spf": 90,
+    "dermokozmetike-floket": 83,
+    "dermokozmetike-makeup": 40,
+    "dermokozmetike-trupi": 33,
+    "produkte-shtese-sete": 18,
+    "higjena-goja": 13,
+    "suplemente-none": 120,
+    "farmaci-aparat-mjeksore": 26,
+    "mama-dhe-bebat-kujdesi-ndaj-nenes": 9,
+    "farmaci-ortopedike": 5,
+    "produkte-shtese-vajra-esencial": 23,
+    "mama-dhe-bebat-kujdesi-ndaj-bebit": 37,
+    "mama-dhe-bebat-planifikim-familjar": 5,
+    "higjena-depilim-dhe-intime": 2,
+    "higjena-kembet": 6,
+    "farmaci-first-aid": 4,
+    "farmaci-mirekenia-seksuale": 4,
+    "mama-dhe-bebat-aksesor-per-beba": 7
+  },
+  "status": "PERMANENTLY_CATEGORIZED"
+}

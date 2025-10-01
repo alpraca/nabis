@@ -1,0 +1,56 @@
+{
+  "timestamp": "2025-09-29T16:56:24.434Z",
+  "schema": [
+    "id",
+    "name",
+    "brand",
+    "category",
+    "subcategory",
+    "description",
+    "price",
+    "original_price",
+    "stock_quantity",
+    "is_new",
+    "on_sale",
+    "in_stock",
+    "created_at",
+    "updated_at",
+    "image_url"
+  ],
+  "validation": [
+    {
+      "name": "Total Products",
+      "count": 1227,
+      "status": "✅"
+    },
+    {
+      "name": "Products with Images",
+      "count": 1218,
+      "status": "✅"
+    },
+    {
+      "name": "Unique Brands",
+      "count": 84,
+      "status": "✅"
+    },
+    {
+      "name": "Products with Valid Prices",
+      "count": 1227,
+      "status": "✅"
+    },
+    {
+      "name": "Products with Names",
+      "count": 1227,
+      "status": "✅"
+    },
+    {
+      "name": "Products with Valid Brands",
+      "count": 1227,
+      "status": "✅"
+    }
+  ],
+  "totalProducts": 1227,
+  "productsWithImages": 1218,
+  "uniqueBrands": 84,
+  "status": "VALIDATED"
+}
