@@ -33,10 +33,8 @@ router.get('/', (req, res) => {
   const { category, search, page = 1, limit = 24, brand } = req.query
   
   let query = `
-    SELECT p.*, 
-           GROUP_CONCAT(DISTINCT pi.image_url ORDER BY pi.sort_order) as images
+    SELECT p.*
     FROM products p
-    LEFT JOIN product_images pi ON p.id = pi.product_id
     WHERE 1=1
   `
   const params = []
@@ -149,7 +147,7 @@ router.get('/', (req, res) => {
       // Process images and ensure no duplicates
       const processedProducts = products.map(product => ({
         ...product,
-        images: product.images ? product.images.split(',').filter(Boolean) : [],
+        images: product.image_url ? [`/uploads/images/${product.image_url}`] : [],
         is_new: Boolean(product.is_new),
         on_sale: Boolean(product.on_sale),
         in_stock: Boolean(product.in_stock)
@@ -208,12 +206,9 @@ router.get('/best-sellers', (req, res) => {
     const offset = (pageNum - 1) * limitNum
 
     const query = `
-      SELECT p.id, p.name, p.brand, p.price, p.in_stock,
-             GROUP_CONCAT(pi.image_url ORDER BY pi.sort_order) as images
+      SELECT p.id, p.name, p.brand, p.price, p.in_stock, p.image_url
       FROM products p
-      LEFT JOIN product_images pi ON p.id = pi.product_id
       WHERE p.in_stock = 1
-      GROUP BY p.id 
       ORDER BY p.created_at DESC
       LIMIT ? OFFSET ?
     `
@@ -226,7 +221,7 @@ router.get('/best-sellers', (req, res) => {
       // Process images
       const processedProducts = products.map(product => ({
         ...product,
-        images: product.images ? product.images.split(',') : [],
+        images: product.image_url ? [`/uploads/images/${product.image_url}`] : [],
         in_stock: Boolean(product.in_stock)
       }))
 
@@ -508,12 +503,9 @@ router.delete('/:id/images/:imageId', verifyToken, requireAdmin, (req, res) => {
 // Get single product (public) - Must be last to avoid conflicts with other routes
 router.get('/:id', (req, res) => {
   const query = `
-    SELECT p.*, 
-           GROUP_CONCAT(pi.image_url ORDER BY pi.sort_order) as images
+    SELECT p.*
     FROM products p
-    LEFT JOIN product_images pi ON p.id = pi.product_id
     WHERE p.id = ?
-    GROUP BY p.id
   `
 
   db.get(query, [req.params.id], (err, product) => {
@@ -527,7 +519,7 @@ router.get('/:id', (req, res) => {
 
     const processedProduct = {
       ...product,
-      images: product.images ? product.images.split(',') : [],
+      images: product.image_url ? [`/uploads/images/${product.image_url}`] : [],
       is_new: Boolean(product.is_new),
       on_sale: Boolean(product.on_sale),
       in_stock: Boolean(product.in_stock)
