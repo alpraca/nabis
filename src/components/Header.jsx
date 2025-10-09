@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Search, ShoppingCart, User, Menu, X, ChevronDown, LogOut } from 'lucide-react'
 import { useCart } from '../hooks/useCart'
 import { useAuth } from '../hooks/useAuth'
-import nabisLogo from '../assets/nabis_logo-removebg-preview.png'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -33,7 +32,7 @@ const Header = () => {
       id: 'dermokozmetike',
       subcategories: [
         { name: 'Fytyre', id: 'fytyre' },
-        { name: 'Floket', id: 'floket' },
+        { name: 'Flokët', id: 'floket' },
         { name: 'Trupi', id: 'trupi' },
         { name: 'SPF', id: 'spf' },
         { name: 'Tanning', id: 'tanning' },
@@ -54,10 +53,10 @@ const Header = () => {
       name: 'Farmaci',
       id: 'farmaci',
       subcategories: [
-        { name: 'OTC (pa recete)', id: 'otc' },
-        { name: 'Mirëqenia seksuale', id: 'seksuale' },
-        { name: 'Aparat mjeksore', id: 'aparat-mjeksore' },
-        { name: 'First Aid (Ndihma e Pare)', id: 'first-aid' },
+        { name: 'OTC (pa recetë)', id: 'otc' },
+        { name: 'Mirëqenia seksuale', id: 'mireqenia-seksuale' },
+        { name: 'Aparat mjekësore', id: 'aparat-mjeksore' },
+        { name: 'First Aid (Ndihmë e Parë)', id: 'first-aid' },
         { name: 'Ortopedike', id: 'ortopedike' }
       ]
     },
@@ -65,13 +64,25 @@ const Header = () => {
       name: 'Mama dhe Bebat',
       id: 'mama-bebat',
       subcategories: [
-        { name: 'Kujdesi ndaj Nënës - Shtatzani', id: 'shtatzani' },
-        { name: 'Kujdesi ndaj Nënës - Ushqyerje me Gji', id: 'ushqyerje-gji' },
-        { name: 'Kujdesi ndaj Bebit - Pelena', id: 'pelena' },
-        { name: 'Kujdesi ndaj Bebit - Higjena', id: 'beba-higjena' },
-        { name: 'Kujdesi ndaj Bebit - SPF', id: 'beba-spf' },
-        { name: 'Kujdesi ndaj Bebit - Suplementa', id: 'beba-suplementa' },
-        { name: 'Aksesor per Beba', id: 'aksesor-beba' },
+        { 
+          name: 'Kujdesi ndaj Nënës', 
+          id: 'kujdesi-nenes',
+          subsubcategories: [
+            { name: 'Shtatzëni', id: 'shtatzeni' },
+            { name: 'Ushqyerje me Gji', id: 'ushqyerje-gji' }
+          ]
+        },
+        { 
+          name: 'Kujdesi ndaj Bebit', 
+          id: 'kujdesi-bebit',
+          subsubcategories: [
+            { name: 'Pelena', id: 'pelena' },
+            { name: 'Higjena', id: 'higjena-bebe' },
+            { name: 'SPF', id: 'spf-bebe' },
+            { name: 'Suplementa', id: 'suplementa-bebe' }
+          ]
+        },
+        { name: 'Aksesore për Beba', id: 'aksesor-beba' },
         { name: 'Planifikim Familjar', id: 'planifikim-familjar' }
       ]
     },
@@ -87,13 +98,10 @@ const Header = () => {
       name: 'Suplemente',
       id: 'suplemente',
       subcategories: [
-        { name: 'Multivitamina', id: 'multivitamina' },
-        { name: 'Vitamina C', id: 'vitamina-c' },
-        { name: 'Vitamina D', id: 'vitamina-d' },
-        { name: 'Omega 3', id: 'omega-3' },
-        { name: 'Magneziu', id: 'magneziu' },
-        { name: 'Kalsium', id: 'kalsium' },
-        { name: 'Hekur', id: 'hekur' }
+        { name: 'Vitaminat dhe Mineralet', id: 'vitaminat-dhe-mineralet' },
+        { name: 'Çajra Mjekësore', id: 'cajra-mjekesore' },
+        { name: 'Proteinë dhe Fitness', id: 'proteine-dhe-fitness' },
+        { name: 'Suplementet Natyrore', id: 'suplementet-natyrore' }
       ]
     }
   ]
@@ -120,12 +128,10 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center py-2 px-3">
-            <img 
-              src={nabisLogo} 
-              alt="Nabis Farmaci" 
-              className="h-12 w-auto max-w-[180px] object-contain mx-2"
-            />
+          <Link to="/" className="flex items-center">
+            <div className="text-2xl font-bold text-primary-600">
+              Nabis <span className="text-secondary-600">Farmaci</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -144,19 +150,40 @@ const Header = () => {
                 {/* Dropdown Menu */}
                 {item.subcategories && activeDropdown === item.id && (
                   <div
-                    className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50"
+                    className="absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-50"
                     onMouseEnter={() => setActiveDropdown(item.id)}
                     onMouseLeave={() => setActiveDropdown(null)}
                   >
                     <div className="py-2">
                       {item.subcategories.map((subcat) => (
-                        <Link
-                          key={subcat.id}
-                          to={`/kategori/${subcat.id}`}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600"
-                        >
-                          {subcat.name}
-                        </Link>
+                        <div key={subcat.id} className="relative group/sub">
+                          <Link
+                            to={`/kategori/${subcat.id}`}
+                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600 flex items-center justify-between"
+                          >
+                            <span>{subcat.name}</span>
+                            {subcat.subsubcategories && (
+                              <ChevronDown className="h-3 w-3 rotate-270" />
+                            )}
+                          </Link>
+                          
+                          {/* Sub-subcategories dropdown */}
+                          {subcat.subsubcategories && (
+                            <div className="absolute left-full top-0 ml-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-60 opacity-0 group-hover/sub:opacity-100 pointer-events-none group-hover/sub:pointer-events-auto transition-opacity duration-200">
+                              <div className="py-2">
+                                {subcat.subsubcategories.map((subsub) => (
+                                  <Link
+                                    key={subsub.id}
+                                    to={`/kategori/${subsub.id}`}
+                                    className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-primary-600"
+                                  >
+                                    {subsub.name}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -211,13 +238,6 @@ const Header = () => {
                         <div className="font-medium">{user.email}</div>
                         <div className="text-xs text-gray-500 capitalize">{user.role}</div>
                       </div>
-                      <Link
-                        to="/porositë"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setUserDropdownOpen(false)}
-                      >
-                        📋 Porositë e Mia
-                      </Link>
                       {user.role === 'admin' && (
                         <Link
                           to="/nabis-admin-panel-2024"
@@ -291,14 +311,30 @@ const Header = () => {
                   {item.subcategories && activeDropdown === item.id && (
                     <div className="pl-6 space-y-1">
                       {item.subcategories.map((subcat) => (
-                        <Link
-                          key={subcat.id}
-                          to={`/kategori/${subcat.id}`}
-                          className="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          {subcat.name}
-                        </Link>
+                        <div key={subcat.id}>
+                          <Link
+                            to={`/kategori/${subcat.id}`}
+                            className="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            {subcat.name}
+                          </Link>
+                          {/* Sub-subcategories for mobile */}
+                          {subcat.subcategories && (
+                            <div className="pl-4 space-y-1 mt-1">
+                              {subcat.subcategories.map((subsubcat) => (
+                                <Link
+                                  key={subsubcat.id}
+                                  to={`/kategori/${subsubcat.id}`}
+                                  className="block px-3 py-2 text-xs text-gray-500 hover:text-primary-600 hover:bg-gray-50 rounded-md border-l-2 border-gray-200"
+                                  onClick={() => setIsMenuOpen(false)}
+                                >
+                                  {subsubcat.name}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </div>
                   )}
@@ -364,13 +400,6 @@ const Header = () => {
                       <div className="font-medium">{user.email}</div>
                       <div className="text-xs text-gray-500 capitalize">{user.role}</div>
                     </div>
-                    <Link
-                      to="/porositë"
-                      className="block px-3 py-2 text-gray-700 hover:text-primary-600"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      📋 Porositë e Mia
-                    </Link>
                     {user.role === 'admin' && (
                       <Link
                         to="/nabis-admin-panel-2024"

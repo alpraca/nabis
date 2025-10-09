@@ -33,10 +33,8 @@ router.get('/', (req, res) => {
   const { category, search, page = 1, limit = 24, brand } = req.query
   
   let query = `
-    SELECT p.*, 
-           GROUP_CONCAT(DISTINCT pi.image_url ORDER BY pi.sort_order) as images
+    SELECT p.*
     FROM products p
-    LEFT JOIN product_images pi ON p.id = pi.product_id
     WHERE 1=1
   `
   const params = []
@@ -47,35 +45,63 @@ router.get('/', (req, res) => {
   if (category && category !== 'te-gjitha') {
     const categoryParam = decodeURIComponent(category).toLowerCase()
     
-    // First check if it's a subcategory
+    // Convert URL-friendly names to actual category names
+    const categoryMappings = {
+      'suplemente': 'Suplemente',
+      'vitaminat-dhe-mineralet': 'Vitaminat dhe Mineralet',
+      'cajra-mjekesore': 'Çajra Mjekësore',
+      'proteine-dhe-fitness': 'Proteinë dhe Fitness',
+      'suplementet-natyrore': 'Suplementet Natyrore',
+      'dermokozmetike': 'Dermokozmetikë',
+      'fytyre': 'Fytyre',
+      'trupi': 'Trupi',
+      'floket': 'Flokët',
+      'spf': 'SPF',
+      'makeup': 'Makeup',
+      'tanning': 'Tanning',
+      'farmaci': 'Farmaci',
+      'aparat-mjekesore': 'Aparat mjekësore',
+      'first-aid-ndihme-e-pare': 'First Aid (Ndihmë e Parë)',
+      'otc-pa-recete': 'OTC (pa recetë)',
+      'ortopedike': 'Ortopedike',
+      'mireqenia-seksuale': 'Mirëqenia seksuale',
+      'higjena': 'Higjena',
+      'goja': 'Goja',
+      'depilim-dhe-intime': 'Depilim dhe Intime',
+      'kembet': 'Këmbët',
+      'mama-dhe-bebat': 'Mama dhe Bebat',
+      'kujdesi-ndaj-nenes': 'Kujdesi ndaj Nënës',
+      'kujdesi-ndaj-bebit': 'Kujdesi ndaj Bebit',
+      'planifikim-familjar': 'Planifikim Familjar',
+      'produkte-shtese': 'Produkte Shtesë',
+      'sete': 'Sete',
+      'pajisje': 'Pajisje',
+      'aksesore': 'Aksesorë'
+    }
+    
+    const actualCategoryName = categoryMappings[categoryParam] || categoryParam
+    
+    // Check in main_category, sub_category, and sub_sub_category
     query += ` AND (
-      LOWER(p.subcategory) = ? OR 
-      LOWER(p.category) = ? OR 
-      LOWER(p.category) LIKE ? OR 
-      LOWER(p.category) LIKE ? OR 
-      LOWER(p.category) LIKE ?
+      LOWER(p.main_category) = LOWER(?) OR 
+      LOWER(p.sub_category) = LOWER(?) OR 
+      LOWER(p.sub_sub_category) = LOWER(?)
     )`
     params.push(
-      categoryParam,
-      categoryParam,
-      `%/${categoryParam}`,
-      `${categoryParam}/%`,
-      `%/${categoryParam}/%`
+      actualCategoryName,
+      actualCategoryName,
+      actualCategoryName
     )
     
     countQuery += ` AND (
-      LOWER(p.subcategory) = ? OR 
-      LOWER(p.category) = ? OR 
-      LOWER(p.category) LIKE ? OR 
-      LOWER(p.category) LIKE ? OR 
-      LOWER(p.category) LIKE ?
+      LOWER(p.main_category) = LOWER(?) OR 
+      LOWER(p.sub_category) = LOWER(?) OR 
+      LOWER(p.sub_sub_category) = LOWER(?)
     )`
     countParams.push(
-      categoryParam,
-      categoryParam,
-      `%/${categoryParam}`,
-      `${categoryParam}/%`,
-      `%/${categoryParam}/%`
+      actualCategoryName,
+      actualCategoryName,
+      actualCategoryName
     )
   }
 
@@ -121,7 +147,7 @@ router.get('/', (req, res) => {
       // Process images and ensure no duplicates
       const processedProducts = products.map(product => ({
         ...product,
-        images: product.images ? product.images.split(',').filter(Boolean) : [],
+        images: product.image_url ? [`/uploads/images/${product.image_url}`] : [],
         is_new: Boolean(product.is_new),
         on_sale: Boolean(product.on_sale),
         in_stock: Boolean(product.in_stock)
@@ -145,14 +171,14 @@ router.get('/', (req, res) => {
 // Get product categories (public)
 router.get('/categories/list', (req, res) => {
   db.all(
-    'SELECT DISTINCT category FROM products ORDER BY category',
+    'SELECT DISTINCT main_category FROM products WHERE main_category IS NOT NULL ORDER BY main_category',
     [],
     (err, categories) => {
       if (err) {
         return res.status(500).json({ error: 'Gabim në marrjen e kategorive' })
       }
 
-      res.json({ categories: categories.map(c => c.category) })
+      res.json({ categories: categories.map(c => c.main_category) })
     }
   )
 })
@@ -180,12 +206,9 @@ router.get('/best-sellers', (req, res) => {
     const offset = (pageNum - 1) * limitNum
 
     const query = `
-      SELECT p.id, p.name, p.brand, p.price, p.in_stock,
-             GROUP_CONCAT(pi.image_url ORDER BY pi.sort_order) as images
+      SELECT p.id, p.name, p.brand, p.price, p.in_stock, p.image_url
       FROM products p
-      LEFT JOIN product_images pi ON p.id = pi.product_id
       WHERE p.in_stock = 1
-      GROUP BY p.id 
       ORDER BY p.created_at DESC
       LIMIT ? OFFSET ?
     `
@@ -198,7 +221,7 @@ router.get('/best-sellers', (req, res) => {
       // Process images
       const processedProducts = products.map(product => ({
         ...product,
-        images: product.images ? product.images.split(',') : [],
+        images: product.image_url ? [`/uploads/images/${product.image_url}`] : [],
         in_stock: Boolean(product.in_stock)
       }))
 
@@ -480,12 +503,9 @@ router.delete('/:id/images/:imageId', verifyToken, requireAdmin, (req, res) => {
 // Get single product (public) - Must be last to avoid conflicts with other routes
 router.get('/:id', (req, res) => {
   const query = `
-    SELECT p.*, 
-           GROUP_CONCAT(pi.image_url ORDER BY pi.sort_order) as images
+    SELECT p.*
     FROM products p
-    LEFT JOIN product_images pi ON p.id = pi.product_id
     WHERE p.id = ?
-    GROUP BY p.id
   `
 
   db.get(query, [req.params.id], (err, product) => {
@@ -499,7 +519,7 @@ router.get('/:id', (req, res) => {
 
     const processedProduct = {
       ...product,
-      images: product.images ? product.images.split(',') : [],
+      images: product.image_url ? [`/uploads/images/${product.image_url}`] : [],
       is_new: Boolean(product.is_new),
       on_sale: Boolean(product.on_sale),
       in_stock: Boolean(product.in_stock)
