@@ -118,10 +118,10 @@ const CheckoutPage = () => {
         // Redirect to verification page with cart items for reference
         navigate('/order-verification', { 
           state: { 
-            orderId: response.data.orderId,
+            orderNumber: response.data.orderId || response.data.orderNumber,
             email: formData.email,
             cartItems: cartItems,
-            total: finalTotal
+            totalAmount: finalTotal
           }
         });
       }
@@ -358,10 +358,10 @@ const CheckoutPage = () => {
               {cartItems.map((item) => (
                 <div key={item.id} className="flex items-center">
                   <div className="flex-shrink-0 w-16 h-16">
-                    {item.product?.images && item.product.images.length > 0 ? (
+                    {item.images && item.images.length > 0 ? (
                       <img
-                        src={`http://localhost:3001${item.product.images[0]}`}
-                        alt={item.product.name}
+                        src={`http://localhost:3001${item.images[0]}`}
+                        alt={item.name}
                         className="w-full h-full object-cover rounded-md"
                       />
                     ) : (
@@ -372,17 +372,17 @@ const CheckoutPage = () => {
                   </div>
                   <div className="ml-4 flex-1">
                     <h3 className="text-sm font-medium text-gray-900">
-                      {item.product?.name}
+                      {item.name}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      {item.product?.brand}
+                      {item.brand}
                     </p>
                     <div className="flex items-center justify-between mt-1">
                       <span className="text-sm text-gray-600">
                         Sasia: {item.quantity}
                       </span>
                       <span className="text-sm font-medium text-gray-900">
-                        {formatPrice(item.product?.price * item.quantity)}
+                        {formatPrice(item.price * item.quantity)}
                       </span>
                     </div>
                   </div>

@@ -36,10 +36,17 @@ const ForgotPasswordPage = () => {
       setMessage({ type: 'success', text: 'Kodi u dërgua në email-in tuaj!' })
       setStep(2)
     } catch (error) {
-      setMessage({ 
-        type: 'error', 
-        text: error.response?.data?.error || 'Gabim në dërgimin e kodit' 
-      })
+      if (error.response?.status === 429) {
+        setMessage({ 
+          type: 'error', 
+          text: 'Shumë kërkesa në pak kohë. Provoni përsëri pas disa minutave.' 
+        })
+      } else {
+        setMessage({ 
+          type: 'error', 
+          text: error.response?.data?.error || 'Gabim në dërgimin e kodit' 
+        })
+      }
     } finally {
       setIsLoading(false)
     }
@@ -72,10 +79,17 @@ const ForgotPasswordPage = () => {
       }, 1500)
       
     } catch (error) {
-      setMessage({ 
-        type: 'error', 
-        text: error.response?.data?.error || 'Kod i gabuar ose i skaduar' 
-      })
+      if (error.response?.status === 429) {
+        setMessage({ 
+          type: 'error', 
+          text: 'Shumë kërkesa në pak kohë. Provoni përsëri pas disa minutave.' 
+        })
+      } else {
+        setMessage({ 
+          type: 'error', 
+          text: error.response?.data?.error || 'Kod i gabuar ose i skaduar' 
+        })
+      }
     } finally {
       setIsLoading(false)
     }

@@ -18,13 +18,32 @@ const OrderVerificationPage = () => {
   const { clearCart } = useCart();
   
   // Get order data from navigation state
-  const orderData = location.state || {
-    // Fallback test data for debugging
-    orderNumber: 'NF4921954956',
-    totalAmount: '1342.00',
-    email: 'muratiberti02@gmail.com',
-    verificationRequired: true
-  };
+  const orderData = location.state;
+
+  // Redirect if no order data
+  if (!orderData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-8 text-center">
+          <div className="h-16 w-16 text-red-500 mx-auto mb-6">
+            ❌
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Gabim në Porosi
+          </h1>
+          <p className="text-gray-600 mb-6">
+            Nuk u gjetën të dhënat e porosisë. Ju lutemi provoni përsëri.
+          </p>
+          <Link 
+            to="/" 
+            className="inline-flex items-center bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700"
+          >
+            Kthehu në faqen kryesore
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const handleVerification = async (e) => {
     e.preventDefault();

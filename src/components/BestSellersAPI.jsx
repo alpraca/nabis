@@ -5,9 +5,11 @@ import axios from 'axios';
 import { API_BASE_URL, API_URL } from '../config/api';
 import { formatPrice } from '../utils/currency';
 import { useCart } from '../hooks/useCart';
+import { useToast } from '../hooks/useToast';
 
 const BestSellersAPI = () => {
   const { addToCart } = useCart();
+  const toast = useToast();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,13 +40,13 @@ const BestSellersAPI = () => {
     try {
       const result = await addToCart(product.id, 1);
       if (result.success) {
-        alert(`${product.name} u shtua në shportë!`);
+        toast.success(`${product.name} u shtua në shportë!`);
       } else {
-        alert(result.error || 'Gabim në shtimin në shportë');
+        toast.error(result.error || 'Gabim në shtimin në shportë');
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      alert('Gabim në shtimin në shportë');
+      toast.error('Gabim në shtimin në shportë');
     }
   };
 
@@ -60,7 +62,7 @@ const BestSellersAPI = () => {
               e.preventDefault();
               e.stopPropagation();
               // Add to wishlist logic here
-              alert(`Shtove ${product.name} tek të preferuarat!`);
+              toast.success(`Shtove ${product.name} tek të preferuarat!`);
             }}
             className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
           >

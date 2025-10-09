@@ -19,26 +19,8 @@ export const CartProvider = ({ children }) => {
       const response = await api.get('/cart');
       const cartItemsFromAPI = response.data.cartItems || [];
       
-      // For each cart item, fetch product details
-      const cartItemsWithProducts = await Promise.all(
-        cartItemsFromAPI.map(async (item) => {
-          try {
-            const productResponse = await api.get(`/products/${item.product_id}`);
-            return {
-              ...item,
-              product: productResponse.data
-            };
-          } catch (error) {
-            console.error(`Error fetching product ${item.product_id}:`, error);
-            return {
-              ...item,
-              product: null
-            };
-          }
-        })
-      );
-      
-      setCartItems(cartItemsWithProducts);
+      // Cart items now come with all necessary data including images
+      setCartItems(cartItemsFromAPI);
     } catch (error) {
       console.error('Error loading cart:', error);
     } finally {

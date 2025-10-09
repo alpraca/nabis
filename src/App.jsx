@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
+import { ToastProvider } from './components/Toast'
 import ProtectedRoute from './components/ProtectedRoute'
 import Header from './components/Header'
 import AdminBanner from './components/AdminBanner'
@@ -26,6 +27,7 @@ import OrderVerificationPage from './pages/OrderVerificationPage'
 import EmailVerificationPage from './pages/EmailVerificationPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
+import OrdersPage from './pages/OrdersPage'
 import AdminPanel from './pages/AdminPanel'
 import './App.css'
 
@@ -33,7 +35,8 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Router>
+        <ToastProvider>
+          <Router>
           <div className="App">
             <Routes>
             {/* Public routes */}
@@ -58,6 +61,11 @@ function App() {
                 <PublicLayout><CheckoutPage /></PublicLayout>
               </ProtectedRoute>
             } />
+            <Route path="/porositë" element={
+              <ProtectedRoute>
+                <PublicLayout><OrdersPage /></PublicLayout>
+              </ProtectedRoute>
+            } />
             <Route path="/order-verification" element={
               <PublicLayout><OrderVerificationPage /></PublicLayout>
             } />
@@ -76,6 +84,7 @@ function App() {
           </Routes>
         </div>
       </Router>
+        </ToastProvider>
       </CartProvider>
     </AuthProvider>
   )

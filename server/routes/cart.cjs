@@ -8,11 +8,12 @@ const router = express.Router()
 router.get('/', verifyToken, (req, res) => {
   const query = `
     SELECT ci.*, p.name, p.brand, p.price, p.in_stock,
-           pi.image_url as primary_image
+           GROUP_CONCAT(pi.image_url ORDER BY pi.sort_order) as images
     FROM cart_items ci
     JOIN products p ON ci.product_id = p.id
-    LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = 1
+    LEFT JOIN product_images pi ON p.id = pi.product_id
     WHERE ci.user_id = ?
+    GROUP BY ci.id, p.id
     ORDER BY ci.created_at DESC
   `
 
@@ -27,7 +28,8 @@ router.get('/', verifyToken, (req, res) => {
     res.json({
       cartItems: cartItems.map(item => ({
         ...item,
-        in_stock: Boolean(item.in_stock)
+        in_stock: Boolean(item.in_stock),
+        images: item.images ? item.images.split(',') : []
       })),
       total: total.toFixed(2),
       itemCount: cartItems.length

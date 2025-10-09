@@ -149,27 +149,111 @@ router.post('/', verifyToken, (req, res) => {
   })
 })
 
-// Get user's orders
+// Get user's orders with detailed information
 router.get('/my-orders', verifyToken, (req, res) => {
-  const query = `
-    SELECT o.*, 
-           COUNT(oi.id) as item_count,
-           GROUP_CONCAT(p.name) as product_names
-    FROM orders o
-    LEFT JOIN order_items oi ON o.id = oi.order_id
-    LEFT JOIN products p ON oi.product_id = p.id
-    WHERE o.user_id = ?
-    GROUP BY o.id
-    ORDER BY o.created_at DESC
-  `
+  try {
+    const userId = req.user.id
 
-  db.all(query, [req.user.id], (err, orders) => {
-    if (err) {
-      return res.status(500).json({ error: 'Gabim në marrjen e porosive' })
-    }
+    // Get orders with their items and product details
+    const ordersQuery = `
+      SELECT 
+        o.id,
+        o.order_number,
+        o.total_amount,
+        o.status,
+        o.payment_method,
+        o.shipping_address,
+        o.shipping_city,
+        o.phone,
+        o.email,
+        o.verification_status,
+        o.notes,
+        o.created_at,
+        o.updated_at
+      FROM orders o
+      WHERE o.user_id = ?
+      ORDER BY o.created_at DESC
+    `
 
-    res.json({ orders })
-  })
+    db.all(ordersQuery, [userId], (err, orders) => {
+      if (err) {
+        console.error('Error fetching orders:', err)
+        return res.status(500).json({ 
+          success: false, 
+          message: 'Gabim në marrjen e porosive' 
+        })
+      }
+
+      if (orders.length === 0) {
+        return res.json({
+          success: true,
+          orders: []
+        })
+      }
+
+      // Get order items for each order
+      let completedOrders = 0
+      const ordersWithItems = []
+
+      orders.forEach((order, index) => {
+        const orderItemsQuery = `
+          SELECT 
+            oi.id,
+            oi.quantity,
+            oi.price,
+            oi.total,
+            p.name as product_name,
+            p.brand as product_brand,
+            p.category as product_category,
+            pi.image_url
+          FROM order_items oi
+          JOIN products p ON oi.product_id = p.id
+          LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = 1
+          WHERE oi.order_id = ?
+          ORDER BY oi.id
+        `
+
+        db.all(orderItemsQuery, [order.id], (err, items) => {
+          if (err) {
+            console.error('Error fetching order items:', err)
+            return res.status(500).json({ 
+              success: false, 
+              message: 'Gabim në marrjen e detajeve të porosisë' 
+            })
+          }
+
+          // Format items with full image URLs
+          const formattedItems = items.map(item => ({
+            ...item,
+            image_url: item.image_url ? `/uploads/${item.image_url}` : null
+          }))
+
+          ordersWithItems[index] = {
+            ...order,
+            items: formattedItems || [],
+            item_count: items ? items.length : 0
+          }
+
+          completedOrders++
+          
+          // When all orders are processed, send response
+          if (completedOrders === orders.length) {
+            res.json({
+              success: true,
+              orders: ordersWithItems
+            })
+          }
+        })
+      })
+    })
+
+  } catch (error) {
+    console.error('Error in /my-orders:', error)
+    res.status(500).json({ 
+      success: false, 
+      message: 'Gabim i brendshëm i serverit' 
+    })
+  }
 })
 
 // Get single order details

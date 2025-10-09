@@ -556,7 +556,9 @@ router.post('/request-temp-login', async (req, res) => {
             return res.status(500).json({ error: 'Gabim në dërgimin e email-it' })
           }
 
-          res.json({ message: 'Kodi i hyrjes së përkohshme u dërgua në email-in tuaj' })
+          res.json({ 
+            message: 'Kodi i hyrjes së përkohshme u dërgua në email-in tuaj'
+          })
         }
       )
     })

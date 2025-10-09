@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const rateLimit = require('express-rate-limit')
 const path = require('path')
-require('dotenv').config()
+require('dotenv').config({ path: path.join(__dirname, '.env') })
 
 const { initializeDatabase } = require('./config/database.cjs')
 
@@ -21,7 +21,7 @@ const limiter = rateLimit({
 // Auth rate limiting (more lenient for development)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // Increased for development - Limit each IP to 50 auth requests per windowMs
+  max: 200, // Increased for development - Limit each IP to 200 auth requests per windowMs
   message: 'Shumë tentativa hyrjeje, provoni përsëri pas 15 minutave.',
   standardHeaders: true,
   legacyHeaders: false,

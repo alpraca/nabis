@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ================================
+   GLOBAL STYLES
+   ================================ */
+
 :root {
   font-family: 'Inter', system-ui, sans-serif;
 }
@@ -14,6 +18,30 @@ body {
   background-color: #ffffff;
   color: #1a1a1a;
 }
+
+/* ================================
+   ANIMATIONS
+   ================================ */
+
+/* Toast animations */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+/* ================================
+   RESPONSIVE DESIGN
+   ================================ */
 
 /* Mobile-first improvements */
 @media (max-width: 768px) {
@@ -50,6 +78,10 @@ body {
   }
 }
 
+/* ================================
+   SCROLLBAR STYLING
+   ================================ */
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -67,6 +99,10 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #a1a1a1;
 }
+
+/* ================================
+   MOBILE OPTIMIZATIONS
+   ================================ */
 
 /* Mobile-friendly product cards */
 @media (max-width: 640px) {

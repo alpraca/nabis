@@ -87,13 +87,13 @@ const CategoryPageAPI = () => {
     try {
       const result = await addToCart(product.id, 1);
       if (result.success) {
-        alert(`${product.name} u shtua në shportë!`);
+        toast.success(`${product.name} u shtua në shportë!`);
       } else {
-        alert(result.error || 'Gabim në shtimin në shportë');
+        toast.error(result.error || 'Gabim në shtimin në shportë');
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      alert('Gabim në shtimin në shportë');
+      toast.error('Gabim në shtimin në shportë');
     }
   };
 

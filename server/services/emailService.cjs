@@ -8,8 +8,6 @@ const createTransporter = () => {
     return null;
   }
 
-  console.log(`📧 Configuring email with: ${process.env.EMAIL_USER}`);
-
   // Gmail SMTP configuration with enhanced options
   return nodemailer.createTransport({
     service: 'gmail',
@@ -31,7 +29,7 @@ const logEmailToConsole = (to, subject, html) => {
   console.log('\n📧 ===== EMAIL WOULD BE SENT =====');
   console.log(`To: ${to}`);
   console.log(`Subject: ${subject}`);
-  console.log('HTML Content:', html.substring(0, 200) + '...');
+  console.log('Content: Email would be sent to recipient');
   console.log('📧 ================================\n');
 };
 
@@ -391,12 +389,24 @@ const sendTemporaryLoginCode = async (email, loginCode, name) => {
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    console.log(`📧 Sending temporary login code to ${email}...`);
+    
+    // Test connection and send email
+    await transporter.verify();
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`✅ Email sent successfully (ID: ${info.messageId})`);
+    
     return { success: true };
   } catch (error) {
-    console.error('Error sending temporary login code email:', error);
+    console.error('❌ Failed to send email:', error.message);
+    
+    // Fallback: log that email would be sent (without sensitive data)
     logEmailToConsole(email, subject, html);
-    return { success: true };
+    
+    return { 
+      success: false, 
+      error: 'Email service temporarily unavailable. Please try again later.' 
+    };
   }
 };
 

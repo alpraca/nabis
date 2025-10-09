@@ -82,10 +82,10 @@ const CartPage = () => {
                       <div className="flex items-center">
                         {/* Product Image */}
                         <div className="flex-shrink-0 w-20 h-20">
-                          {item.product?.images && item.product.images.length > 0 ? (
+                          {item.images && item.images.length > 0 ? (
                             <img
-                              src={`http://localhost:3001${item.product.images[0]}`}
-                              alt={item.product.name}
+                              src={`http://localhost:3001${item.images[0]}`}
+                              alt={item.name}
                               className="w-full h-full object-cover rounded-md"
                               onError={(e) => {
                                 e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="12">📦</text></svg>';
@@ -107,14 +107,14 @@ const CartPage = () => {
                                   to={`/produkti/${item.product_id}`}
                                   className="hover:text-primary-600"
                                 >
-                                  {item.product?.name}
+                                  {item.name}
                                 </Link>
                               </h3>
                               <p className="text-sm text-gray-500 mt-1">
-                                {item.product?.brand}
+                                {item.brand}
                               </p>
                               <p className="text-lg font-medium text-gray-900 mt-2">
-                                {formatPrice(item.product?.price)}
+                                {formatPrice(item.price)}
                               </p>
                             </div>
 
@@ -170,7 +170,7 @@ const CartPage = () => {
                   <div className="flex justify-between">
                     <span className="text-gray-600">Transporti</span>
                     <span className="font-medium">
-                      {getCartTotal() >= 30 ? 'Falas' : '3.00€'}
+                      {getCartTotal() >= 30 ? 'Falas' : formatPrice(3)}
                     </span>
                   </div>
                   
@@ -213,7 +213,7 @@ const CartPage = () => {
 
                 <div className="mt-6 text-center">
                   <p className="text-sm text-gray-600">
-                    🚚 Transport falas për porosi mbi 30€
+                    🚚 Transport falas për porosi mbi {formatPrice(30)}
                   </p>
                 </div>
               </div>

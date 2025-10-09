@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Search, ShoppingCart, User, Menu, X, ChevronDown, LogOut } from 'lucide-react'
 import { useCart } from '../hooks/useCart'
 import { useAuth } from '../hooks/useAuth'
+import nabisLogo from '../assets/nabis_logo-removebg-preview.png'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -31,38 +32,60 @@ const Header = () => {
       name: 'Dermokozmetikë',
       id: 'dermokozmetike',
       subcategories: [
-        { name: 'Kujdes për fytyren', id: 'fytyre' },
-        { name: 'Kujdes për flokët', id: 'floket' },
-        { name: 'Kujdes për trupin', id: 'trupi' },
-        { name: 'Mbrojtje diellore', id: 'spf' },
-        { name: 'Anti-aging', id: 'anti-aging' },
-        { name: 'Akne dhe probleme', id: 'akne' }
+        { name: 'Fytyre', id: 'fytyre' },
+        { name: 'Floket', id: 'floket' },
+        { name: 'Trupi', id: 'trupi' },
+        { name: 'SPF', id: 'spf' },
+        { name: 'Tanning', id: 'tanning' },
+        { name: 'Makeup', id: 'makeup' }
       ]
     },
     {
-      name: 'Gratë Shtatzëna',
-      id: 'grate-shtatzena',
+      name: 'Higjena',
+      id: 'higjena',
       subcategories: [
-        { name: 'Vitamina për shtatzëni', id: 'vitamina-shtatzeni' },
-        { name: 'Kujdes për lëkurën', id: 'kujdes-lekure-shtatzeni' },
-        { name: 'Suplemente të nevojshme', id: 'suplemente-shtatzeni' },
-        { name: 'Kujdes gjiri', id: 'kujdes-gjiri' }
+        { name: 'Depilim dhe Intime', id: 'depilim-intime' },
+        { name: 'Goja', id: 'goja' },
+        { name: 'Këmbët', id: 'kembet' },
+        { name: 'Trupi', id: 'trupi-higjena' }
       ]
     },
     {
-      name: 'Fëmijët dhe Bebet',
-      id: 'femijet-bebet',
+      name: 'Farmaci',
+      id: 'farmaci',
       subcategories: [
-        { name: 'Vitamina për fëmijë', id: 'vitamina-femije' },
-        { name: 'Kujdes për bebet', id: 'kujdes-bebe' },
-        { name: 'Ushqim për bebe', id: 'ushqim-bebe' },
-        { name: 'Higjienë fëmijësh', id: 'higjiene-femije' },
-        { name: 'Aksesorë bebesh', id: 'aksesor-bebe' }
+        { name: 'OTC (pa recete)', id: 'otc' },
+        { name: 'Mirëqenia seksuale', id: 'seksuale' },
+        { name: 'Aparat mjeksore', id: 'aparat-mjeksore' },
+        { name: 'First Aid (Ndihma e Pare)', id: 'first-aid' },
+        { name: 'Ortopedike', id: 'ortopedike' }
       ]
     },
     {
-      name: 'Vitamina & Suplemente',
-      id: 'vitamina-suplemente',
+      name: 'Mama dhe Bebat',
+      id: 'mama-bebat',
+      subcategories: [
+        { name: 'Kujdesi ndaj Nënës - Shtatzani', id: 'shtatzani' },
+        { name: 'Kujdesi ndaj Nënës - Ushqyerje me Gji', id: 'ushqyerje-gji' },
+        { name: 'Kujdesi ndaj Bebit - Pelena', id: 'pelena' },
+        { name: 'Kujdesi ndaj Bebit - Higjena', id: 'beba-higjena' },
+        { name: 'Kujdesi ndaj Bebit - SPF', id: 'beba-spf' },
+        { name: 'Kujdesi ndaj Bebit - Suplementa', id: 'beba-suplementa' },
+        { name: 'Aksesor per Beba', id: 'aksesor-beba' },
+        { name: 'Planifikim Familjar', id: 'planifikim-familjar' }
+      ]
+    },
+    {
+      name: 'Produkte Shtesë',
+      id: 'produkte-shtese',
+      subcategories: [
+        { name: 'Sete', id: 'sete' },
+        { name: 'Vajra Esencial', id: 'vajra-esencial' }
+      ]
+    },
+    {
+      name: 'Suplemente',
+      id: 'suplemente',
       subcategories: [
         { name: 'Multivitamina', id: 'multivitamina' },
         { name: 'Vitamina C', id: 'vitamina-c' },
@@ -70,30 +93,7 @@ const Header = () => {
         { name: 'Omega 3', id: 'omega-3' },
         { name: 'Magneziu', id: 'magneziu' },
         { name: 'Kalsium', id: 'kalsium' },
-        { name: 'Hekur', id: 'hekur' },
-        { name: 'Suplemente sportive', id: 'suplemente-sportive' }
-      ]
-    },
-    {
-      name: 'Farmaci & Mjekësi',
-      id: 'farmaci-mjekesi',
-      subcategories: [
-        { name: 'Ilaçe pa recetë', id: 'otc' },
-        { name: 'Aparat mjekësore', id: 'aparat-mjeksore' },
-        { name: 'Ortopedike', id: 'ortopedike' },
-        { name: 'Teste shtëpie', id: 'teste-shtepi' },
-        { name: 'Dezinfektues', id: 'dezinfektues' }
-      ]
-    },
-    {
-      name: 'Higjienë dhe Kujdes',
-      id: 'higjiene-kujdes',
-      subcategories: [
-        { name: 'Higjienë orale', id: 'higjiene-orale' },
-        { name: 'Higjienë personale', id: 'higjiene-personale' },
-        { name: 'Deodorantë', id: 'deodorante' },
-        { name: 'Shampo dhe balsam', id: 'shampo-balsam' },
-        { name: 'Sapunë dhe gel', id: 'sapun-gel' }
+        { name: 'Hekur', id: 'hekur' }
       ]
     }
   ]
@@ -120,10 +120,12 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <div className="text-2xl font-bold text-primary-600">
-              Nabis <span className="text-secondary-600">Farmaci</span>
-            </div>
+          <Link to="/" className="flex items-center py-2 px-3">
+            <img 
+              src={nabisLogo} 
+              alt="Nabis Farmaci" 
+              className="h-12 w-auto max-w-[180px] object-contain mx-2"
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -209,6 +211,13 @@ const Header = () => {
                         <div className="font-medium">{user.email}</div>
                         <div className="text-xs text-gray-500 capitalize">{user.role}</div>
                       </div>
+                      <Link
+                        to="/porositë"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setUserDropdownOpen(false)}
+                      >
+                        📋 Porositë e Mia
+                      </Link>
                       {user.role === 'admin' && (
                         <Link
                           to="/nabis-admin-panel-2024"
@@ -355,6 +364,13 @@ const Header = () => {
                       <div className="font-medium">{user.email}</div>
                       <div className="text-xs text-gray-500 capitalize">{user.role}</div>
                     </div>
+                    <Link
+                      to="/porositë"
+                      className="block px-3 py-2 text-gray-700 hover:text-primary-600"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      📋 Porositë e Mia
+                    </Link>
                     {user.role === 'admin' && (
                       <Link
                         to="/nabis-admin-panel-2024"
