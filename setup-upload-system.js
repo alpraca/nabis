@@ -44,12 +44,12 @@ try {
   import('axios');
   import('form-data');
   console.log('✅ All dependencies are installed');
-} catch (error) {
+} catch {
   console.log('📦 Installing dependencies...');
   try {
     execSync('npm install xlsx axios form-data', { stdio: 'inherit' });
     console.log('✅ Dependencies installed successfully');
-  } catch (installError) {
+  } catch {
     console.log('❌ Failed to install dependencies. Please run: npm install xlsx axios form-data');
     process.exit(1);
   }

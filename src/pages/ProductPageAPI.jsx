@@ -4,12 +4,14 @@ import { Star, Heart, ShoppingCart, Shield, Truck, RefreshCw } from 'lucide-reac
 import axios from 'axios';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast';
 import { API_URL, API_BASE_URL } from '../config/api';
 import { formatPrice } from '../utils/currency';
 
 const ProductPageAPI = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const toast = useToast();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -40,7 +42,7 @@ const ProductPageAPI = () => {
   const handleAddToCart = async () => {
     // Check if product is in stock
     if (!product.in_stock || product.stock_quantity <= 0) {
-      alert('❌ Ky produkt nuk është në stok momentalisht.');
+      toast.error('Ky produkt nuk është në stok momentalisht.');
       return;
     }
 
@@ -59,9 +61,9 @@ const ProductPageAPI = () => {
     const result = await addProductToCart(product.id, quantity);
     
     if (result.success) {
-      alert(`✅ U shtua në shportë: ${product.name} (${quantity} copë)`);
+      toast.success(`✅ U shtua në shportë: ${product.name} (${quantity} copë)`);
     } else {
-      alert(`❌ ${result.error}`);
+      toast.error(`❌ ${result.error}`);
     }
     
     setAddingToCart(false);
@@ -80,7 +82,7 @@ const ProductPageAPI = () => {
     }
 
     // For now, just show a message since favorites functionality isn't implemented yet
-    alert(`${product.name} u shtua në listën e dëshirave!`);
+    toast.success(`${product.name} u shtua në listën e dëshirave!`);
   };
 
   if (loading) {

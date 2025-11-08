@@ -280,7 +280,7 @@ class ComprehensiveProductUploader {
         try {
           const stats = fs.statSync(path.join(this.config.imagesFolder, img));
           if (stats.isFile() && stats.size > 0) accessibleImages++;
-        } catch (error) {
+        } catch {
           // Image not accessible
         }
       }
@@ -473,7 +473,7 @@ class ComprehensiveProductUploader {
   /**
    * Perform the actual product upload
    */
-  async performUpload(product, productNumber, attempt) {
+  async performUpload(product, productNumber) {
     // Create form data
     const formData = new FormData();
     
@@ -491,7 +491,7 @@ class ComprehensiveProductUploader {
         const imageBuffer = fs.readFileSync(imagePath);
         const imageFilename = path.basename(imagePath);
         formData.append('images', imageBuffer, imageFilename);
-      } catch (imageError) {
+      } catch {
         console.log(`   ⚠️  ${productNumber}: Image not found: ${imagePath}`);
       }
     }
@@ -594,7 +594,7 @@ class ComprehensiveProductUploader {
     return this.categoryMapping.default;
   }
 
-  extractBrand(name, description) {
+  extractBrand(name) {
     // Extract brand from product name (usually the first word)
     const words = name.split(' ');
     const potentialBrand = words[0];

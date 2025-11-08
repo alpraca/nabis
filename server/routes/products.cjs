@@ -32,77 +32,98 @@ router.get('/debug/product/:id', (req, res) => {
 router.get('/', (req, res) => {
   const { category, search, page = 1, limit = 24, brand } = req.query
   
+  // Build query that explicitly selects primary image (sort_order = 1) via LEFT JOIN
   let query = `
-    SELECT p.*
+    SELECT p.*, pi.image_url as image_url
     FROM products p
+    LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.sort_order = 1
     WHERE 1=1
   `
   const params = []
   let countQuery = 'SELECT COUNT(DISTINCT p.id) as total FROM products p WHERE 1=1'
   const countParams = []
 
-  // Enhanced category filtering with hierarchical support
+  // Category filtering - use `category` and `subcategory` columns from the DB
   if (category && category !== 'te-gjitha') {
     const categoryParam = decodeURIComponent(category).toLowerCase()
-    
-    // Convert URL-friendly names to actual category names
+
+    // Mapping of URL-friendly names -> actual database category/subcategory values
     const categoryMappings = {
-      'suplemente': 'Suplemente',
-      'vitaminat-dhe-mineralet': 'Vitaminat dhe Mineralet',
-      'cajra-mjekesore': 'Çajra Mjekësore',
-      'proteine-dhe-fitness': 'Proteinë dhe Fitness',
-      'suplementet-natyrore': 'Suplementet Natyrore',
-      'dermokozmetike': 'Dermokozmetikë',
+      // Main categories
+      'dermokozmetike': 'dermokozmetikë',
+      'higjena': 'higjena',
+      'farmaci': 'farmaci',
+      'mama-dhe-bebat': 'mama-dhe-bebat',
+      'produkte-shtese': 'produkte-shtese',
+      'suplemente': 'suplemente',
+      
+      // Dermokozmetikë subcategories
       'fytyre': 'Fytyre',
-      'trupi': 'Trupi',
       'floket': 'Flokët',
+      'trupi': 'Trupi',
       'spf': 'SPF',
-      'makeup': 'Makeup',
       'tanning': 'Tanning',
-      'farmaci': 'Farmaci',
-      'aparat-mjekesore': 'Aparat mjekësore',
-      'first-aid-ndihme-e-pare': 'First Aid (Ndihmë e Parë)',
-      'otc-pa-recete': 'OTC (pa recetë)',
-      'ortopedike': 'Ortopedike',
-      'mireqenia-seksuale': 'Mirëqenia seksuale',
-      'higjena': 'Higjena',
+      'makeup': 'Makeup',
+      
+      // Higjena subcategories
+      'depilim-intime': 'Depilim dhe Intime',
       'goja': 'Goja',
-      'depilim-dhe-intime': 'Depilim dhe Intime',
       'kembet': 'Këmbët',
-      'mama-dhe-bebat': 'Mama dhe Bebat',
-      'kujdesi-ndaj-nenes': 'Kujdesi ndaj Nënës',
-      'kujdesi-ndaj-bebit': 'Kujdesi ndaj Bebit',
+      'trupi-higjena': 'Trupi',
+      
+      // Farmaci subcategories
+      'otc': 'OTC (pa recete)',
+      'mireqenia-seksuale': 'Mirëqenia seksuale',
+      'aparat-mjeksore': 'Aparat mjeksore',
+      'first-aid': 'First Aid (Ndihma e Pare)',
+      'ortopedike': 'Ortopedike',
+      
+      // Mama dhe Bebat subcategories and sub-subcategories
+      'kujdesi-nenes': 'Kujdesi ndaj Nënës',
+      'shtatzani': 'Shtatzani',
+      'ushqyerje-gji': 'Ushqyerje me Gji',
+      'kujdesi-bebit': 'Kujdesi ndaj Bebit',
+      'pelena': 'Pelena',
+      'higjena-bebe': 'Higjena',
+      'spf-bebe': 'SPF',
+      'suplementa-bebe': 'Suplementa',
+      'aksesor-beba': 'Aksesor per Beba',
       'planifikim-familjar': 'Planifikim Familjar',
-      'produkte-shtese': 'Produkte Shtesë',
+      
+      // Produkte Shtesë subcategories
       'sete': 'Sete',
-      'pajisje': 'Pajisje',
-      'aksesore': 'Aksesorë'
+      'vajra-esencial': 'Vajra Esencial',
+      
+      // Suplemente subcategories
+      'vitaminat-mineralet': 'Vitaminat dhe Mineralet',
+      'cajra-mjekesore': 'Çajra Mjekësore',
+      'proteine-fitness': 'Proteinë dhe Fitness',
+      'suplementet-natyrore': 'Suplementet Natyrore'
     }
-    
+
     const actualCategoryName = categoryMappings[categoryParam] || categoryParam
     
-    // Check in main_category, sub_category, and sub_sub_category
-    query += ` AND (
-      LOWER(p.main_category) = LOWER(?) OR 
-      LOWER(p.sub_category) = LOWER(?) OR 
-      LOWER(p.sub_sub_category) = LOWER(?)
-    )`
-    params.push(
-      actualCategoryName,
-      actualCategoryName,
-      actualCategoryName
-    )
+    // Main categories in the database
+    const mainCategories = ['dermokozmetikë', 'higjena', 'farmaci', 'mama-dhe-bebat', 'produkte-shtese', 'suplemente']
     
-    countQuery += ` AND (
-      LOWER(p.main_category) = LOWER(?) OR 
-      LOWER(p.sub_category) = LOWER(?) OR 
-      LOWER(p.sub_sub_category) = LOWER(?)
-    )`
-    countParams.push(
-      actualCategoryName,
-      actualCategoryName,
-      actualCategoryName
-    )
+    // Determine if this is a main category or subcategory
+    const isMainCategory = mainCategories.some(cat => cat.toLowerCase() === actualCategoryName.toLowerCase())
+    
+    if (isMainCategory) {
+      // Search only in category column for main categories
+      query += ` AND LOWER(p.category) = LOWER(?)`
+      params.push(actualCategoryName)
+      
+      countQuery += ` AND LOWER(p.category) = LOWER(?)`
+      countParams.push(actualCategoryName)
+    } else {
+      // Search only in subcategory column for subcategories
+      query += ` AND LOWER(p.subcategory) = LOWER(?)`
+      params.push(actualCategoryName)
+      
+      countQuery += ` AND LOWER(p.subcategory) = LOWER(?)`
+      countParams.push(actualCategoryName)
+    }
   }
 
   if (brand) {
@@ -131,8 +152,9 @@ router.get('/', (req, res) => {
     const limitNum = parseInt(limit)
     const totalPages = Math.ceil(totalProducts / limitNum)
 
-    query += ' GROUP BY p.id ORDER BY p.created_at DESC'
-    
+  // Ensure group by and ordering
+  query += ' GROUP BY p.id ORDER BY p.created_at DESC'
+
     if (limit !== 'all') {
       const offset = (pageNum - 1) * limitNum
       query += ' LIMIT ? OFFSET ?'
@@ -144,10 +166,10 @@ router.get('/', (req, res) => {
         return res.status(500).json({ error: 'Gabim në marrjen e produkteve' })
       }
 
-      // Process images and ensure no duplicates
+      // Process images (pi.image_url comes from the LEFT JOIN)
       const processedProducts = products.map(product => ({
         ...product,
-        images: product.image_url ? [`/uploads/images/${product.image_url}`] : [],
+        images: product.image_url ? [product.image_url] : [],
         is_new: Boolean(product.is_new),
         on_sale: Boolean(product.on_sale),
         in_stock: Boolean(product.in_stock)
@@ -171,14 +193,14 @@ router.get('/', (req, res) => {
 // Get product categories (public)
 router.get('/categories/list', (req, res) => {
   db.all(
-    'SELECT DISTINCT main_category FROM products WHERE main_category IS NOT NULL ORDER BY main_category',
+    'SELECT DISTINCT category FROM products WHERE category IS NOT NULL ORDER BY category',
     [],
     (err, categories) => {
       if (err) {
         return res.status(500).json({ error: 'Gabim në marrjen e kategorive' })
       }
 
-      res.json({ categories: categories.map(c => c.main_category) })
+      res.json({ categories: categories.map(c => c.category) })
     }
   )
 })
@@ -205,9 +227,11 @@ router.get('/best-sellers', (req, res) => {
     const totalPages = Math.ceil(totalProducts / limitNum)
     const offset = (pageNum - 1) * limitNum
 
+    // Select primary image if exists via join
     const query = `
-      SELECT p.id, p.name, p.brand, p.price, p.in_stock, p.image_url
+      SELECT p.id, p.name, p.brand, p.price, p.in_stock, pi.image_url
       FROM products p
+      LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.sort_order = 1
       WHERE p.in_stock = 1
       ORDER BY p.created_at DESC
       LIMIT ? OFFSET ?
@@ -221,7 +245,7 @@ router.get('/best-sellers', (req, res) => {
       // Process images
       const processedProducts = products.map(product => ({
         ...product,
-        images: product.image_url ? [`/uploads/images/${product.image_url}`] : [],
+        images: product.image_url ? [product.image_url] : [],
         in_stock: Boolean(product.in_stock)
       }))
 
@@ -286,7 +310,7 @@ router.get('/brand/:brand', (req, res) => {
       return res.status(500).json({ error: 'Gabim në marrjen e produkteve' })
     }
 
-    // Process images
+    // Process images (products may already contain concatenated images)
     const processedProducts = products.map(product => ({
       ...product,
       images: product.images ? product.images.split(',') : [],
@@ -516,16 +540,25 @@ router.get('/:id', (req, res) => {
     if (!product) {
       return res.status(404).json({ error: 'Produkti nuk u gjet' })
     }
+    // Fetch all images for this product ordered by sort_order
+    const imagesQuery = 'SELECT image_url FROM product_images WHERE product_id = ? ORDER BY sort_order'
+    db.all(imagesQuery, [req.params.id], (imgErr, images) => {
+      if (imgErr) {
+        return res.status(500).json({ error: 'Gabim në marrjen e fotove të produktit' })
+      }
 
-    const processedProduct = {
-      ...product,
-      images: product.image_url ? [`/uploads/images/${product.image_url}`] : [],
-      is_new: Boolean(product.is_new),
-      on_sale: Boolean(product.on_sale),
-      in_stock: Boolean(product.in_stock)
-    }
+      const imageUrls = (images || []).map(i => i.image_url)
 
-    res.json({ product: processedProduct })
+      const processedProduct = {
+        ...product,
+        images: imageUrls,
+        is_new: Boolean(product.is_new),
+        on_sale: Boolean(product.on_sale),
+        in_stock: Boolean(product.in_stock)
+      }
+
+      res.json({ product: processedProduct })
+    })
   })
 })
 

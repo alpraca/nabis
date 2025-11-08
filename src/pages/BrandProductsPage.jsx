@@ -3,10 +3,12 @@ import { Link, useParams } from 'react-router-dom'
 import { Grid, List, Filter, SortAsc, Package, ArrowLeft, ShoppingCart, Heart, Star } from 'lucide-react'
 import axios from 'axios'
 import { useCart } from '../hooks/useCart'
+import { useToast } from '../hooks/useToast'
 import { formatPrice } from '../utils/currency'
 
 const BrandProductsPage = () => {
   const { brand } = useParams()
+  const toast = useToast()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -119,9 +121,9 @@ const BrandProductsPage = () => {
     try {
       const result = await addToCart(product.id, 1);
       if (result.success) {
-        alert('Produkti u shtua në shportë me sukses!');
+        toast.success('Produkti u shtua në shportë me sukses!');
       } else {
-        alert('Gabim në shtimin e produktit në shportë');
+        toast.error('Gabim në shtimin e produktit në shportë');
       }
     } catch (error) {
       console.error('Error adding to cart:', error);

@@ -5,10 +5,12 @@ import axios from 'axios';
 import { API_URL, API_BASE_URL } from '../config/api';
 import { formatPrice } from '../utils/currency';
 import { useCart } from '../hooks/useCart';
+import { useToast } from '../hooks/useToast';
 
 const AllProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { addToCart } = useCart();
+  const toast = useToast();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -139,9 +141,9 @@ const AllProductsPage = () => {
     try {
       const result = await addToCart(product.id, 1);
       if (result.success) {
-        alert(`${product.name} u shtua në shportë!`);
+        toast.success(`${product.name} u shtua në shportë!`);
       } else {
-        alert(result.error || 'Gabim në shtimin në shportë');
+        toast.error(result.error || 'Gabim në shtimin në shportë');
       }
     } catch (error) {
       console.error('Error adding to cart:', error);

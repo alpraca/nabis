@@ -53,27 +53,27 @@ const Header = () => {
       name: 'Farmaci',
       id: 'farmaci',
       subcategories: [
-        { name: 'OTC (pa recetë)', id: 'otc' },
+        { name: 'OTC (pa recete)', id: 'otc' },
         { name: 'Mirëqenia seksuale', id: 'mireqenia-seksuale' },
-        { name: 'Aparat mjekësore', id: 'aparat-mjeksore' },
-        { name: 'First Aid (Ndihmë e Parë)', id: 'first-aid' },
+        { name: 'Aparat mjeksore', id: 'aparat-mjeksore' },
+        { name: 'First Aid (Ndihma e Pare)', id: 'first-aid' },
         { name: 'Ortopedike', id: 'ortopedike' }
       ]
     },
     {
       name: 'Mama dhe Bebat',
-      id: 'mama-bebat',
+      id: 'mama-dhe-bebat',
       subcategories: [
-        { 
-          name: 'Kujdesi ndaj Nënës', 
+        {
+          name: 'Kujdesi ndaj Nënës',
           id: 'kujdesi-nenes',
           subsubcategories: [
-            { name: 'Shtatzëni', id: 'shtatzeni' },
+            { name: 'Shtatzani', id: 'shtatzani' },
             { name: 'Ushqyerje me Gji', id: 'ushqyerje-gji' }
           ]
         },
-        { 
-          name: 'Kujdesi ndaj Bebit', 
+        {
+          name: 'Kujdesi ndaj Bebit',
           id: 'kujdesi-bebit',
           subsubcategories: [
             { name: 'Pelena', id: 'pelena' },
@@ -82,7 +82,7 @@ const Header = () => {
             { name: 'Suplementa', id: 'suplementa-bebe' }
           ]
         },
-        { name: 'Aksesore për Beba', id: 'aksesor-beba' },
+        { name: 'Aksesor per Beba', id: 'aksesor-beba' },
         { name: 'Planifikim Familjar', id: 'planifikim-familjar' }
       ]
     },
@@ -98,9 +98,9 @@ const Header = () => {
       name: 'Suplemente',
       id: 'suplemente',
       subcategories: [
-        { name: 'Vitaminat dhe Mineralet', id: 'vitaminat-dhe-mineralet' },
+        { name: 'Vitaminat dhe Mineralet', id: 'vitaminat-mineralet' },
         { name: 'Çajra Mjekësore', id: 'cajra-mjekesore' },
-        { name: 'Proteinë dhe Fitness', id: 'proteine-dhe-fitness' },
+        { name: 'Proteinë dhe Fitness', id: 'proteine-fitness' },
         { name: 'Suplementet Natyrore', id: 'suplementet-natyrore' }
       ]
     }
@@ -135,41 +135,36 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-1">
             {menuItems.map((item) => (
               <div key={item.id} className="relative group">
                 <button
-                  className="flex items-center space-x-1 text-gray-700 hover:text-primary-600 py-2"
-                  onMouseEnter={() => setActiveDropdown(item.id)}
-                  onMouseLeave={() => setActiveDropdown(null)}
+                  type="button"
+                  className="flex items-center space-x-1 text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium group-hover:bg-gray-50 cursor-pointer"
                 >
                   <span>{item.name}</span>
                   {item.subcategories && <ChevronDown className="h-4 w-4" />}
                 </button>
 
                 {/* Dropdown Menu */}
-                {item.subcategories && activeDropdown === item.id && (
-                  <div
-                    className="absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-50"
-                    onMouseEnter={() => setActiveDropdown(item.id)}
-                    onMouseLeave={() => setActiveDropdown(null)}
-                  >
+                {item.subcategories && (
+                  <div className="absolute left-0 mt-0 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                     <div className="py-2">
                       {item.subcategories.map((subcat) => (
                         <div key={subcat.id} className="relative group/sub">
                           <Link
                             to={`/kategori/${subcat.id}`}
-                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600 flex items-center justify-between"
+                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600 flex items-center justify-between w-full"
                           >
                             <span>{subcat.name}</span>
                             {subcat.subsubcategories && (
-                              <ChevronDown className="h-3 w-3 rotate-270" />
+                              <ChevronDown className="h-3 w-3" />
                             )}
                           </Link>
                           
                           {/* Sub-subcategories dropdown */}
                           {subcat.subsubcategories && (
-                            <div className="absolute left-full top-0 ml-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-60 opacity-0 group-hover/sub:opacity-100 pointer-events-none group-hover/sub:pointer-events-auto transition-opacity duration-200">
+                            <div className="absolute left-full top-0 ml-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-60 opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200">
                               <div className="py-2">
                                 {subcat.subsubcategories.map((subsub) => (
                                   <Link

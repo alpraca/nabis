@@ -6,6 +6,7 @@ import { API_URL, API_BASE_URL } from '../config/api';
 import { formatPrice } from '../utils/currency';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast';
 import { SkeletonProductCard, SkeletonProductListItem } from '../components/SkeletonLoaders';
 
 const CategoryPageAPI = () => {
@@ -14,6 +15,7 @@ const CategoryPageAPI = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isLoggedIn } = useAuth();
+  const toast = useToast();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -110,7 +112,7 @@ const CategoryPageAPI = () => {
     }
 
     // For now, just show a message since favorites functionality isn't implemented yet
-    alert(`${product.name} u shtua në listën e dëshirave!`);
+    toast.success(`${product.name} u shtua në listën e dëshirave!`);
   };
 
   const handlePageChange = (newPage) => {

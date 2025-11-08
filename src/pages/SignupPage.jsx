@@ -69,6 +69,8 @@ const SignupPage = () => {
       newErrors.password = 'Fjalëkalimi është i nevojshëm'
     } else if (formData.password.length < 6) {
       newErrors.password = 'Fjalëkalimi duhet të ketë së paku 6 karaktere'
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      newErrors.password = 'Fjalëkalimi duhet të përmbajë të paktën një shkronjë të madhe, një të vogël dhe një numër'
     }
 
     if (formData.password !== formData.confirmPassword) {
@@ -112,15 +114,20 @@ const SignupPage = () => {
       
       // Extract specific error message from backend
       let errorMessage = 'Gabim në regjistrimin e llogarisë'
-      
+
       if (error.response?.data) {
-        const { error: backendError, message } = error.response.data
-        errorMessage = backendError || message || errorMessage
+        const resp = error.response.data
+        // If the backend provided detailed validation messages, show them
+        if (Array.isArray(resp.details) && resp.details.length > 0) {
+          errorMessage = resp.details.join('; ')
+        } else if (resp.error || resp.message) {
+          errorMessage = resp.error || resp.message
+        }
       }
-      
+
       console.log('📋 Backend error:', errorMessage)
-      
-      setErrors({ 
+
+      setErrors({
         submit: errorMessage
       })
     } finally {

@@ -9,13 +9,6 @@ const Hero = () => {
     }
   }
 
-  const scrollToProducts = () => {
-    const productsElement = document.getElementById('produktet')
-    if (productsElement) {
-      productsElement.scrollIntoView({ behavior: 'smooth' })
-    }
-  }
-
   return (
     <section className="bg-gradient-to-r from-primary-50 to-secondary-50 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

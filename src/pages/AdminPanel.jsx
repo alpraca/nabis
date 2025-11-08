@@ -43,7 +43,8 @@ const AdminPanel = () => {
   // Load functions
   const loadProducts = async () => {
     try {
-      const response = await api.get('/products')
+      // Request all products for admin view
+      const response = await api.get('/products?limit=all')
       setProducts(response.data.products)
     } catch (error) {
       console.error('Error loading products:', error)
@@ -170,7 +171,9 @@ const AdminPanel = () => {
     const statusMap = {
       pending: { color: 'text-yellow-600 bg-yellow-100', icon: Clock, label: 'Në pritje' },
       processing: { color: 'text-blue-600 bg-blue-100', icon: Package, label: 'Duke u përpunuar' },
+      confirmed: { color: 'text-indigo-600 bg-indigo-100', icon: Check, label: 'Konfirmuar' },
       shipped: { color: 'text-purple-600 bg-purple-100', icon: Truck, label: 'Dërguar' },
+      in_delivery: { color: 'text-pink-600 bg-pink-100', icon: Truck, label: 'Në dërgesë' },
       delivered: { color: 'text-green-600 bg-green-100', icon: Check, label: 'Dorëzuar' },
       cancelled: { color: 'text-red-600 bg-red-100', icon: X, label: 'Anulluar' }
     }
@@ -434,8 +437,10 @@ const AdminPanel = () => {
                                   className={`text-xs px-2 py-1 rounded-full border-0 font-medium ${statusDisplay.color} cursor-pointer`}
                                 >
                                   <option value="pending">Në pritje</option>
+                                  <option value="confirmed">Konfirmuar</option>
                                   <option value="processing">Duke u përpunuar</option>
                                   <option value="shipped">Dërguar</option>
+                                  <option value="in_delivery">Në dërgesë</option>
                                   <option value="delivered">Dorëzuar</option>
                                   <option value="cancelled">Anulluar</option>
                                 </select>
@@ -512,8 +517,10 @@ const AdminPanel = () => {
                                 className={`text-xs px-2 py-1 rounded-full border-0 font-medium ${statusDisplay.color} cursor-pointer`}
                               >
                                 <option value="pending">Në pritje</option>
+                                <option value="confirmed">Konfirmuar</option>
                                 <option value="processing">Duke u përpunuar</option>
                                 <option value="shipped">Dërguar</option>
+                                <option value="in_delivery">Në dërgesë</option>
                                 <option value="delivered">Dorëzuar</option>
                                 <option value="cancelled">Anulluar</option>
                               </select>

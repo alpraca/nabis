@@ -28,6 +28,7 @@ import EmailVerificationPage from './pages/EmailVerificationPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import OrdersPage from './pages/OrdersPage'
+import UserOrdersPage from './pages/UserOrdersPage'
 import AdminPanel from './pages/AdminPanel'
 import './App.css'
 
@@ -63,7 +64,7 @@ function App() {
             } />
             <Route path="/porositë" element={
               <ProtectedRoute>
-                <PublicLayout><OrdersPage /></PublicLayout>
+                <PublicLayout><UserOrdersPage /></PublicLayout>
               </ProtectedRoute>
             } />
             <Route path="/order-verification" element={

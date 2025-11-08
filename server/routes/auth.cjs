@@ -86,15 +86,47 @@ router.post('/register', validateRegistration, async (req, res) => {
       if (existingUser) {
         return res.status(400).json({ error: 'Ky email është përdorur tashmë' })
       }
+      // If developer auto-verify mode is enabled, create the user immediately so testers can login.
+      if (process.env.DEV_AUTO_VERIFY === 'true') {
+        try {
+          const hashedPassword = await bcrypt.hash(password, 12)
+          db.run(
+            `INSERT INTO users (name, email, password, phone, address, city, email_verified, created_at) VALUES (?, ?, ?, ?, ?, ?, 1, datetime('now'))`,
+            [sanitizedName, sanitizedEmail, hashedPassword, sanitizedPhone, sanitizedAddress, sanitizedCity],
+            function(err) {
+              if (err) {
+                console.error('Error creating user in DEV_AUTO_VERIFY mode:', err)
+                return res.status(500).json({ error: 'Gabim në krijimin e llogarisë' })
+              }
+              // Return token and user immediately
+              const token = generateToken(this.lastID)
+              return res.status(201).json({
+                message: 'Llogaria u krijua dhe u verifikua (DEV_AUTO_VERIFY)',
+                token,
+                user: {
+                  id: this.lastID,
+                  name: sanitizedName,
+                  email: sanitizedEmail,
+                  role: 'user'
+                }
+              })
+            }
+          )
+        } catch (hashErr) {
+          console.error('Hashing error in DEV_AUTO_VERIFY:', hashErr)
+          return res.status(500).json({ error: 'Gabim në ruajtjen e të dhënave' })
+        }
+        return
+      }
 
-      // Generate 6-digit verification code
+      // Generate 6-digit verification code for normal flow
       const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
       const codeExpires = new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
 
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 12)
 
-      // Store pending registration temporarily (we'll create a pending_registrations table)
+      // Store pending registration temporarily
       db.run(
         `INSERT OR REPLACE INTO pending_registrations 
          (email, name, password, phone, address, city, verification_code, code_expires) 
@@ -449,10 +481,22 @@ router.post('/forgot-password', async (req, res) => {
 
           // Send reset email
           const emailResult = await sendPasswordResetEmail(user.email, resetToken, user.name)
-          
+
           if (!emailResult.success) {
-            console.error('Failed to send reset email:', emailResult.error)
-            return res.status(500).json({ error: 'Gabim në dërgimin e email-it' })
+            console.error('❌ Failed to send reset email for', user.email, '— Error:', emailResult.error)
+
+            // Development fallback: if SMTP is not configured and developer allows fallback,
+            // return success and include a debug reset URL so the developer can continue testing.
+            if (emailResult.error === 'SMTP_NOT_CONFIGURED' && process.env.DEV_EMAIL_FALLBACK === 'true') {
+              const debugUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${resetToken}`
+              console.log(`✅ DEV_EMAIL_FALLBACK enabled: reset URL for ${user.email}: ${debugUrl}`)
+              return res.json({ 
+                message: 'DEV: Udhëzimet për rivendosjen e fjalëkalimit janë shfaqur në server (dev fallback).',
+                debugResetUrl: debugUrl
+              })
+            }
+
+            return res.status(500).json({ error: 'Gabim në dërgimin e email-it', debugError: emailResult.error })
           }
 
           res.json({ message: 'Udhëzimet për rivendosjen e fjalëkalimit u dërguan në email-in tuaj' })

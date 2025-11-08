@@ -42,6 +42,32 @@ app.use(cors({
   ], // Allow both localhost and network access
   credentials: true
 }))
+// Ensure CORS headers are present for all responses (extra safety for dev)
+app.use((req, res, next) => {
+  // If you prefer to allow any origin during development, change to '*'.
+  const allowed = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'http://192.168.100.96:5173',
+    'http://192.168.100.96:5174',
+    'http://192.168.100.96:5175'
+  ];
+  const origin = req.headers.origin;
+  if (allowed.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 

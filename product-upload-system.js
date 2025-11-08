@@ -121,7 +121,7 @@ class ProductUploadSystem {
     try {
       await axios.get(`${CONFIG.API_BASE_URL}/health`);
       console.log('✅ API server is running');
-    } catch (error) {
+    } catch {
       throw new Error('API server is not running. Please start the server first.');
     }
     
@@ -283,7 +283,7 @@ class ProductUploadSystem {
    * Get value from row using column mapping
    */
   getValueFromRow(row, columnKey) {
-    if (!columnKey || !row.hasOwnProperty(columnKey)) return null;
+    if (!columnKey || !Object.prototype.hasOwnProperty.call(row, columnKey)) return null;
     
     const value = row[columnKey];
     return value !== null && value !== undefined && value !== '' ? String(value).trim() : null;
@@ -361,7 +361,7 @@ class ProductUploadSystem {
     
     // Split by common separators and clean
     const tokens = nameWithoutExt
-      .split(/[_\-\s\.]+/)
+      .split(/[_\-\s.]+/)
       .map(token => token.toLowerCase().trim())
       .filter(token => token.length > 1);
     
@@ -375,7 +375,7 @@ class ProductUploadSystem {
     const productTokens = this.generateSearchTokens(product.name + ' ' + product.brand);
     const matches = [];
 
-    for (const [filename, imageInfo] of this.imageCache.entries()) {
+    for (const [_filename, imageInfo] of this.imageCache.entries()) {
       const similarity = this.calculateSimilarity(productTokens, imageInfo.searchTokens);
       
       if (similarity >= CONFIG.IMAGE_SIMILARITY_THRESHOLD) {

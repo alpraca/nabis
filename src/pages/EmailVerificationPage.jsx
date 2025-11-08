@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, Navigate, Link } from 'react-router-dom';
 import { CheckCircle, XCircle, Mail, ArrowLeft, RefreshCw } from 'lucide-react';
 import axios from 'axios';
@@ -19,9 +19,9 @@ const EmailVerificationPage = () => {
     }
 
     verifyEmail();
-  }, [token]);
+  }, [verifyEmail, token]);
 
-  const verifyEmail = async () => {
+  const verifyEmail = useCallback(async () => {
     try {
       setStatus('loading');
       const response = await axios.post('http://localhost:3001/api/auth/verify-email', {
@@ -44,14 +44,14 @@ const EmailVerificationPage = () => {
         'Gabim në verifikimin e email-it. Token-i mund të jetë i skaduar ose i pavlefshëm.'
       );
     }
-  };
+  }, [token]);
 
   const resendVerification = async () => {
     setIsResending(true);
     try {
       // This would need the user's email - for simplicity, we'll just show a message
       setMessage('Për të rinisur verifikimin, ju lutemi regjistrohuni përsëri ose kontaktoni mbështetjen.');
-    } catch (error) {
+    } catch {
       setMessage('Gabim në dërgimin e email-it të verifikimit.');
     } finally {
       setIsResending(false);

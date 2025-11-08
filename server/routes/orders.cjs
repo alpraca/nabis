@@ -2,7 +2,7 @@ const express = require('express')
 const crypto = require('crypto')
 const { db } = require('../config/database.cjs')
 const { verifyToken, requireAdmin } = require('../middleware/auth.cjs')
-const { sendOrderConfirmationEmail, sendOrderVerificationCode } = require('../services/emailService.cjs')
+const { sendOrderConfirmationEmail, sendOrderVerificationCode, sendOrderStatusUpdateEmail } = require('../services/emailService.cjs')
 
 const router = express.Router()
 
@@ -341,7 +341,7 @@ router.get('/admin/all', verifyToken, requireAdmin, (req, res) => {
 // Admin: Update order status
 router.put('/admin/:id/status', verifyToken, requireAdmin, (req, res) => {
   const { status } = req.body
-  const validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled']
+  const validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'in_delivery', 'delivered', 'cancelled']
 
   if (!validStatuses.includes(status)) {
     return res.status(400).json({ error: 'Status i pavlefshëm' })
@@ -359,7 +359,39 @@ router.put('/admin/:id/status', verifyToken, requireAdmin, (req, res) => {
         return res.status(404).json({ error: 'Porosia nuk u gjet' })
       }
 
-      res.json({ message: 'Statusi u përditësua me sukses' })
+      // After successful update, fetch order and optionally send status update email
+      db.get('SELECT * FROM orders WHERE id = ?', [req.params.id], async (err, order) => {
+        if (err || !order) {
+          console.error('Error fetching order after status update:', err)
+          return res.json({ message: 'Statusi u përditësua me sukses' })
+        }
+
+        // Send email for all valid statuses (admin wants user notified on each selection)
+        const notifyStatuses = validStatuses
+        if (notifyStatuses.includes(status)) {
+          // Get user name for personalization
+          db.get('SELECT name, email FROM users WHERE id = ?', [order.user_id], async (uErr, user) => {
+            const userName = (order && order.name) ? order.name : (user && user.name) ? user.name : ''
+            const toEmail = order.email || (user && user.email) || null
+
+            if (!toEmail) {
+              console.warn('No email found for order', order.id)
+              return res.json({ message: 'Statusi u përditësua me sukses' })
+            }
+
+            try {
+              await sendOrderStatusUpdateEmail(toEmail, order.order_number, status, userName)
+              console.log('✅ Order status update email attempted')
+            } catch (emailErr) {
+              console.error('❌ Failed to send order status update email:', emailErr)
+            }
+
+            return res.json({ message: 'Statusi u përditësua me sukses' })
+          })
+        } else {
+          return res.json({ message: 'Statusi u përditësua me sukses' })
+        }
+      })
     }
   )
 })
