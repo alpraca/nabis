@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, Navigate, Link } from 'react-router-dom';
-import { CheckCircle, XCircle, Mail, ArrowLeft, RefreshCw } from 'lucide-react';
+import { CheckCircle, XCircle, Mail, ArrowLeft, RefreshCw, Phone } from 'lucide-react';
 import axios from 'axios';
 
 const EmailVerificationPage = () => {
@@ -180,8 +180,14 @@ const EmailVerificationPage = () => {
                 Nëse keni probleme me verifikimin e email-it, kontaktoni mbështetjen tonë.
               </p>
               <div className="flex items-center justify-center space-x-4 text-xs text-gray-500">
-                <span>📞 +355 69 123 4567</span>
-                <span>✉️ info@nabisfarmaci.al</span>
+                <span className="flex items-center gap-1">
+                  <Phone className="w-3 h-3" />
+                  +355 69 123 4567
+                </span>
+                <span className="flex items-center gap-1">
+                  <Mail className="w-3 h-3" />
+                  info@nabisfarmaci.al
+                </span>
               </div>
             </div>
           </div>

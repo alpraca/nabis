@@ -1,47 +1,52 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
+import { Heart, Sparkles, Droplets, Flower2, Droplet, Leaf, Sprout, Waves, Baby, Building2 } from 'lucide-react'
 import axios from 'axios'
 
-// Static brand info with logos and descriptions
+// Icon mapping for brands
+const brandIcons = {
+  'Roche': Heart,
+  'La Roche-Posay': Sparkles,
+  'Vichy': Waves,
+  'Avène': Flower2,
+  'Eucerin': Droplet,
+  'Bioderma': Droplets,
+  'Nuxe': Leaf,
+  'Ducray': Sprout,
+  'Uriage': Waves,
+  'Mustela': Baby
+}
+
+// Static brand info with descriptions
 const staticBrandInfo = {
   'Roche': {
-    logo: '🏥',
     description: 'Produkte farmaceutike të certifikuara'
   },
   'La Roche-Posay': {
-    logo: '💎',
     description: 'Dermokozmetikë për lëkurë të ndjeshme'
   },
   'Vichy': {
-    logo: '🌊',
     description: 'Kujdes i përditshëm për lëkurën'
   },
   'Avène': {
-    logo: '🌸',
     description: 'Produkte të buta për lëkurë të irrituar'
   },
   'Eucerin': {
-    logo: '🧴',
     description: 'Shkencë për lëkurën tuaj'
   },
   'Bioderma': {
-    logo: '💧',
     description: 'Biologji në shërbim të dermatologjisë'
   },
   'Nuxe': {
-    logo: '🌿',
     description: 'Bukuria natyrore franceze'
   },
   'Ducray': {
-    logo: '🌱',
     description: 'Specialistë për flokët dhe lëkurën'
   },
   'Uriage': {
-    logo: '💙',
     description: 'Uji termal për shëndetin e lëkurës'
   },
   'Mustela': {
-    logo: '👶',
     description: 'Kujdes i specializuar për bebat'
   }
 }
@@ -55,13 +60,14 @@ const ShopByBrand = () => {
       setLoading(true)
       const response = await axios.get('http://localhost:3001/api/products/brands')
       
-      // Use all brands from API, just limit to first 5 for landing page
+      // Sort alfabetikisht dhe merr 5 të parët
       const combinedData = response.data
+        .sort((a, b) => a.brand.localeCompare(b.brand, 'sq-AL'))
         .map((brand, index) => ({
           id: index + 1,
           name: brand.brand,
           productCount: brand.product_count,
-          logo: staticBrandInfo[brand.brand]?.logo || '🏢',
+          Icon: brandIcons[brand.brand] || Building2,
           description: staticBrandInfo[brand.brand]?.description || 'Produkte të cilësisë së lartë'
         }))
         .slice(0, 5) // Show only first 5 brands on landing page
@@ -108,8 +114,8 @@ const ShopByBrand = () => {
               >
                 <div className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 group-hover:border-primary-300 h-full flex flex-col justify-between min-h-[200px]">
                   {/* Brand Logo */}
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                    {brand.logo}
+                  <div className="flex justify-center mb-4 text-primary-600 group-hover:scale-110 transition-transform duration-300">
+                    <brand.Icon className="w-10 h-10" />
                   </div>
 
                   {/* Brand Name */}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingBag, Truck, CreditCard, MapPin, Phone, User, Mail } from 'lucide-react';
+import { ShoppingBag, Truck, CreditCard, MapPin, Phone, User, Mail, PackageOpen } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import { formatPrice } from '../utils/currency';
@@ -305,7 +305,7 @@ const CheckoutPage = () => {
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
                     <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">💰</span>
+                      <CreditCard className="w-4 h-4 text-white" />
                     </div>
                   </div>
                   <div className="ml-3">
@@ -366,7 +366,7 @@ const CheckoutPage = () => {
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-100 rounded-md flex items-center justify-center text-gray-400">
-                        📦
+                        <PackageOpen className="w-6 h-6" />
                       </div>
                     )}
                   </div>
@@ -411,9 +411,10 @@ const CheckoutPage = () => {
             </div>
 
             {cartTotal < 30 && (
-              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md flex items-center gap-2">
+                <Truck className="w-4 h-4 text-blue-700 flex-shrink-0" />
                 <p className="text-blue-700 text-sm">
-                  💡 Shtoni {formatPrice(30 - cartTotal)} më shumë për transport falas!
+                  Shtoni {formatPrice(30 - cartTotal)} më shumë për transport falas!
                 </p>
               </div>
             )}

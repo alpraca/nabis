@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Grid, List, Filter, SortAsc, Package, ArrowLeft, ShoppingCart, Heart, Star } from 'lucide-react'
+import { Grid, List, Filter, SortAsc, Package, ArrowLeft, ShoppingCart, Star } from 'lucide-react'
 import axios from 'axios'
 import { useCart } from '../hooks/useCart'
 import { useToast } from '../hooks/useToast'

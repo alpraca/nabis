@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Star, Heart, ShoppingCart, Shield, Truck, RefreshCw } from 'lucide-react';
+import { Star, ShoppingCart, Shield, Truck, RefreshCw, PackageOpen } from 'lucide-react';
 import axios from 'axios';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
@@ -67,22 +67,6 @@ const ProductPageAPI = () => {
     }
     
     setAddingToCart(false);
-  };
-
-  const handleAddToFavorites = () => {
-    // Check if user is logged in first
-    if (!isLoggedIn()) {
-      const shouldLogin = window.confirm(
-        'Ju duhet të jeni të kyçur për të shtuar produktet në listën e dëshirave.\n\nDëshironi të kyçeni tani?'
-      );
-      if (shouldLogin) {
-        navigate('/hyrje', { state: { from: `/produkti/${id}` } });
-      }
-      return;
-    }
-
-    // For now, just show a message since favorites functionality isn't implemented yet
-    toast.success(`${product.name} u shtua në listën e dëshirave!`);
   };
 
   if (loading) {
@@ -199,7 +183,9 @@ const ProductPageAPI = () => {
                       alt={product.name}
                       className="w-full h-full object-cover cursor-zoom-in"
                       onError={(e) => {
-                        e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="24">📦 Nuk ka foto</text></svg>';
+                        e.target.onerror = null;
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center bg-gray-100"><svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M20.91 8.84 8.56 21.19a2 2 0 0 1-2.83 0l-5.46-5.46a2 2 0 0 1 0-2.83L12.6 .57a2 2 0 0 1 2.83 0l5.46 5.46a2 2 0 0 1 0 2.83Z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></div>';
                       }}
                     />
                     
@@ -233,8 +219,8 @@ const ProductPageAPI = () => {
                     )}
                   </>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-6xl text-gray-400">
-                    📦
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <PackageOpen className="w-16 h-16" />
                   </div>
                 )}
               </div>
@@ -322,15 +308,6 @@ const ProductPageAPI = () => {
                       ? 'Duke shtuar...' 
                       : 'Shto në shportë'
                   }
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleAddToFavorites}
-                  className="ml-4 flex items-center justify-center rounded-md px-3 py-3 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
-                >
-                  <Heart className="h-6 w-6" />
-                  <span className="sr-only">Shto në listën e dëshirave</span>
                 </button>
               </div>
             </form>

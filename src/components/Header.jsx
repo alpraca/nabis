@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, ShoppingCart, User, Menu, X, ChevronDown, LogOut } from 'lucide-react'
+import { Search, ShoppingCart, User, Menu, X, ChevronDown, LogOut, Settings } from 'lucide-react'
 import { useCart } from '../hooks/useCart'
 import { useAuth } from '../hooks/useAuth'
+import SearchModal from './SearchModal'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { cartItems } = useCart()
   const { user, logout } = useAuth()
   const userDropdownRef = useRef(null)
@@ -211,7 +213,10 @@ const Header = () => {
           {/* Right side icons - Desktop only */}
           <div className="hidden lg:flex items-center space-x-4">
             {/* Search */}
-            <button className="p-2 text-gray-600 hover:text-primary-600">
+            <button 
+              onClick={() => setIsSearchOpen(true)}
+              className="p-2 text-gray-600 hover:text-primary-600"
+            >
               <Search className="h-5 w-5" />
             </button>
 
@@ -236,10 +241,11 @@ const Header = () => {
                       {user.role === 'admin' && (
                         <Link
                           to="/nabis-admin-panel-2024"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           onClick={() => setUserDropdownOpen(false)}
                         >
-                          🔧 Admin Panel
+                          <Settings className="h-4 w-4 mr-2" />
+                          Admin Panel
                         </Link>
                       )}
                       <button
@@ -364,7 +370,13 @@ const Header = () => {
               {/* Mobile Actions */}
               <div className="border-t border-gray-200 mt-4 pt-4 space-y-3">
                 {/* Search */}
-                <button className="flex items-center w-full px-3 py-3 text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md">
+                <button 
+                  onClick={() => {
+                    setIsSearchOpen(true)
+                    setIsMenuOpen(false)
+                  }}
+                  className="flex items-center w-full px-3 py-3 text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md"
+                >
                   <Search className="h-5 w-5 mr-3" />
                   <span>Kërkoni</span>
                 </button>
@@ -398,10 +410,11 @@ const Header = () => {
                     {user.role === 'admin' && (
                       <Link
                         to="/nabis-admin-panel-2024"
-                        className="block px-3 py-2 text-gray-700 hover:text-primary-600"
+                        className="flex items-center px-3 py-2 text-gray-700 hover:text-primary-600"
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        🔧 Admin Panel
+                        <Settings className="h-4 w-4 mr-2" />
+                        Admin Panel
                       </Link>
                     )}
                     <button
@@ -430,6 +443,9 @@ const Header = () => {
           </div>
         )}
       </div>
+
+      {/* Search Modal */}
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </header>
   )
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { Pill } from 'lucide-react'
 
 const Hero = () => {
   const scrollToFooter = () => {
@@ -59,7 +60,9 @@ const Hero = () => {
               {/* Placeholder for hero image */}
               <div className="w-full h-full bg-white/70 rounded-2xl flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-6xl mb-4">💊</div>
+                  <div className="flex justify-center mb-4 text-primary-600">
+                    <Pill className="w-16 h-16" />
+                  </div>
                   <p className="text-gray-600 font-medium">Nabis Farmaci</p>
                   <p className="text-gray-500 text-sm">Shëndeti juaj është prioriteti ynë</p>
                 </div>

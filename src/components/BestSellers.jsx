@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Star, Heart } from 'lucide-react'
+import { Star } from 'lucide-react'
 
 const BestSellers = () => {
   // Sample products - in a real app, this would come from an API
@@ -122,11 +122,6 @@ const BestSellers = () => {
             )}
           </div>
         )}
-
-        {/* Wishlist Button */}
-        <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
-        </button>
 
         {/* Product Image Placeholder */}
         <div className="text-6xl">{product.image}</div>

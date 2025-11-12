@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, Link, Navigate } from 'react-router-dom';
-import { CheckCircle, Truck, Mail, Phone, ArrowLeft } from 'lucide-react';
+import { CheckCircle, Truck, Mail, Phone, ArrowLeft, PackageOpen } from 'lucide-react';
 import { formatPrice } from '../utils/currency';
 
 const OrderSuccessPage = () => {
@@ -83,7 +83,7 @@ const OrderSuccessPage = () => {
               <div className="flex items-start">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <span className="text-yellow-600 text-sm font-bold">📦</span>
+                    <PackageOpen className="w-4 h-4 text-yellow-600" />
                   </div>
                 </div>
                 <div className="ml-3">

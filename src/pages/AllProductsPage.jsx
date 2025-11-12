@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Star, Heart, ShoppingCart, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { Star, ShoppingCart, ChevronLeft, ChevronRight, Filter, PackageOpen } from 'lucide-react';
 import axios from 'axios';
 import { API_URL, API_BASE_URL } from '../config/api';
 import { formatPrice } from '../utils/currency';
@@ -22,6 +22,7 @@ const AllProductsPage = () => {
   const [selectedBrand, setSelectedBrand] = useState(searchParams.get('brand') || '');
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'name');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchParams.get('search') || '');
   const currentPage = parseInt(searchParams.get('page')) || 1;
   
   const [pagination, setPagination] = useState({
@@ -52,6 +53,15 @@ const AllProductsPage = () => {
     fetchFilters();
   }, []);
 
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
@@ -64,7 +74,7 @@ const AllProductsPage = () => {
         
         if (selectedCategory) params.category = selectedCategory;
         if (selectedBrand) params.brand = selectedBrand;
-        if (searchTerm) params.search = searchTerm;
+        if (debouncedSearchTerm) params.search = debouncedSearchTerm;
         
         const response = await axios.get(`${API_URL}/products`, { params });
         
@@ -87,7 +97,7 @@ const AllProductsPage = () => {
     };
 
     fetchProducts();
-  }, [currentPage, selectedCategory, selectedBrand, searchTerm]);
+  }, [currentPage, selectedCategory, selectedBrand, debouncedSearchTerm]);
 
   const handleFilterChange = (filterType, value) => {
     const newParams = new URLSearchParams(searchParams);
@@ -203,28 +213,21 @@ const AllProductsPage = () => {
           
           {/* Product Image */}
           <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center overflow-hidden h-56">
-            <button 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                // Add wishlist functionality here
-              }}
-              className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 hover:scale-110"
-            >
-              <Heart className="h-4 w-4 text-gray-600 hover:text-red-500 transition-colors" />
-            </button>
-
             {product.images && product.images.length > 0 ? (
               <img
                 src={`${API_BASE_URL}${product.images[0]}`}
                 alt={product.name}
                 className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                 onError={(e) => {
-                  e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="16">📦 Nuk ka foto</text></svg>';
+                  e.target.onerror = null;
+                  e.target.style.display = 'none';
+                  e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.91 8.84 8.56 21.19a2 2 0 0 1-2.83 0l-5.46-5.46a2 2 0 0 1 0-2.83L12.6 .57a2 2 0 0 1 2.83 0l5.46 5.46a2 2 0 0 1 0 2.83Z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></div>';
                 }}
               />
             ) : (
-              <div className="text-6xl text-gray-400 flex items-center justify-center h-full">📦</div>
+              <div className="flex items-center justify-center h-full text-gray-400">
+                <PackageOpen className="w-12 h-12" />
+              </div>
             )}
           </div>
 
@@ -513,7 +516,9 @@ const AllProductsPage = () => {
         </>
       ) : (
         <div className="text-center py-16">
-          <div className="text-6xl text-gray-400 mb-4">📦</div>
+          <div className="flex justify-center text-gray-400 mb-4">
+            <PackageOpen className="w-16 h-16" />
+          </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             Nuk ka produkte me këto filtra
           </h3>

@@ -18,10 +18,16 @@ const BrandPage = () => {
 
   useEffect(() => {
     if (searchTerm.trim() === '') {
-      setFilteredBrands(brands)
+      // Sort alfabetikisht A-Z
+      const sorted = [...brands].sort((a, b) => 
+        a.brand.localeCompare(b.brand, 'sq-AL')
+      )
+      setFilteredBrands(sorted)
     } else {
       const filtered = brands.filter(brand =>
         brand.brand.toLowerCase().includes(searchTerm.toLowerCase())
+      ).sort((a, b) => 
+        a.brand.localeCompare(b.brand, 'sq-AL')
       )
       setFilteredBrands(filtered)
     }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, PackageOpen, Truck } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import { formatPrice } from '../utils/currency';
@@ -88,12 +88,14 @@ const CartPage = () => {
                               alt={item.name}
                               className="w-full h-full object-cover rounded-md"
                               onError={(e) => {
-                                e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="12">📦</text></svg>';
+                                e.target.onerror = null;
+                                e.target.style.display = 'none';
+                                e.target.parentElement.innerHTML = '<div class="w-full h-full bg-gray-100 rounded-md flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M20.91 8.84 8.56 21.19a2 2 0 0 1-2.83 0l-5.46-5.46a2 2 0 0 1 0-2.83L12.6 .57a2 2 0 0 1 2.83 0l5.46 5.46a2 2 0 0 1 0 2.83Z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></div>';
                               }}
                             />
                           ) : (
-                            <div className="w-full h-full bg-gray-100 rounded-md flex items-center justify-center text-2xl text-gray-400">
-                              📦
+                            <div className="w-full h-full bg-gray-100 rounded-md flex items-center justify-center text-gray-400">
+                              <PackageOpen className="w-6 h-6" />
                             </div>
                           )}
                         </div>
@@ -212,8 +214,9 @@ const CartPage = () => {
                 </div>
 
                 <div className="mt-6 text-center">
-                  <p className="text-sm text-gray-600">
-                    🚚 Transport falas për porosi mbi {formatPrice(30)}
+                  <p className="text-sm text-gray-600 flex items-center justify-center gap-2">
+                    <Truck className="w-4 h-4" />
+                    Transport falas për porosi mbi {formatPrice(30)}
                   </p>
                 </div>
               </div>

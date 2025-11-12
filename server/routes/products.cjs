@@ -5,6 +5,41 @@ const { uploadProductImages, handleUploadError } = require('../middleware/upload
 
 const router = express.Router()
 
+// Search products endpoint
+router.get('/search', (req, res) => {
+  const { q } = req.query
+  
+  if (!q || q.trim().length < 2) {
+    return res.json([])
+  }
+
+  const searchTerm = `%${q.toLowerCase()}%`
+  const query = `
+    SELECT p.*, pi.image_url as image_url
+    FROM products p
+    LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.sort_order = 1
+    WHERE LOWER(p.name) LIKE ? 
+       OR LOWER(p.brand) LIKE ?
+       OR LOWER(p.description) LIKE ?
+    ORDER BY 
+      CASE 
+        WHEN LOWER(p.name) LIKE ? THEN 1
+        WHEN LOWER(p.brand) LIKE ? THEN 2
+        ELSE 3
+      END,
+      p.name
+    LIMIT 20
+  `
+  
+  db.all(query, [searchTerm, searchTerm, searchTerm, searchTerm, searchTerm], (err, products) => {
+    if (err) {
+      console.error('Search error:', err)
+      return res.status(500).json({ error: 'Gabim në kërkim' })
+    }
+    res.json(products)
+  })
+})
+
 // Debug route - temporary (must be before /:id route)
 router.get('/debug/product/:id', (req, res) => {
   const productQuery = 'SELECT * FROM products WHERE id = ?'

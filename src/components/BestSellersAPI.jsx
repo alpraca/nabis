@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, Heart, ShoppingCart } from 'lucide-react';
+import { Star, ShoppingCart, PackageOpen } from 'lucide-react';
 import axios from 'axios';
 import { API_BASE_URL, API_URL } from '../config/api';
 import { formatPrice } from '../utils/currency';
@@ -56,19 +56,6 @@ const BestSellersAPI = () => {
         
         {/* Product Image */}
         <div className="relative bg-gray-50 h-48 sm:h-64 flex items-center justify-center overflow-hidden">
-          {/* Wishlist Button */}
-          <button 
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              // Add to wishlist logic here
-              toast.success(`Shtove ${product.name} tek të preferuarat!`);
-            }}
-            className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
-          >
-            <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
-          </button>
-
           {/* Product Image */}
           {product.images && product.images.length > 0 ? (
             <img
@@ -76,11 +63,15 @@ const BestSellersAPI = () => {
               alt={product.name}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               onError={(e) => {
-                e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="16">📦 Nuk ka foto</text></svg>';
+                e.target.onerror = null;
+                e.target.style.display = 'none';
+                e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.91 8.84 8.56 21.19a2 2 0 0 1-2.83 0l-5.46-5.46a2 2 0 0 1 0-2.83L12.6 .57a2 2 0 0 1 2.83 0l5.46 5.46a2 2 0 0 1 0 2.83Z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></div>';
               }}
             />
           ) : (
-            <div className="text-6xl text-gray-400 flex items-center justify-center h-full">📦</div>
+            <div className="flex items-center justify-center h-full text-gray-400">
+              <PackageOpen className="w-12 h-12" />
+            </div>
           )}
         </div>
 

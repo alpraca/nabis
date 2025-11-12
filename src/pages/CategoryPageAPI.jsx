@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { Filter, Star, Heart, ShoppingCart, ChevronLeft, ChevronRight, Grid, List } from 'lucide-react';
+import { Filter, Star, ShoppingCart, ChevronLeft, ChevronRight, Grid, List, PackageOpen } from 'lucide-react';
 import axios from 'axios';
 import { API_URL, API_BASE_URL } from '../config/api';
 import { formatPrice } from '../utils/currency';
@@ -97,22 +97,6 @@ const CategoryPageAPI = () => {
       console.error('Error adding to cart:', error);
       toast.error('Gabim në shtimin në shportë');
     }
-  };
-
-  const handleAddToFavorites = (product) => {
-    // Check if user is logged in first
-    if (!isLoggedIn()) {
-      const shouldLogin = window.confirm(
-        'Ju duhet të jeni të kyçur për të shtuar produktet në listën e dëshirave.\n\nDëshironi të kyçeni tani?'
-      );
-      if (shouldLogin) {
-        navigate('/hyrje', { state: { from: window.location.pathname } });
-      }
-      return;
-    }
-
-    // For now, just show a message since favorites functionality isn't implemented yet
-    toast.success(`${product.name} u shtua në listën e dëshirave!`);
   };
 
   const handlePageChange = (newPage) => {
@@ -243,18 +227,6 @@ const CategoryPageAPI = () => {
           
           {/* Product Image - Fixed Height */}
           <div className="relative bg-gray-50 flex items-center justify-center overflow-hidden">
-            {/* Wishlist Button */}
-            <button 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleAddToFavorites(product);
-              }}
-              className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
-            >
-              <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
-            </button>
-
             {/* Product Image */}
             {product.images && product.images.length > 0 ? (
               <img
@@ -264,11 +236,15 @@ const CategoryPageAPI = () => {
                 onError={(e) => {
                   console.error(`❌ Image failed to load: ${product.images[0]}`);
                   console.error('Full image URL:', e.target.src);
-                  e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="16">📦 Nuk ka foto</text></svg>';
+                  e.target.onerror = null;
+                  e.target.style.display = 'none';
+                  e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.91 8.84 8.56 21.19a2 2 0 0 1-2.83 0l-5.46-5.46a2 2 0 0 1 0-2.83L12.6 .57a2 2 0 0 1 2.83 0l5.46 5.46a2 2 0 0 1 0 2.83Z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></div>';
                 }}
               />
             ) : (
-              <div className="text-6xl text-gray-400 flex items-center justify-center h-full">📦</div>
+              <div className="flex items-center justify-center h-full text-gray-400">
+                <PackageOpen className="w-12 h-12" />
+              </div>
             )}
           </div>
 
@@ -342,29 +318,21 @@ const CategoryPageAPI = () => {
           <div className="flex">
             {/* Product Image */}
             <div className="relative w-48 h-48 bg-gray-50 flex items-center justify-center overflow-hidden">
-              {/* Wishlist Button */}
-              <button 
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleAddToFavorites(product);
-                }}
-                className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
-              >
-                <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
-              </button>
-
               {product.images && product.images.length > 0 ? (
                 <img
                   src={`${API_BASE_URL}${product.images[0]}`}
                   alt={product.name}
                   className="h-full w-full object-cover"
                   onError={(e) => {
-                    e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="%23f3f4f6"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%236b7280" font-size="16">📦 Nuk ka foto</text></svg>';
+                    e.target.onerror = null;
+                    e.target.style.display = 'none';
+                    e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.91 8.84 8.56 21.19a2 2 0 0 1-2.83 0l-5.46-5.46a2 2 0 0 1 0-2.83L12.6 .57a2 2 0 0 1 2.83 0l5.46 5.46a2 2 0 0 1 0 2.83Z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></div>';
                   }}
                 />
               ) : (
-                <div className="text-4xl text-gray-400">📦</div>
+                <div className="flex items-center justify-center text-gray-400">
+                  <PackageOpen className="w-9 h-9" />
+                </div>
               )}
             </div>
 
@@ -591,7 +559,9 @@ const CategoryPageAPI = () => {
           </>
         ) : (
           <div className="text-center py-16">
-            <div className="text-6xl text-gray-400 mb-4">📦</div>
+            <div className="flex justify-center text-gray-400 mb-4">
+              <PackageOpen className="w-16 h-16" />
+            </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               Nuk ka produkte në këtë kategori
             </h3>

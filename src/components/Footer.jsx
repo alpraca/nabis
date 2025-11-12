@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Facebook, Instagram, Twitter, Youtube, Phone, Mail, MapPin, Clock } from 'lucide-react'
+import { Instagram, Phone, Mail, MapPin, Clock, Award, Truck, CheckCircle, Shield } from 'lucide-react'
+import { FaTiktok } from 'react-icons/fa'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
@@ -32,7 +33,7 @@ const Footer = () => {
   const categories = [
     { name: 'Dermokozmetikë', href: '/kategori/dermokozmetike' },
     { name: 'Higjena', href: '/kategori/higjena' },
-    { name: 'Mama dhe Bebat', href: '/kategori/mama-bebat' },
+    { name: 'Mama dhe Bebat', href: '/kategori/mama-dhe-bebat' },
     { name: 'Suplemente', href: '/kategori/suplemente' }
   ]
 
@@ -76,17 +77,11 @@ const Footer = () => {
             <div>
               <h4 className="font-semibold mb-3">Na Ndiqni</h4>
               <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-300">
-                  <Facebook className="h-5 w-5" />
+                <a href="https://www.instagram.com/farmaci.nabis/?hl=en" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary-400 transition-colors duration-300">
+                  <Instagram className="h-6 w-6" />
                 </a>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-300">
-                  <Instagram className="h-5 w-5" />
-                </a>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-300">
-                  <Twitter className="h-5 w-5" />
-                </a>
-                <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors duration-300">
-                  <Youtube className="h-5 w-5" />
+                <a href="https://www.tiktok.com/@farmaci.nabis" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary-400 transition-colors duration-300">
+                  <FaTiktok className="h-6 w-6" />
                 </a>
               </div>
             </div>
@@ -150,19 +145,19 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
             <div className="flex flex-col items-center">
-              <div className="text-3xl mb-2">🏆</div>
+              <Award className="h-10 w-10 text-primary-400 mb-2" />
               <div className="text-sm text-gray-300">Farmaci e Certifikuar</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-3xl mb-2">🚚</div>
+              <Truck className="h-10 w-10 text-primary-400 mb-2" />
               <div className="text-sm text-gray-300">Dërgesa e Shpejtë</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-3xl mb-2">💯</div>
+              <CheckCircle className="h-10 w-10 text-primary-400 mb-2" />
               <div className="text-sm text-gray-300">Cilësi e Garantuar</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-3xl mb-2">🔒</div>
+              <Shield className="h-10 w-10 text-primary-400 mb-2" />
               <div className="text-sm text-gray-300">Pagesa e Sigurt</div>
             </div>
           </div>

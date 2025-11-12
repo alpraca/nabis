@@ -134,7 +134,7 @@ const sendOrderConfirmationEmail = async (email, orderData, name) => {
     <tr style="border-bottom: 1px solid #e5e7eb;">
       <td style="padding: 15px 0; color: #1f2937;">${item.name}</td>
       <td style="padding: 15px 0; text-align: center; color: #6b7280;">${item.quantity}</td>
-      <td style="padding: 15px 0; text-align: right; color: #1f2937; font-weight: bold;">${item.price}€</td>
+      <td style="padding: 15px 0; text-align: right; color: #1f2937; font-weight: bold;">${item.price} Lek</td>
     </tr>
   `).join('');
   
@@ -187,7 +187,7 @@ const sendOrderConfirmationEmail = async (email, orderData, name) => {
             <tfoot>
               <tr style="border-top: 2px solid #e5e7eb;">
                 <td colspan="2" style="text-align: right; padding: 15px 0; color: #1f2937; font-weight: bold;">Totali:</td>
-                <td style="text-align: right; padding: 15px 0; color: #ec4899; font-weight: bold; font-size: 18px;">${total}€</td>
+                <td style="text-align: right; padding: 15px 0; color: #ec4899; font-weight: bold; font-size: 18px;">${total} Lek</td>
               </tr>
             </tfoot>
           </table>

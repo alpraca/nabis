@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import { ToastProvider } from './components/Toast'
 import ProtectedRoute from './components/ProtectedRoute'
+import ScrollToTop from './components/ScrollToTop'
 import Header from './components/Header'
 import AdminBanner from './components/AdminBanner'
 import Hero from './components/Hero'
@@ -38,6 +39,7 @@ function App() {
       <CartProvider>
         <ToastProvider>
           <Router>
+          <ScrollToTop />
           <div className="App">
             <Routes>
             {/* Public routes */}
