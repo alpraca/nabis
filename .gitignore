@@ -20,10 +20,10 @@ build/
 *.local
 
 # Database files
-*.sqlite
-*.db
-database.sqlite
-server/database.sqlite
+# *.sqlite - keeping database.sqlite in repo for deployment
+# *.db
+# database.sqlite
+# server/database.sqlite
 
 # Logs
 logs/
