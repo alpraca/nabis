@@ -31,6 +31,12 @@ import ResetPasswordPage from './pages/ResetPasswordPage'
 import OrdersPage from './pages/OrdersPage'
 import UserOrdersPage from './pages/UserOrdersPage'
 import AdminPanel from './pages/AdminPanel'
+import AboutUs from './pages/AboutUs'
+import FAQ from './pages/FAQ'
+import Shipping from './pages/Shipping'
+import Payment from './pages/Payment'
+import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
 import './App.css'
 
 function App() {
@@ -57,6 +63,14 @@ function App() {
             <Route path="/harruat-fjalekalimin" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/shporta" element={<PublicLayout><CartPage /></PublicLayout>} />
+            
+            {/* Footer pages */}
+            <Route path="/rreth-nesh" element={<PublicLayout><AboutUs /></PublicLayout>} />
+            <Route path="/faq" element={<PublicLayout><FAQ /></PublicLayout>} />
+            <Route path="/dergimi" element={<PublicLayout><Shipping /></PublicLayout>} />
+            <Route path="/pagesa" element={<PublicLayout><Payment /></PublicLayout>} />
+            <Route path="/privatesia" element={<PublicLayout><Privacy /></PublicLayout>} />
+            <Route path="/termat" element={<PublicLayout><Terms /></PublicLayout>} />
             
             {/* Protected user routes */}
             <Route path="/check-out" element={
