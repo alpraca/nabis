@@ -51,3 +51,19 @@ ehthumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Scraped data (already imported)
+Scraped_Products_*/
+
+# Upload reports (keep latest only)
+upload-report-*.json
+
+# Excel working files (keep one master)
+farmaon_products_classified*.xlsx
+farmaon_products_AI_classified.xlsx
+
+# Archived scripts
+archived_scripts/
+
+# Import success report (generated)
+IMPORT_SUCCESS_REPORT.md

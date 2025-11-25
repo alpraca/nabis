@@ -94,8 +94,8 @@ const FAQ = () => {
         },
         {
           question: 'Si mund të fshij llogarinë time?',
-          answer: 'Për të fshirë llogarinë, na dërgoni një kërkesë në info@nabisfarmaci.al. Do të procesohet brenda 7 ditëve pune.'
-        }
+          answer: 'Për të fshirë llogarinë, na dërgoni një kërkesë në farmacinabis@gmail.com. Do të procesohet brenda 7 ditëve pune.'
+        },
       ]
     },
     {

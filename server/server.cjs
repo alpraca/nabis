@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const rateLimit = require('express-rate-limit')
 const path = require('path')
-require('dotenv').config({ path: path.join(__dirname, '.env') })
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') })
 
 const { initializeDatabase } = require('./config/database.cjs')
 

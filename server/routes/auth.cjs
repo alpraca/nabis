@@ -99,16 +99,17 @@ router.post('/register', validateRegistration, async (req, res) => {
                 return res.status(500).json({ error: 'Gabim në krijimin e llogarisë' })
               }
               // Return token and user immediately
-              const token = generateToken(this.lastID)
+              const userObj = {
+                id: this.lastID,
+                name: sanitizedName,
+                email: sanitizedEmail,
+                role: 'user'
+              }
+              const token = generateToken(userObj)
               return res.status(201).json({
                 message: 'Llogaria u krijua dhe u verifikua (DEV_AUTO_VERIFY)',
                 token,
-                user: {
-                  id: this.lastID,
-                  name: sanitizedName,
-                  email: sanitizedEmail,
-                  role: 'user'
-                }
+                user: userObj
               })
             }
           )
@@ -143,6 +144,18 @@ router.post('/register', validateRegistration, async (req, res) => {
           
           if (!emailResult.success) {
             console.error('Failed to send verification email:', emailResult.error)
+            
+            // In development with fallback enabled, still allow registration but log the code
+            if (process.env.DEV_EMAIL_FALLBACK === 'true') {
+              console.log('🔑 DEV_EMAIL_FALLBACK: Verification code for', email, ':', verificationCode)
+              return res.status(200).json({
+                message: 'Kodi i verifikimit u krijua (DEV: shiko console-in e serverit)',
+                email: email,
+                requiresVerification: true,
+                debugCode: verificationCode // Only in dev mode
+              })
+            }
+            
             return res.status(500).json({ error: 'Gabim në dërgimin e email-it' })
           }
 
@@ -205,17 +218,18 @@ router.post('/verify-registration', async (req, res) => {
             db.run('DELETE FROM pending_registrations WHERE email = ?', [email])
 
             // Generate login token
-            const token = generateToken(this.lastID)
+            const userObj = {
+              id: this.lastID,
+              name: pending.name,
+              email: pending.email,
+              role: 'user'
+            }
+            const token = generateToken(userObj)
 
             res.status(201).json({
               message: 'Llogaria u krijua me sukses!',
               token,
-              user: {
-                id: this.lastID,
-                name: pending.name,
-                email: pending.email,
-                role: 'user'
-              }
+              user: userObj
             })
           }
         )
