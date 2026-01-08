@@ -8,7 +8,7 @@ const { generateToken, verifyToken, getUserById } = require('../middleware/auth.
 const { sendVerificationEmail, sendPasswordResetEmail, sendTemporaryLoginCode } = require('../services/emailService.cjs')
 
 const router = express.Router()
-
+ 
 // Input validation middleware
 const validateRegistration = [
   body('name')

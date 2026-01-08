@@ -135,7 +135,8 @@ const CheckoutPage = () => {
   };
 
   const cartTotal = getCartTotal();
-  const shippingCost = cartTotal >= 30 ? 0 : 3;
+  // Free shipping over 5000 Lekë, 300L for Tirana, 500L for other cities (default to Tirana)
+  const shippingCost = cartTotal >= 5000 ? 0 : (formData.shippingCity?.toLowerCase().includes('tiran') ? 300 : 500);
   const finalTotal = cartTotal + shippingCost;
 
   if (cartItems.length === 0) {

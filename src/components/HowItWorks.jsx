@@ -23,7 +23,7 @@ const HowItWorks = () => {
       icon: <Truck className="h-12 w-12 text-accent-600" />,
       title: 'Merrni Produktet Tuaja',
       description: 'Vetëm disa klikime dhe porosia juaj është në rrugë!',
-      details: 'Shijoni opsionet e shpejta si Dërgesa po Ditë ose Dërgesa Ditën e Ardhshme. Dërgesa falas aplikohet për porositë mbi 5000 lekë. Shihni detajet e plota në Politikën e Dërgimeve.',
+      details: 'Shijoni opsionet e shpejta si Dërgesa po Ditë ose Dërgesa Ditën e Ardhshme. Dërgesa falas aplikohet për porositë mbi 5,000 lekë. Kostoja e dërgimit: 300 Lekë (Tiranë), 500 Lekë (qytete të tjera). Shihni detajet e plota në Politikën e Dërgimeve.',
       buttonText: '',
       buttonLink: ''
     }

@@ -53,16 +53,16 @@ const Shipping = () => {
               <div className="bg-gray-50 rounded-lg p-6">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-gray-200 pb-3">
-                    <span className="text-gray-700">Porosi mbi 3,000 Lekë</span>
+                    <span className="text-gray-700">Porosi mbi 5,000 Lekë</span>
                     <span className="font-semibold text-green-600">FALAS</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-200 pb-3">
-                    <span className="text-gray-700">Tiranë (nën 3,000 Lekë)</span>
+                    <span className="text-gray-700">Tiranë (nën 5,000 Lekë)</span>
                     <span className="font-semibold text-gray-900">300 Lekë</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-700">Qytete të tjera (nën 3,000 Lekë)</span>
-                    <span className="font-semibold text-gray-900">400 Lekë</span>
+                    <span className="text-gray-700">Qytete të tjera (nën 5,000 Lekë)</span>
+                    <span className="font-semibold text-gray-900">500 Lekë</span>
                   </div>
                 </div>
               </div>

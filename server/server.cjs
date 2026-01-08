@@ -9,26 +9,26 @@ const { initializeDatabase } = require('./config/database.cjs')
 const app = express()
 const PORT = process.env.PORT || 3001
 
-// Rate limiting
+// Rate limiting - DISABLED FOR DEVELOPMENT
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // Increased for development - Limit each IP to 1000 requests per windowMs
+  max: 999999, // Essentially unlimited for development
   message: 'Shumë kërkesa nga ky IP, provoni përsëri më vonë.',
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  standardHeaders: true,
+  legacyHeaders: false,
 })
 
-// Auth rate limiting (more lenient for development)
+// Auth rate limiting - DISABLED FOR DEVELOPMENT
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200, // Increased for development - Limit each IP to 200 auth requests per windowMs
+  max: 999999, // Essentially unlimited for development
   message: 'Shumë tentativa hyrjeje, provoni përsëri pas 15 minutave.',
   standardHeaders: true,
   legacyHeaders: false,
 })
 
-// Apply rate limiting
-app.use(limiter)
+// Apply rate limiting (disabled in dev)
+// app.use(limiter)
 
 // Middleware
 app.use(cors({
@@ -36,6 +36,9 @@ app.use(cors({
     'http://localhost:5173', 
     'http://localhost:5174', 
     'http://localhost:5175',
+    'http://192.168.0.166:5173',
+    'http://192.168.0.166:5174',
+    'http://192.168.0.166:5175',
     'http://192.168.100.96:5173',
     'http://192.168.100.96:5174',
     'http://192.168.100.96:5175'
@@ -49,6 +52,9 @@ app.use((req, res, next) => {
     'http://localhost:5173',
     'http://localhost:5174',
     'http://localhost:5175',
+    'http://192.168.0.166:5173',
+    'http://192.168.0.166:5174',
+    'http://192.168.0.166:5175',
     'http://192.168.100.96:5173',
     'http://192.168.100.96:5174',
     'http://192.168.100.96:5175'

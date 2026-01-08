@@ -18,7 +18,7 @@ const FAQ = () => {
         },
         {
           question: 'Sa kushton dërgesa?',
-          answer: 'Dërgesa është falas për porosi mbi 3000 Lekë. Për porosi nën këtë shumë, kostoja e dërgimit është 300 Lekë për Tiranën dhe 400 Lekë për qytetet e tjera.'
+          answer: 'Dërgesa është falas për porosi mbi 5000 Lekë. Për porosi nën këtë shumë, kostoja e dërgimit është 300 Lekë për Tiranën dhe 500 Lekë për qytetet e tjera.'
         },
         {
           question: 'Mund të ndryshoj adresen e dërgimit pas bërjes së porosisë?',

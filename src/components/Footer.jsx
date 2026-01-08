@@ -57,19 +57,19 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-primary-400" />
-                <span className="text-gray-300">+355 69 123 4567</span>
+                <span className="text-gray-300">+355 69 206 9023</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-primary-400" />
-                <span className="text-gray-300">farmacinabis@gmail.com</span>
+                <span className="text-gray-300">nabisfarmaci@gmail.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="h-5 w-5 text-primary-400" />
-                <span className="text-gray-300">Rruga e Durrësit, Tiranë</span>
+                <span className="text-gray-300">Rruga Myslym Shyri, Tiranë</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Clock className="h-5 w-5 text-primary-400" />
-                <span className="text-gray-300">Hënë - Premte: 08:00 - 20:00</span>
+                <span className="text-gray-300">E Hënë - E Diel: 08:30 - 22:00</span>
               </div>
             </div>
 

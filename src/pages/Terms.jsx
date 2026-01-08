@@ -104,7 +104,7 @@ const Terms = () => {
                 4.1. Dërgimi brenda Tiranës: 24 orë. Qytete të tjera: 2-3 ditë pune.
               </p>
               <p>
-                4.2. Kostoja e dërgimit: Falas për porosi mbi 3,000 Lekë. Nën këtë shumë: 300 Lekë (Tiranë), 400 Lekë (qytete të tjera).
+                4.2. Kostoja e dërgimit: Falas për porosi mbi 5,000 Lekë. Nën këtë shumë: 300 Lekë (Tiranë), 500 Lekë (qytete të tjera).
               </p>
               <p>
                 4.3. Ju duhet të jeni i disponueshëm në adresën e specifikuar gjatë orarit të dërgimit.

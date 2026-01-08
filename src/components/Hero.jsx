@@ -1,8 +1,22 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Pill } from 'lucide-react'
+import axios from 'axios'
 
 const Hero = () => {
+  const [heroImage, setHeroImage] = useState(null)
+
+  useEffect(() => {
+    // Load hero image from backend
+    axios.get('http://localhost:3001/api/settings/hero/image')
+      .then(response => {
+        setHeroImage(response.data.imageUrl)
+      })
+      .catch(error => {
+        console.error('Error loading hero image:', error)
+      })
+  }, [])
+
   const scrollToFooter = () => {
     const footerElement = document.getElementById('kontakt')
     if (footerElement) {
@@ -57,23 +71,31 @@ const Hero = () => {
           {/* Right Content - Hero Image */}
           <div className="relative">
             <div className="bg-gradient-to-br from-primary-100 to-secondary-100 rounded-3xl p-8 h-96">
-              {/* Placeholder for hero image */}
-              <div className="w-full h-full bg-white/70 rounded-2xl flex items-center justify-center">
-                <div className="text-center">
-                  <div className="flex justify-center mb-4 text-primary-600">
-                    <Pill className="w-16 h-16" />
+              {/* Hero Image or Placeholder */}
+              <div className="w-full h-full bg-white/70 rounded-2xl flex items-center justify-center overflow-hidden">
+                {heroImage ? (
+                  <img 
+                    src={`http://localhost:3001${heroImage}`}
+                    alt="Nabis Farmaci" 
+                    className="w-full h-full object-cover rounded-2xl"
+                  />
+                ) : (
+                  <div className="text-center">
+                    <div className="flex justify-center mb-4 text-primary-600">
+                      <Pill className="w-16 h-16" />
+                    </div>
+                    <p className="text-gray-600 font-medium">Nabis Farmaci</p>
+                    <p className="text-gray-500 text-sm">Shëndeti juaj është prioriteti ynë</p>
                   </div>
-                  <p className="text-gray-600 font-medium">Nabis Farmaci</p>
-                  <p className="text-gray-500 text-sm">Shëndeti juaj është prioriteti ynë</p>
-                </div>
+                )}
               </div>
             </div>
 
             {/* Floating elements */}
             <div className="absolute -top-4 -right-4 bg-primary-600 text-white p-4 rounded-full shadow-lg">
               <div className="text-center">
-                <div className="font-bold">Dërgesa</div>
-                <div className="text-xs">FALAS</div>
+                <div className="font-bold">Ulje të</div>
+                <div className="text-xs">ÇMENDURA</div>
               </div>
             </div>
 

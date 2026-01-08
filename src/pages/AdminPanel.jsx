@@ -18,6 +18,9 @@ const AdminPanel = () => {
   const [isAddingProduct, setIsAddingProduct] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
   const [bannerText, setBannerText] = useState('')
+  const [heroImage, setHeroImage] = useState(null)
+  const [heroImageFile, setHeroImageFile] = useState(null)
+  const [heroImagePreview, setHeroImagePreview] = useState(null)
   const [loading, setLoading] = useState(false)
   const [stats, setStats] = useState({
     totalProducts: 0,
@@ -35,6 +38,7 @@ const AdminPanel = () => {
   useEffect(() => {
     loadProducts()
     loadBannerText()
+    loadHeroImage()
     loadStats()
     loadOrders()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,6 +61,67 @@ const AdminPanel = () => {
       setBannerText(response.data.bannerText)
     } catch (error) {
       console.error('Error loading banner:', error)
+    }
+  }
+
+  const loadHeroImage = async () => {
+    try {
+      const response = await api.get('/settings/hero/image')
+      setHeroImage(response.data.imageUrl)
+    } catch (error) {
+      console.error('Error loading hero image:', error)
+    }
+  }
+
+  const handleHeroImageChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setHeroImageFile(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setHeroImagePreview(reader.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const uploadHeroImage = async () => {
+    if (!heroImageFile) return
+
+    setLoading(true)
+    try {
+      const formData = new FormData()
+      formData.append('heroImage', heroImageFile)
+
+      const response = await api.post('/settings/hero/image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+
+      setHeroImage(response.data.imageUrl)
+      setHeroImageFile(null)
+      setHeroImagePreview(null)
+      alert('Imazhi u ngarkua me sukses!')
+    } catch (error) {
+      console.error('Error uploading hero image:', error)
+      alert('Gabim në ngarkimin e imazhit')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const deleteHeroImage = async () => {
+    if (!confirm('Jeni të sigurt që dëshironi ta fshini këtë imazh?')) return
+
+    setLoading(true)
+    try {
+      await api.delete('/settings/hero/image')
+      setHeroImage(null)
+      alert('Imazhi u fshi me sukses!')
+    } catch (error) {
+      console.error('Error deleting hero image:', error)
+      alert('Gabim në fshirjen e imazhit')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -897,6 +962,96 @@ const AdminPanel = () => {
                   <li>• Lëreni bosh për ta fshehur banner-in</li>
                   <li>• Ndryshimet aplikohen menjëherë në faqe</li>
                 </ul>
+              </div>
+            </div>
+
+            {/* Hero Image Section */}
+            <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6 mt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Imazhi i Landing Page</h3>
+              
+              {/* Current Image Display */}
+              {heroImage && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Imazhi Aktual
+                  </label>
+                  <div className="relative inline-block">
+                    <img 
+                      src={`http://localhost:3001${heroImage}`}
+                      alt="Hero" 
+                      className="w-64 h-64 object-cover rounded-lg border-2 border-gray-300"
+                    />
+                    <button
+                      onClick={deleteHeroImage}
+                      disabled={loading}
+                      className="absolute top-2 right-2 bg-red-600 text-white p-2 rounded-full hover:bg-red-700 disabled:opacity-50"
+                      title="Fshi Imazhin"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Image Preview */}
+              {heroImagePreview && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Parashikimi i Imazhit të Ri
+                  </label>
+                  <img 
+                    src={heroImagePreview}
+                    alt="Preview" 
+                    className="w-64 h-64 object-cover rounded-lg border-2 border-primary-300"
+                  />
+                </div>
+              )}
+
+              {/* Upload Section */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {heroImage ? 'Ndrysho Imazhin' : 'Ngarko Imazh'}
+                  </label>
+                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleHeroImageChange}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+                    />
+                    {heroImageFile && (
+                      <button
+                        onClick={uploadHeroImage}
+                        disabled={loading}
+                        className="w-full sm:w-auto bg-primary-600 text-white px-4 sm:px-6 py-2 rounded-md hover:bg-primary-700 disabled:opacity-50 flex items-center justify-center space-x-2 text-sm"
+                      >
+                        {loading ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            <span>Duke ngarkuar...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="h-4 w-4" />
+                            <span>Ngarko</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-4 bg-blue-50 rounded-md">
+                  <h4 className="text-sm font-medium text-blue-800 mb-2">Udhëzime:</h4>
+                  <ul className="text-sm text-blue-700 space-y-1">
+                    <li>• Imazhi shfaqet në seksionin kryesor të faqes</li>
+                    <li>• Formatet e mbështetura: JPG, PNG, GIF, WebP</li>
+                    <li>• Madhësia maksimale: 5MB</li>
+                    <li>• Rekomandohet: 800x600px ose më i madh</li>
+                    <li>• Nëse nuk ka imazh, shfaqet ikona standarde</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
