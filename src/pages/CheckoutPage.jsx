@@ -20,6 +20,7 @@ const CheckoutPage = () => {
     notes: ''
   });
   
+  const [shippingZone, setShippingZone] = useState('tirane-brenda'); // Default to Tiranë brenda unazës
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -135,8 +136,24 @@ const CheckoutPage = () => {
   };
 
   const cartTotal = getCartTotal();
-  // Free shipping over 5000 Lekë, 300L for Tirana, 500L for other cities (default to Tirana)
-  const shippingCost = cartTotal >= 5000 ? 0 : (formData.shippingCity?.toLowerCase().includes('tiran') ? 300 : 500);
+  
+  // Calculate shipping based on selected zone
+  const getShippingCost = () => {
+    switch(shippingZone) {
+      case 'tirane-brenda':
+        return 200; // Tiranë brenda unazës
+      case 'tirane-jashte':
+        return 300; // Tiranë jashtë unazës
+      case 'rrethe':
+        return 300; // Rrethet
+      case 'kosove':
+        return 600; // Kosovë
+      default:
+        return 200;
+    }
+  };
+  
+  const shippingCost = getShippingCost();
   const finalTotal = cartTotal + shippingCost;
 
   if (cartItems.length === 0) {
@@ -295,6 +312,88 @@ const CheckoutPage = () => {
               </div>
             </div>
 
+            {/* Shipping Zone Selection */}
+            <div className="bg-white p-6 rounded-lg border border-gray-200">
+              <h2 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                <Truck className="h-5 w-5 mr-2" />
+                Zona e Transportit
+              </h2>
+              
+              <div className="space-y-3">
+                <label className="flex items-start p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors" 
+                  style={{ borderColor: shippingZone === 'tirane-brenda' ? '#2563eb' : '#e5e7eb' }}>
+                  <input
+                    type="radio"
+                    name="shippingZone"
+                    value="tirane-brenda"
+                    checked={shippingZone === 'tirane-brenda'}
+                    onChange={(e) => setShippingZone(e.target.value)}
+                    className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500"
+                  />
+                  <div className="ml-3 flex-1">
+                    <span className="block text-sm font-medium text-gray-900">
+                      Tiranë brenda unazës
+                    </span>
+                    <span className="block text-sm text-gray-500">200 LEK</span>
+                  </div>
+                </label>
+
+                <label className="flex items-start p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                  style={{ borderColor: shippingZone === 'tirane-jashte' ? '#2563eb' : '#e5e7eb' }}>
+                  <input
+                    type="radio"
+                    name="shippingZone"
+                    value="tirane-jashte"
+                    checked={shippingZone === 'tirane-jashte'}
+                    onChange={(e) => setShippingZone(e.target.value)}
+                    className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500"
+                  />
+                  <div className="ml-3 flex-1">
+                    <span className="block text-sm font-medium text-gray-900">
+                      Tiranë jashtë unazës
+                    </span>
+                    <span className="block text-sm text-gray-500">300 LEK</span>
+                  </div>
+                </label>
+
+                <label className="flex items-start p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                  style={{ borderColor: shippingZone === 'rrethe' ? '#2563eb' : '#e5e7eb' }}>
+                  <input
+                    type="radio"
+                    name="shippingZone"
+                    value="rrethe"
+                    checked={shippingZone === 'rrethe'}
+                    onChange={(e) => setShippingZone(e.target.value)}
+                    className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500"
+                  />
+                  <div className="ml-3 flex-1">
+                    <span className="block text-sm font-medium text-gray-900">
+                      Rrethet
+                    </span>
+                    <span className="block text-sm text-gray-500">300 LEK</span>
+                  </div>
+                </label>
+
+                <label className="flex items-start p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                  style={{ borderColor: shippingZone === 'kosove' ? '#2563eb' : '#e5e7eb' }}>
+                  <input
+                    type="radio"
+                    name="shippingZone"
+                    value="kosove"
+                    checked={shippingZone === 'kosove'}
+                    onChange={(e) => setShippingZone(e.target.value)}
+                    className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500"
+                  />
+                  <div className="ml-3 flex-1">
+                    <span className="block text-sm font-medium text-gray-900">
+                      Kosovë
+                    </span>
+                    <span className="block text-sm text-gray-500">600 LEK</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
             {/* Payment Method */}
             <div className="bg-white p-6 rounded-lg border border-gray-200">
               <h2 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
@@ -401,7 +500,7 @@ const CheckoutPage = () => {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Transporti</span>
                 <span className="font-medium">
-                  {shippingCost === 0 ? 'Falas' : `${formatPrice(shippingCost)}`}
+                  {formatPrice(shippingCost)}
                 </span>
               </div>
               
@@ -410,15 +509,6 @@ const CheckoutPage = () => {
                 <span className="text-primary-600">{formatPrice(finalTotal)}</span>
               </div>
             </div>
-
-            {cartTotal < 30 && (
-              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md flex items-center gap-2">
-                <Truck className="w-4 h-4 text-blue-700 flex-shrink-0" />
-                <p className="text-blue-700 text-sm">
-                  Shtoni {formatPrice(30 - cartTotal)} më shumë për transport falas!
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </div>

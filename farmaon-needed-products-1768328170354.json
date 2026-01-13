@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Pharmasept Hygienic Cleansing Scrub",
+    "brand": "Pharmasept",
+    "category": "dermokozmetikë",
+    "subcategory": "Pastrimi",
+    "price": 1450,
+    "url": "https://farmaon.al/product/pharmasept-hygienic-cleansing-scrub/",
+    "stock_quantity": 100,
+    "image_url": "",
+    "description": ""
+  },
+  {
+    "name": "Pharmasept Derma Balance Cleansing Gel",
+    "brand": "Pharmasept",
+    "category": "dermokozmetikë",
+    "subcategory": "Pastrimi",
+    "price": 1060,
+    "url": "https://farmaon.al/product/pharmasept-derma-balance-cleansing-gel/",
+    "stock_quantity": 100,
+    "image_url": "",
+    "description": ""
+  },
+  {
+    "name": "SelfSKN Acqua Pura &#8211; Cleansing Foam",
+    "brand": "SelfSKN",
+    "category": "dermokozmetikë",
+    "subcategory": "Pastrimi",
+    "price": 2600,
+    "url": "https://farmaon.al/product/selfskn-acqua-pura-cleansing-foam/",
+    "stock_quantity": 100,
+    "image_url": "",
+    "description": ""
+  }
+]

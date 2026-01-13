@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Nutriva Omega 3 TG",
+    "brand": "Nutriva",
+    "category": "suplemente",
+    "subcategory": "Omega-3 dhe DHA",
+    "price": 5500,
+    "url": "https://farmaon.al/product/nutriva-omega-3-tg/",
+    "stock_quantity": 100,
+    "image_url": "",
+    "description": ""
+  },
+  {
+    "name": "Nutriva Epaval Fegato",
+    "brand": "Nutriva",
+    "category": "suplemente",
+    "subcategory": "Omega-3 dhe DHA",
+    "price": 4530,
+    "url": "https://farmaon.al/product/nutriva-epaval-fegato/",
+    "stock_quantity": 100,
+    "image_url": "",
+    "description": ""
+  }
+]

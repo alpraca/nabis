@@ -169,18 +169,11 @@ const CartPage = () => {
                     <span className="font-medium">{formatPrice(getCartTotal())}</span>
                   </div>
                   
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Transporti</span>
-                    <span className="font-medium">
-                      {getCartTotal() >= 30 ? 'Falas' : formatPrice(3)}
-                    </span>
-                  </div>
-                  
                   <div className="border-t border-gray-200 pt-4">
                     <div className="flex justify-between text-lg font-medium">
                       <span>Totali</span>
                       <span>
-                        {formatPrice(getCartTotal() + (getCartTotal() >= 30 ? 0 : 3))}
+                        {formatPrice(getCartTotal())}
                       </span>
                     </div>
                   </div>
@@ -216,7 +209,7 @@ const CartPage = () => {
                 <div className="mt-6 text-center">
                   <p className="text-sm text-gray-600 flex items-center justify-center gap-2">
                     <Truck className="w-4 h-4" />
-                    Transport falas për porosi mbi {formatPrice(30)}
+                    Kostoja e transportit llogaritet në checkout
                   </p>
                 </div>
               </div>

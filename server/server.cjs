@@ -80,6 +80,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
+// Serve public images (for product images)
+app.use('/images', express.static(path.join(__dirname, '..', 'public', 'images')))
+
 // Routes with rate limiting
 app.use('/api/auth', authLimiter, require('./routes/auth.cjs'))
 app.use('/api/products', require('./routes/products.cjs'))
