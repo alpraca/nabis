@@ -126,11 +126,11 @@ async function consolidateImages() {
   });
 }
 
-async function fixDuplicateAssignments() {
+async function checkDuplicateAssignments() {
   return new Promise(async (resolve, reject) => {
     const db = new sqlite3.Database(dbPath);
     
-    console.log('🔧 Fixing duplicate image assignments...');
+    console.log('🔍 Validating image assignments (no fixing)...');
     
     try {
       // Find all images shared by multiple products
@@ -149,134 +149,17 @@ async function fixDuplicateAssignments() {
       });
       
       if (sharedImages.length === 0) {
-        console.log('   ✅ No duplicate assignments found');
+        console.log(`   ✅ All images are uniquely assigned (no duplicates)`);
         db.close();
-        return resolve({ fixed: 0 });
+        resolve({ checked: true, duplicatesFound: 0 });
+        return;
       }
       
-      console.log(`   📦 Found ${sharedImages.length} images shared by multiple products`);
+      console.log(`   ⚠️  WARNING: Found ${sharedImages.length} images still shared by multiple products`);
+      console.log(`   This should not happen - run permanent-duplicate-fix.cjs if needed`);
       
-      // Get all available images
-      const availableImages = getAllImages(CONSOLIDATED_DIR);
-      const availableFilenames = availableImages.map(img => img.filename);
-      
-      // For each shared image, keep it for the first product and assign different images to others
-      let fixed = 0;
-      const usedImages = new Set();
-      
-      for (const shared of sharedImages) {
-        const productIds = shared.product_ids.split(',').map(id => parseInt(id));
-        const imageUrl = shared.image_url;
-        
-        // Keep original image for first product
-        usedImages.add(path.basename(imageUrl));
-        
-        // For remaining products, try to find better matches
-        for (let i = 1; i < productIds.length; i++) {
-          const productId = productIds[i];
-          
-          // Get product info
-          const product = await new Promise((resolveQuery, rejectQuery) => {
-            db.get(`
-              SELECT id, name, brand FROM products WHERE id = ?
-            `, [productId], (err, row) => {
-              if (err) rejectQuery(err);
-              else resolveQuery(row);
-            });
-          });
-          
-          if (!product) continue;
-          
-          // Try to find a better matching image
-          const productNormalized = product.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-          const brandNormalized = (product.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-          
-          // For Comfort Zone products, use stricter matching
-          const isComfortZone = product.brand && product.brand.toLowerCase().includes('comfort zone');
-          const productWords = product.name.toLowerCase()
-            .replace(/comfort\s*zone/gi, '')
-            .split(/[\s\-_]+/)
-            .filter(w => w.length > 3);
-          
-          let bestMatch = null;
-          let bestScore = 0;
-          
-          for (const availableImg of availableImages) {
-            if (usedImages.has(availableImg.filename)) continue;
-            
-            const imgNormalized = availableImg.filename.toLowerCase().replace(/[^a-z0-9]/g, '');
-            let score = 0;
-            
-            if (isComfortZone && availableImg.filename.toLowerCase().startsWith('comfort-zone')) {
-              // Strict matching for Comfort Zone
-              const matchingWords = productWords.filter(word => {
-                const wordNorm = word.replace(/[^a-z0-9]/g, '');
-                return wordNorm.length > 3 && imgNormalized.includes(wordNorm);
-              });
-              score = matchingWords.length * 150;
-              if (matchingWords.length >= 2) score += 300;
-            } else {
-              // Regular matching for other brands
-              // Check for brand match
-              if (brandNormalized && imgNormalized.includes(brandNormalized.replace(/\s+/g, ''))) {
-                score += 100;
-              }
-              
-              // Check for product name words
-              const matchingWords = productWords.filter(word => imgNormalized.includes(word));
-              score += matchingWords.length * 50;
-            }
-            
-            if (score > bestScore) {
-              bestScore = score;
-              bestMatch = availableImg;
-            }
-          }
-          
-          // Increased minimum score requirement
-          const minScore = isComfortZone ? 300 : 50;
-          
-          if (bestMatch && bestScore >= minScore) {
-            // Update product to use new image
-            await new Promise((resolveUpdate, rejectUpdate) => {
-              db.run(`
-                UPDATE product_images
-                SET image_url = ?
-                WHERE product_id = ? AND sort_order = 0
-              `, [`/images/products/${bestMatch.filename}`, productId], (err) => {
-                if (err) rejectUpdate(err);
-                else resolveUpdate();
-              });
-            });
-            
-            usedImages.add(bestMatch.filename);
-            fixed++;
-          } else if (!isComfortZone) {
-            // For non-Comfort Zone, assign any unused image
-            const unusedImage = availableImages.find(img => !usedImages.has(img.filename));
-            if (unusedImage) {
-              await new Promise((resolveUpdate, rejectUpdate) => {
-                db.run(`
-                  UPDATE product_images
-                  SET image_url = ?
-                  WHERE product_id = ? AND sort_order = 0
-                `, [`/images/products/${unusedImage.filename}`, productId], (err) => {
-                  if (err) rejectUpdate(err);
-                  else resolveUpdate();
-                });
-              });
-              
-              usedImages.add(unusedImage.filename);
-              fixed++;
-            }
-          }
-        }
-      }
-      
-      console.log(`   ✅ Fixed ${fixed} duplicate assignments`);
       db.close();
-      resolve({ fixed });
-      
+      resolve({ checked: true, duplicatesFound: sharedImages.length });
     } catch (error) {
       db.close();
       reject(error);
@@ -324,13 +207,13 @@ async function updateAllReferences() {
 async function autoConsolidateImages() {
   try {
     const consolidateResult = await consolidateImages();
-    const fixResult = await fixDuplicateAssignments();
+    const checkResult = await checkDuplicateAssignments();
     const updateResult = await updateAllReferences();
     
     return {
       success: true,
       consolidated: consolidateResult,
-      fixed: fixResult,
+      validated: checkResult,
       updated: updateResult
     };
   } catch (error) {
