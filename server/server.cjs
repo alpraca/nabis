@@ -5,6 +5,7 @@ const path = require('path')
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') })
 
 const { initializeDatabase } = require('./config/database.cjs')
+const { runAutostart } = require('./autostart/index.cjs')
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -117,6 +118,11 @@ initializeDatabase()
       console.log(`🌐 Network: http://192.168.100.96:${PORT}`)
       console.log(`📁 Uploads folder: ${path.join(__dirname, 'uploads')}`)
       console.log(`🗄️  Database: ${path.join(__dirname, 'database.sqlite')}`)
+      
+      // Run autostart tasks after server is up
+      runAutostart().catch(err => {
+        console.error('⚠️  Autostart encountered an error:', err.message)
+      })
     })
   })
   .catch((error) => {

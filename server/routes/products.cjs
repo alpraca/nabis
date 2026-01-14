@@ -15,12 +15,13 @@ router.get('/search', (req, res) => {
 
   const searchTerm = `%${q.toLowerCase()}%`
   const query = `
-    SELECT p.*, pi.image_url as image_url
+    SELECT p.*, GROUP_CONCAT(pi.image_url ORDER BY pi.sort_order) as images
     FROM products p
-    LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.sort_order = 1
+    LEFT JOIN product_images pi ON p.id = pi.product_id
     WHERE LOWER(p.name) LIKE ? 
        OR LOWER(p.brand) LIKE ?
        OR LOWER(p.description) LIKE ?
+    GROUP BY p.id
     ORDER BY 
       CASE 
         WHEN LOWER(p.name) LIKE ? THEN 1
@@ -36,7 +37,14 @@ router.get('/search', (req, res) => {
       console.error('Search error:', err)
       return res.status(500).json({ error: 'Gabim në kërkim' })
     }
-    res.json(products)
+    
+    // Process images
+    const processedProducts = products.map(product => ({
+      ...product,
+      images: product.images ? product.images.split(',').filter(img => img) : []
+    }))
+    
+    res.json(processedProducts)
   })
 })
 
@@ -67,11 +75,11 @@ router.get('/debug/product/:id', (req, res) => {
 router.get('/', (req, res) => {
   const { category, search, page = 1, limit = 24, brand } = req.query
   
-  // Build query that explicitly selects primary image (sort_order = 0) via LEFT JOIN
+  // Build query that gets ALL images via GROUP_CONCAT
   let query = `
-    SELECT p.*, pi.image_url as image_url
+    SELECT p.*, GROUP_CONCAT(pi.image_url ORDER BY pi.sort_order) as images
     FROM products p
-    LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.sort_order = 0
+    LEFT JOIN product_images pi ON p.id = pi.product_id
     WHERE 1=1
   `
   const params = []
@@ -201,10 +209,10 @@ router.get('/', (req, res) => {
         return res.status(500).json({ error: 'Gabim në marrjen e produkteve' })
       }
 
-      // Process images (pi.image_url comes from the LEFT JOIN)
+      // Process images (images come from GROUP_CONCAT as comma-separated string)
       const processedProducts = products.map(product => ({
         ...product,
-        images: product.image_url ? [product.image_url] : [],
+        images: product.images ? product.images.split(',').filter(img => img) : [],
         is_new: Boolean(product.is_new),
         on_sale: Boolean(product.on_sale),
         in_stock: Boolean(product.in_stock)
@@ -262,12 +270,13 @@ router.get('/best-sellers', (req, res) => {
     const totalPages = Math.ceil(totalProducts / limitNum)
     const offset = (pageNum - 1) * limitNum
 
-    // Select primary image if exists via join
+    // Get ALL images via GROUP_CONCAT
     const query = `
-      SELECT p.id, p.name, p.brand, p.price, p.in_stock, pi.image_url
+      SELECT p.id, p.name, p.brand, p.price, p.in_stock, GROUP_CONCAT(pi.image_url ORDER BY pi.sort_order) as images
       FROM products p
-      LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.sort_order = 0
+      LEFT JOIN product_images pi ON p.id = pi.product_id
       WHERE p.in_stock = 1
+      GROUP BY p.id
       ORDER BY p.created_at DESC
       LIMIT ? OFFSET ?
     `
@@ -280,7 +289,7 @@ router.get('/best-sellers', (req, res) => {
       // Process images
       const processedProducts = products.map(product => ({
         ...product,
-        images: product.image_url ? [product.image_url] : [],
+        images: product.images ? product.images.split(',').filter(img => img) : [],
         in_stock: Boolean(product.in_stock)
       }))
 
