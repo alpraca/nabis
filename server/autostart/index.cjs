@@ -17,14 +17,15 @@ async function runAutostart() {
   const startTime = Date.now();
   
   try {
-    // 1. Consolidate all images into one location and fix duplicates (PERMANENT)
+    // 1. Consolidate all images into one location and validate (PERMANENT)
     await autoConsolidateImages();
     
     // 2. Restore and assign images from uploads
     await autoRestoreImages();
     
-    // 3. Match available images to products without images
-    await autoMatchImages();
+    // 3. Auto-matching DISABLED to prevent duplicate assignments
+    // Image matching is now done manually when needed
+    console.log('🎯 Auto-matching disabled (database is clean)');
     
     const duration = ((Date.now() - startTime) / 1000).toFixed(2);
     console.log(`\n✅ ========== AUTOSTART COMPLETE (${duration}s) ==========\n`);
