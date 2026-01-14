@@ -67,11 +67,11 @@ router.get('/debug/product/:id', (req, res) => {
 router.get('/', (req, res) => {
   const { category, search, page = 1, limit = 24, brand } = req.query
   
-  // Build query that explicitly selects primary image (sort_order = 1) via LEFT JOIN
+  // Build query that explicitly selects primary image (sort_order = 0) via LEFT JOIN
   let query = `
     SELECT p.*, pi.image_url as image_url
     FROM products p
-    LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.sort_order = 1
+    LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.sort_order = 0
     WHERE 1=1
   `
   const params = []
@@ -266,7 +266,7 @@ router.get('/best-sellers', (req, res) => {
     const query = `
       SELECT p.id, p.name, p.brand, p.price, p.in_stock, pi.image_url
       FROM products p
-      LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.sort_order = 1
+      LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.sort_order = 0
       WHERE p.in_stock = 1
       ORDER BY p.created_at DESC
       LIMIT ? OFFSET ?

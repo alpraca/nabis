@@ -54,22 +54,17 @@ async function matchImages() {
   for (const product of products) {
     const productNameLower = product.name.toLowerCase();
     
-    // Find best matching image based on priority and keyword matches
+    // Find best matching image
     let bestImage = null;
-    let bestScore = 0;
+    let maxMatches = 0;
     
     for (const mapping of IMAGE_MAPPINGS) {
-      let score = 0;
+      const keywordMatches = mapping.keywords.filter(keyword => 
+        productNameLower.includes(keyword.toLowerCase())
+      ).length;
       
-      for (const keyword of mapping.keywords) {
-        if (productNameLower.includes(keyword.toLowerCase())) {
-          score += mapping.priority;
-          break; // Only count once per mapping
-        }
-      }
-      
-      if (score > bestScore) {
-        bestScore = score;
+      if (keywordMatches > maxMatches) {
+        maxMatches = keywordMatches;
         bestImage = mapping.image;
       }
     }
