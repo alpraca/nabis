@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { formatPrice } from '../utils/currency'
+import { API_BASE_URL } from '../config/api'
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -709,7 +710,7 @@ const AdminPanel = () => {
                                     className="h-10 w-10 rounded object-cover mr-4"
                                     src={product.images[0].startsWith('http') 
                                       ? product.images[0] 
-                                      : `http://localhost:3001${product.images[0]}`
+                                      : `${API_BASE_URL}${product.images[0]}`
                                     }
                                     alt={product.name}
                                   />
@@ -811,7 +812,7 @@ const AdminPanel = () => {
                                 className="h-12 w-12 rounded object-cover flex-shrink-0"
                                 src={product.images[0].startsWith('http') 
                                   ? product.images[0] 
-                                  : `http://localhost:3001${product.images[0]}`
+                                  : `${API_BASE_URL}${product.images[0]}`
                                 }
                                 alt={product.name}
                               />
@@ -977,7 +978,7 @@ const AdminPanel = () => {
                   </label>
                   <div className="relative inline-block">
                     <img 
-                      src={`http://localhost:3001${heroImage}`}
+                      src={`${API_BASE_URL}${heroImage}`}
                       alt="Hero" 
                       className="w-64 h-64 object-cover rounded-lg border-2 border-gray-300"
                     />
@@ -1365,7 +1366,7 @@ const ProductForm = ({ product, onSave, onCancel }) => {
                 {existingImages.map((img, index) => (
                   <img
                     key={index}
-                    src={img.startsWith('http') ? img : `http://localhost:3001${img}`}
+                    src={img.startsWith('http') ? img : `${API_BASE_URL}${img}`}
                     alt={`Product ${index + 1}`}
                     className="w-16 h-16 object-cover rounded border"
                   />

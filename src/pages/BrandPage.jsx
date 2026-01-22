@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Search, Package, TrendingUp } from 'lucide-react'
 import axios from 'axios'
 import { formatPrice } from '../utils/currency'
+import { API_URL } from '../config/api'
 
 const BrandPage = () => {
   const [brands, setBrands] = useState([])
@@ -38,12 +39,12 @@ const BrandPage = () => {
       setLoading(true)
       // Try the new brands endpoint first, fallback to products/brands
       try {
-        const response = await axios.get('http://localhost:3001/api/brands')
+        const response = await axios.get(`${API_URL}/brands`)
         setBrands(response.data.brands || [])
         setFilteredBrands(response.data.brands || [])
       } catch {
         // Fallback to old endpoint
-        const response = await axios.get('http://localhost:3001/api/products/brands')
+        const response = await axios.get(`${API_URL}/products/brands`)
         setBrands(response.data || [])
         setFilteredBrands(response.data || [])
       }
