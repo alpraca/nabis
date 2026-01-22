@@ -42,8 +42,9 @@ app.use(cors({
     'http://192.168.0.166:5175',
     'http://192.168.100.96:5173',
     'http://192.168.100.96:5174',
-    'http://192.168.100.96:5175'
-  ], // Allow both localhost and network access
+    'http://192.168.100.96:5175',
+    'https://nabis-front.onrender.com'
+  ], // Allow both localhost, network access, and production frontend
   credentials: true
 }))
 // Ensure CORS headers are present for all responses (extra safety for dev)
@@ -58,7 +59,8 @@ app.use((req, res, next) => {
     'http://192.168.0.166:5175',
     'http://192.168.100.96:5173',
     'http://192.168.100.96:5174',
-    'http://192.168.100.96:5175'
+    'http://192.168.100.96:5175',
+    'https://nabis-front.onrender.com'
   ];
   const origin = req.headers.origin;
   if (allowed.includes(origin)) {
