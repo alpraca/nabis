@@ -5,6 +5,7 @@ import axios from 'axios'
 import { useCart } from '../hooks/useCart'
 import { useToast } from '../hooks/useToast'
 import { formatPrice } from '../utils/currency'
+import { API_URL, API_BASE_URL } from '../config/api'
 
 const BrandProductsPage = () => {
   const { brand } = useParams()
@@ -69,7 +70,7 @@ const BrandProductsPage = () => {
       setLoading(true)
       // Try new brands API first, fallback to old endpoint
       try {
-        const response = await axios.get(`http://localhost:3001/api/brands/${encodeURIComponent(decodedBrand)}`, {
+        const response = await axios.get(`${API_URL}/brands/${encodeURIComponent(decodedBrand)}`, {
           params: {
             page: currentPage,
             limit: productsPerPage,
@@ -88,7 +89,7 @@ const BrandProductsPage = () => {
         })
       } catch {
         // Fallback to old endpoint
-        const response = await axios.get(`http://localhost:3001/api/products/brand/${encodeURIComponent(decodedBrand)}`)
+        const response = await axios.get(`${API_URL}/products/brand/${encodeURIComponent(decodedBrand)}`)
         setProducts(response.data.products || [])
       }
     } catch (error) {
@@ -101,7 +102,7 @@ const BrandProductsPage = () => {
 
   const fetchBrandStats = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/brands/${encodeURIComponent(decodedBrand)}/stats`)
+      const response = await axios.get(`${API_URL}/brands/${encodeURIComponent(decodedBrand)}/stats`)
       setBrandStats(response.data.stats || null)
     } catch {
       // Silently fail - stats are optional
@@ -203,7 +204,7 @@ const BrandProductsPage = () => {
           <div className="relative">
             <div className="w-full h-48 bg-gray-50 flex items-center justify-center overflow-hidden">
               <img
-                src={product.images && product.images.length > 0 ? `http://localhost:3001${product.images[0]}` : '/api/placeholder/300/300'}
+                src={product.images && product.images.length > 0 ? `${API_BASE_URL}${product.images[0]}` : '/api/placeholder/300/300'}
                 alt={product.name}
                 className="h-full w-full object-cover"
               />
@@ -256,7 +257,7 @@ const BrandProductsPage = () => {
           <div className="flex">
             <div className="relative w-48 h-48 bg-gray-50 flex items-center justify-center overflow-hidden">
               <img
-                src={product.images && product.images.length > 0 ? `http://localhost:3001${product.images[0]}` : '/api/placeholder/300/300'}
+                src={product.images && product.images.length > 0 ? `${API_BASE_URL}${product.images[0]}` : '/api/placeholder/300/300'}
                 alt={product.name}
                 className="h-full w-full object-cover"
               />

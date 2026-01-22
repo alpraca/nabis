@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { Heart, Sparkles, Droplets, Flower2, Droplet, Leaf, Sprout, Waves, Baby, Building2 } from 'lucide-react'
 import axios from 'axios'
+import { API_URL } from '../config/api'
 
 // Icon mapping for brands
 const brandIcons = {
@@ -58,7 +59,7 @@ const ShopByBrand = () => {
   const fetchBrandsData = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await axios.get('http://localhost:3001/api/products/brands')
+      const response = await axios.get(`${API_URL}/products/brands`)
       
       // Sort alfabetikisht dhe merr 5 të parët
       const combinedData = response.data

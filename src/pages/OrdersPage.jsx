@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { PackageOpen } from 'lucide-react'
 import { formatPrice } from '../utils/currency'
+import { API_BASE_URL } from '../config/api'
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([])
@@ -192,7 +193,7 @@ const OrdersPage = () => {
                           <div className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
                             {item.image_url ? (
                               <img 
-                                src={`http://localhost:3001${item.image_url}`} 
+                                src={`${API_BASE_URL}${item.image_url}`} 
                                 alt={item.product_name}
                                 className="w-full h-full object-cover"
                                 onError={(e) => {

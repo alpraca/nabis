@@ -10,7 +10,7 @@ export const UPLOAD_CONFIG = {
   // =================
   
   // Base URL for your API (update if different)
-  API_BASE_URL: 'http://localhost:3001/api',
+  API_BASE_URL: 'https://nabis.onrender.com/api',
   
   // Authentication credentials
   // IMPORTANT: Update these with your admin credentials

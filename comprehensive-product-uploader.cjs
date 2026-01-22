@@ -17,7 +17,7 @@ const FormData = require('form-data');
 class ComprehensiveProductUploader {
   constructor() {
     this.config = {
-      apiBaseUrl: 'http://localhost:3001',
+      apiBaseUrl: 'https://nabis.onrender.com',
       adminCredentials: {
         email: 'admin@nabisfarmaci.al',
         password: 'admin123'

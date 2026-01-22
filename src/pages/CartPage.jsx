@@ -4,6 +4,7 @@ import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, PackageOpen, Truck } from 
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import { formatPrice } from '../utils/currency';
+import { API_BASE_URL } from '../config/api';
 
 const CartPage = () => {
   const { cartItems, updateQuantity, removeFromCart, getCartTotal, loading } = useCart();
@@ -84,7 +85,7 @@ const CartPage = () => {
                         <div className="flex-shrink-0 w-20 h-20">
                           {item.images && item.images.length > 0 ? (
                             <img
-                              src={`http://localhost:3001${item.images[0]}`}
+                              src={`${API_BASE_URL}${item.images[0]}`}
                               alt={item.name}
                               className="w-full h-full object-cover rounded-md"
                               onError={(e) => {

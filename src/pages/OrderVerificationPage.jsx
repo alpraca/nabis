@@ -4,6 +4,7 @@ import { CheckCircle, Mail, ArrowLeft } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import { formatPrice } from '../utils/currency';
 import axios from 'axios';
+import { API_URL } from '../config/api';
 
 const OrderVerificationPage = () => {
   const [verificationCode, setVerificationCode] = useState('');
@@ -57,7 +58,7 @@ const OrderVerificationPage = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:3001/api/orders/verify', {
+      const response = await axios.post(`${API_URL}/orders/verify`, {
         email: orderData.email,
         code: verificationCode.trim()
       });

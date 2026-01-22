@@ -5,6 +5,7 @@ import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import { formatPrice } from '../utils/currency';
 import axios from 'axios';
+import { API_URL, API_BASE_URL } from '../config/api';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -108,7 +109,7 @@ const CheckoutPage = () => {
         notes: formData.notes.trim()
       };
 
-      const response = await axios.post('http://localhost:3001/api/orders', orderData, {
+      const response = await axios.post(`${API_URL}/orders`, orderData, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -460,7 +461,7 @@ const CheckoutPage = () => {
                   <div className="flex-shrink-0 w-16 h-16">
                     {item.images && item.images.length > 0 ? (
                       <img
-                        src={`http://localhost:3001${item.images[0]}`}
+                        src={`${API_BASE_URL}${item.images[0]}`}
                         alt={item.name}
                         className="w-full h-full object-cover rounded-md"
                       />

@@ -4,6 +4,7 @@ import { Package, Truck, CheckCircle, Clock, ArrowLeft, AlertCircle } from 'luci
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
 import { formatPrice } from '../utils/currency';
+import { API_URL } from '../config/api';
 
 const UserOrdersPage = () => {
   const { token } = useAuth();
@@ -13,7 +14,7 @@ const UserOrdersPage = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/orders/my-orders', {
+      const response = await axios.get(`${API_URL}/orders/my-orders`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

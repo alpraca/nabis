@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Mail, ArrowLeft, AlertCircle, CheckCircle, Key } from 'lucide-react'
 import axios from 'axios'
+import { API_URL } from '../config/api'
 
 const ForgotPasswordPage = () => {
   const [step, setStep] = useState(1) // 1: Enter email, 2: Enter code
@@ -29,7 +30,7 @@ const ForgotPasswordPage = () => {
     setMessage({ type: '', text: '' })
 
     try {
-      await axios.post('http://localhost:3001/api/auth/request-temp-login', {
+      await axios.post(`${API_URL}/auth/request-temp-login`, {
         email: formData.email
       })
 
@@ -58,7 +59,7 @@ const ForgotPasswordPage = () => {
     setMessage({ type: '', text: '' })
 
     try {
-      const response = await axios.post('http://localhost:3001/api/auth/login-with-code', {
+      const response = await axios.post(`${API_URL}/auth/login-with-code`, {
         email: formData.email,
         code: formData.code
       })

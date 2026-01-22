@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Pill } from 'lucide-react'
 import axios from 'axios'
+import { API_URL, API_BASE_URL } from '../config/api'
 
 const Hero = () => {
   const [heroImage, setHeroImage] = useState(null)
 
   useEffect(() => {
     // Load hero image from backend
-    axios.get('http://localhost:3001/api/settings/hero/image')
+    axios.get(`${API_URL}/settings/hero/image`)
       .then(response => {
         setHeroImage(response.data.imageUrl)
       })
@@ -75,7 +76,7 @@ const Hero = () => {
               <div className="w-full h-full bg-white/70 rounded-2xl flex items-center justify-center overflow-hidden">
                 {heroImage ? (
                   <img 
-                    src={`http://localhost:3001${heroImage}`}
+                    src={`${API_BASE_URL}${heroImage}`}
                     alt="Nabis Farmaci" 
                     className="w-full h-full object-cover rounded-2xl"
                   />

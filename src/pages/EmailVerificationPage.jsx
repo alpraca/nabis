@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, Navigate, Link } from 'react-router-dom';
 import { CheckCircle, XCircle, Mail, ArrowLeft, RefreshCw, Phone } from 'lucide-react';
 import axios from 'axios';
+import { API_URL } from '../config/api';
 
 const EmailVerificationPage = () => {
   const [searchParams] = useSearchParams();
@@ -24,7 +25,7 @@ const EmailVerificationPage = () => {
   const verifyEmail = useCallback(async () => {
     try {
       setStatus('loading');
-      const response = await axios.post('http://localhost:3001/api/auth/verify-email', {
+      const response = await axios.post(`${API_URL}/auth/verify-email`, {
         token
       });
 
