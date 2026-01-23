@@ -4,7 +4,11 @@ const rateLimit = require('express-rate-limit')
 const path = require('path')
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') })
 
-const { initializeDatabase } = require('./config/database.cjs')
+// Use PostgreSQL in production, SQLite in development
+const dbModule = process.env.DATABASE_URL 
+  ? './config/database-postgres.cjs' 
+  : './config/database.cjs'
+const { initializeDatabase } = require(dbModule)
 const { runAutostart } = require('./autostart/index.cjs')
 
 const app = express()
@@ -33,18 +37,19 @@ const authLimiter = rateLimit({
 
 // Middleware
 app.use(cors({
-  origin: [
-    'http://localhost:5173', 
-    'http://localhost:5174', 
-    'http://localhost:5175',
-    'http://192.168.0.166:5173',
-    'http://192.168.0.166:5174',
-    'http://192.168.0.166:5175',
-    'http://192.168.100.96:5173',
-    'http://192.168.100.96:5174',
-    'http://192.168.100.96:5175',
-    'https://nabis-front.onrender.com'
-  ], // Allow both localhost, network access, and production frontend
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://nabis-front.onrender.com', /\.onrender\.com$/]
+    : [
+      'http://localhost:5173', 
+      'http://localhost:5174', 
+      'http://localhost:5175',
+      'http://192.168.0.166:5173',
+      'http://192.168.0.166:5174',
+      'http://192.168.0.166:5175',
+      'http://192.168.100.96:5173',
+      'http://192.168.100.96:5174',
+      'http://192.168.100.96:5175'
+    ],
   credentials: true
 }))
 // Ensure CORS headers are present for all responses (extra safety for dev)

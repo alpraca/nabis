@@ -1,0 +1,24 @@
+# Don't upload these to Render (speeds up deployment)
+*.sqlite
+*.sqlite-journal
+node_modules/
+.git/
+.vscode/
+*.log
+*.cjs.map
+archived_scripts/
+Scraped_Products_*/
+product_images/
+*.xlsx
+*.csv
+*.json
+!package.json
+!classification.json
+*.txt
+*.md
+!README.md
+test-*.html
+debug-*.html
+*.ps1
+*.bat
+.env
