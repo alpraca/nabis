@@ -7,20 +7,13 @@ const Footer = () => {
   const currentYear = new Date().getFullYear()
 
   const companyLinks = [
-    { name: 'Rreth Nesh', href: '/rreth-nesh' },
-    { name: 'Karriera', href: '/karriera' },
-    { name: 'Kontakt', href: '/kontakt' },
-    { name: 'Partnerët', href: '/partneret' },
-    { name: 'Lajme dhe Media', href: '/lajme' }
+    { name: 'Rreth Nesh', href: '/rreth-nesh' }
   ]
 
   const helpLinks = [
     { name: 'Pyetje të Shpeshta', href: '/faq' },
     { name: 'Dërgimi dhe Kthimi', href: '/dergimi' },
-    { name: 'Metoda të Pagesës', href: '/pagesa' },
-    { name: 'Reklamime', href: '/reklamime' },
-    { name: 'Garanci të Produkteve', href: '/garancia' },
-    { name: 'Konsultime Online', href: '/konsultime' }
+    { name: 'Metoda të Pagesës', href: '/pagesa' }
   ]
 
   const legalLinks = [
@@ -171,12 +164,11 @@ const Footer = () => {
             {/* Legal Info */}
             <div className="text-sm text-gray-400">
               <p className="mb-2">
-                Farmacist Përgjegjës: Dr. Mahmoud Metwally. Nr. Regjistrimi: 2082818 | 
-                Nr. Farmaci e Regjistruar: 9012474
+                Adresa: Rruga Perlat Rexhepi, Tiranë, Shqipëri | Tel: +355694397499 | Email:
               </p>
               <p>
-                Nabis Farmaci Sh.p.k., Rruga e Durrësit, Tiranë, Shqipëri | 
-                Nr. Regjistrimi të Kompanisë: 12535657
+                Nabis Farmaci Sh.p.k., Rruga Perlat Rexhepi, Tiranë, Shqipëri | 
+                Nr. Regjistrimi të Kompanisë: xxxxxxx  
               </p>
             </div>
 
