@@ -139,15 +139,15 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-1">
+          <nav className="hidden lg:flex items-center space-x-0.5">
             {menuItems.map((item) => (
               <div key={item.id} className="relative group">
                 <button
                   type="button"
-                  className="flex items-center space-x-1 text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium group-hover:bg-gray-50 cursor-pointer"
+                  className="flex items-center space-x-0.5 text-gray-700 hover:text-primary-600 px-2.5 py-2 rounded-md text-xs font-medium group-hover:bg-gray-50 cursor-pointer whitespace-nowrap"
                 >
                   <span>{item.name}</span>
-                  {item.subcategories && <ChevronDown className="h-4 w-4" />}
+                  {item.subcategories && <ChevronDown className="h-3.5 w-3.5" />}
                 </button>
 
                 {/* Dropdown Menu */}
@@ -196,7 +196,7 @@ const Header = () => {
                 <button
                   key={item.id}
                   onClick={scrollToFooter}
-                  className="text-gray-700 hover:text-primary-600 py-2 cursor-pointer"
+                  className="text-gray-700 hover:text-primary-600 px-2.5 py-2 text-xs font-medium cursor-pointer whitespace-nowrap"
                 >
                   {item.name}
                 </button>
@@ -204,7 +204,7 @@ const Header = () => {
                 <Link
                   key={item.id}
                   to={`/${item.id}`}
-                  className="text-gray-700 hover:text-primary-600 py-2"
+                  className="text-gray-700 hover:text-primary-600 px-2.5 py-2 text-xs font-medium whitespace-nowrap"
                 >
                   {item.name}
                 </Link>

@@ -78,7 +78,7 @@ const Hero = () => {
                   <img 
                     src={`${API_BASE_URL}${heroImage}`}
                     alt="Nabis Farmaci" 
-                    className="w-full h-full object-cover rounded-2xl"
+                    className="w-full h-full object-contain rounded-2xl"
                   />
                 ) : (
                   <div className="text-center">

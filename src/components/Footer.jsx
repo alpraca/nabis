@@ -164,11 +164,7 @@ const Footer = () => {
             {/* Legal Info */}
             <div className="text-sm text-gray-400">
               <p className="mb-2">
-                Adresa: Rruga Perlat Rexhepi, Tiranë, Shqipëri | Tel: +355694397499 | Email:
-              </p>
-              <p>
-                Nabis Farmaci Sh.p.k., Rruga Perlat Rexhepi, Tiranë, Shqipëri | 
-                Nr. Regjistrimi të Kompanisë: xxxxxxx  
+                Adresa: Rruga Perlat Rexhepi, Tiranë, Shqipëri | Tel: +355694397499
               </p>
             </div>
 
