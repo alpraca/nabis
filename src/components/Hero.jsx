@@ -71,17 +71,17 @@ const Hero = () => {
 
           {/* Right Content - Hero Image */}
           <div className="relative">
-            <div className="bg-gradient-to-br from-primary-100 to-secondary-100 rounded-3xl p-8 h-96">
+            <div className="bg-gradient-to-br from-primary-100 to-secondary-100 rounded-3xl p-8">
               {/* Hero Image or Placeholder */}
-              <div className="w-full h-full bg-white/70 rounded-2xl flex items-center justify-center overflow-hidden">
+              <div className="w-full bg-white/70 rounded-2xl flex items-center justify-center overflow-hidden">
                 {heroImage ? (
                   <img 
                     src={`${API_BASE_URL}${heroImage}`}
                     alt="Nabis Farmaci" 
-                    className="w-full h-full object-contain rounded-2xl"
+                    className="w-full h-auto rounded-2xl"
                   />
                 ) : (
-                  <div className="text-center">
+                  <div className="text-center py-32">
                     <div className="flex justify-center mb-4 text-primary-600">
                       <Pill className="w-16 h-16" />
                     </div>
