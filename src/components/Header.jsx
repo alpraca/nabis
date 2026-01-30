@@ -125,6 +125,11 @@ const Header = () => {
     setActiveDropdown(activeDropdown === itemId ? null : itemId)
   }
 
+  const toggleSubDropdown = (parentId, subId) => {
+    const fullId = `${parentId}-${subId}`
+    setActiveDropdown(activeDropdown === fullId ? parentId : fullId)
+  }
+
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -319,7 +324,10 @@ const Header = () => {
                           {subcat.subsubcategories ? (
                             <div>
                               <button
-                                onClick={() => toggleDropdown(`${item.id}-${subcat.id}`)}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  toggleSubDropdown(item.id, subcat.id)
+                                }}
                                 className="flex items-center justify-between w-full px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
                               >
                                 <span>{subcat.name}</span>
