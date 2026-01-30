@@ -206,13 +206,28 @@ const AllProductsPage = () => {
     }
   });
 
-  const ProductCard = ({ product }) => (
+  const ProductCard = ({ product }) => {
+    // Calculate discount percentage
+    const discountPercentage = product.original_price && parseFloat(product.original_price) > parseFloat(product.price)
+      ? Math.round(((parseFloat(product.original_price) - parseFloat(product.price)) / parseFloat(product.original_price)) * 100)
+      : 0;
+
+    return (
     <Link to={`/produkti/${product.id}`} className="block h-full">
       <div className="product-card bg-white rounded-xl shadow-lg overflow-hidden group max-w-sm mx-auto w-full h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100">
         <div className="h-[450px] flex flex-col">
           
           {/* Product Image */}
           <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center overflow-hidden h-56">
+            {/* Discount Badge */}
+            {discountPercentage > 0 && (
+              <div className="absolute top-2 left-2 z-10">
+                <span className="bg-red-600 text-white px-2 py-1 text-xs font-bold rounded-md shadow-lg">
+                  -{discountPercentage}%
+                </span>
+              </div>
+            )}
+
             {product.images && product.images.length > 0 ? (
               <img
                 src={`${API_BASE_URL}${product.images[0]}`}
@@ -275,6 +290,11 @@ const AllProductsPage = () => {
                 <span className="text-2xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-200">
                   {formatPrice(product.price)}
                 </span>
+                {discountPercentage > 0 && (
+                  <div className="text-sm text-gray-500 line-through mt-1">
+                    {formatPrice(product.original_price)}
+                  </div>
+                )}
               </div>
 
               {/* Action Button */}
@@ -299,7 +319,8 @@ const AllProductsPage = () => {
         </div>
       </div>
     </Link>
-  );
+    );
+  };
 
   const PaginationComponent = () => {
     if (pagination.totalPages <= 1) return null;

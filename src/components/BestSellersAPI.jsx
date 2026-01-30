@@ -50,12 +50,27 @@ const BestSellersAPI = () => {
     }
   };
 
-  const ProductCard = ({ product }) => (
+  const ProductCard = ({ product }) => {
+    // Calculate discount percentage
+    const discountPercentage = product.original_price && parseFloat(product.original_price) > parseFloat(product.price)
+      ? Math.round(((parseFloat(product.original_price) - parseFloat(product.price)) / parseFloat(product.original_price)) * 100)
+      : 0;
+
+    return (
     <Link to={`/produkti/${product.id}`} className="block">
       <div className="product-card bg-white rounded-lg shadow-md overflow-hidden group max-w-sm mx-auto w-full h-full hover:shadow-lg transition-shadow duration-300 relative">
         
         {/* Product Image */}
         <div className="relative bg-gray-50 h-48 sm:h-64 flex items-center justify-center overflow-hidden">
+          {/* Discount Badge */}
+          {discountPercentage > 0 && (
+            <div className="absolute top-2 left-2 z-10">
+              <span className="bg-red-600 text-white px-2 py-1 text-xs font-bold rounded-md shadow-lg">
+                -{discountPercentage}%
+              </span>
+            </div>
+          )}
+
           {/* Product Image */}
           {product.images && product.images.length > 0 ? (
             <img
@@ -101,10 +116,15 @@ const BestSellersAPI = () => {
           </div>
 
           {/* Price */}
-          <div className="flex items-center space-x-2 mb-4">
+          <div className="flex flex-col mb-4">
             <span className="text-base sm:text-lg font-bold text-gray-900">
               {formatPrice(product.price)}
             </span>
+            {discountPercentage > 0 && (
+              <span className="text-xs sm:text-sm text-gray-500 line-through">
+                {formatPrice(product.original_price)}
+              </span>
+            )}
           </div>
 
           {/* Add to Cart Button */}
