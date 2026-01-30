@@ -147,7 +147,8 @@ const BestSellersAPI = () => {
         </div>
       </div>
     </Link>
-  );
+    );
+  };
 
   if (loading) {
     return (
