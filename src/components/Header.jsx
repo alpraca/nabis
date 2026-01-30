@@ -316,7 +316,7 @@ const Header = () => {
                   </button>
 
                   {/* Mobile Dropdown */}
-                  {item.subcategories && activeDropdown === item.id && (
+                  {item.subcategories && (activeDropdown === item.id || activeDropdown?.startsWith(`${item.id}-`)) && (
                     <div className="pl-6 space-y-1">
                       {item.subcategories.map((subcat) => (
                         <div key={subcat.id}>
