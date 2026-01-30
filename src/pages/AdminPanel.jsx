@@ -12,6 +12,7 @@ import { API_BASE_URL } from '../config/api'
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [products, setProducts] = useState([])
+  const [productSearch, setProductSearch] = useState('')
   const [orders, setOrders] = useState([])
   const [filteredOrders, setFilteredOrders] = useState([])
   const [orderSearch, setOrderSearch] = useState('')
@@ -667,6 +668,21 @@ const AdminPanel = () => {
 
             {/* Products List */}
             {!isAddingProduct && !editingProduct && (
+              <div className="space-y-4">
+                {/* Search Bar */}
+                <div className="bg-white rounded-lg shadow-sm border p-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Kërko sipas emrit, markës ose kategorisë..."
+                      value={productSearch}
+                      onChange={(e) => setProductSearch(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                  </div>
+                </div>
+
               <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
                 {/* Desktop Table View */}
                 <div className="hidden lg:block overflow-x-auto">
@@ -694,14 +710,26 @@ const AdminPanel = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {products.length === 0 ? (
+                      {products.filter(product => {
+                        const searchLower = productSearch.toLowerCase();
+                        return productSearch === '' || 
+                          product.name.toLowerCase().includes(searchLower) ||
+                          product.brand?.toLowerCase().includes(searchLower) ||
+                          product.category?.toLowerCase().includes(searchLower);
+                      }).length === 0 ? (
                         <tr>
                           <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
-                            Nuk ka produkte akoma
+                            {productSearch ? 'Nuk u gjet asnjë produkt' : 'Nuk ka produkte akoma'}
                           </td>
                         </tr>
                       ) : (
-                        products.map((product) => (
+                        products.filter(product => {
+                          const searchLower = productSearch.toLowerCase();
+                          return productSearch === '' || 
+                            product.name.toLowerCase().includes(searchLower) ||
+                            product.brand?.toLowerCase().includes(searchLower) ||
+                            product.category?.toLowerCase().includes(searchLower);
+                        }).map((product) => (
                           <tr key={product.id}>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center">
@@ -798,13 +826,25 @@ const AdminPanel = () => {
 
                 {/* Mobile Card View */}
                 <div className="lg:hidden">
-                  {products.length === 0 ? (
+                  {products.filter(product => {
+                    const searchLower = productSearch.toLowerCase();
+                    return productSearch === '' || 
+                      product.name.toLowerCase().includes(searchLower) ||
+                      product.brand?.toLowerCase().includes(searchLower) ||
+                      product.category?.toLowerCase().includes(searchLower);
+                  }).length === 0 ? (
                     <div className="p-6 text-center text-gray-500">
-                      Nuk ka produkte akoma
+                      {productSearch ? 'Nuk u gjet asnjë produkt' : 'Nuk ka produkte akoma'}
                     </div>
                   ) : (
                     <div className="divide-y divide-gray-200">
-                      {products.map((product) => (
+                      {products.filter(product => {
+                        const searchLower = productSearch.toLowerCase();
+                        return productSearch === '' || 
+                          product.name.toLowerCase().includes(searchLower) ||
+                          product.brand?.toLowerCase().includes(searchLower) ||
+                          product.category?.toLowerCase().includes(searchLower);
+                      }).map((product) => (
                         <div key={product.id} className="p-4 space-y-3">
                           <div className="flex space-x-3">
                             {product.images && product.images.length > 0 ? (
@@ -892,6 +932,7 @@ const AdminPanel = () => {
                     </div>
                   )}
                 </div>
+              </div>
               </div>
             )}
           </div>
