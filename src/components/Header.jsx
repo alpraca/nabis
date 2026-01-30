@@ -315,27 +315,44 @@ const Header = () => {
                     <div className="pl-6 space-y-1">
                       {item.subcategories.map((subcat) => (
                         <div key={subcat.id}>
-                          <Link
-                            to={`/kategori/${subcat.id}`}
-                            className="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            {subcat.name}
-                          </Link>
-                          {/* Sub-subcategories for mobile */}
-                          {subcat.subcategories && (
-                            <div className="pl-4 space-y-1 mt-1">
-                              {subcat.subcategories.map((subsubcat) => (
-                                <Link
-                                  key={subsubcat.id}
-                                  to={`/kategori/${subsubcat.id}`}
-                                  className="block px-3 py-2 text-xs text-gray-500 hover:text-primary-600 hover:bg-gray-50 rounded-md border-l-2 border-gray-200"
-                                  onClick={() => setIsMenuOpen(false)}
-                                >
-                                  {subsubcat.name}
-                                </Link>
-                              ))}
+                          {/* If has sub-subcategories, make it expandable, otherwise link */}
+                          {subcat.subsubcategories ? (
+                            <div>
+                              <button
+                                onClick={() => toggleDropdown(`${item.id}-${subcat.id}`)}
+                                className="flex items-center justify-between w-full px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
+                              >
+                                <span>{subcat.name}</span>
+                                <ChevronDown 
+                                  className={`h-4 w-4 transition-transform duration-200 ${
+                                    activeDropdown === `${item.id}-${subcat.id}` ? 'rotate-180' : ''
+                                  }`} 
+                                />
+                              </button>
+                              {/* Sub-subcategories for mobile */}
+                              {activeDropdown === `${item.id}-${subcat.id}` && (
+                                <div className="pl-4 space-y-1 mt-1">
+                                  {subcat.subsubcategories.map((subsubcat) => (
+                                    <Link
+                                      key={subsubcat.id}
+                                      to={`/kategori/${subsubcat.id}`}
+                                      className="block px-3 py-2 text-xs text-gray-500 hover:text-primary-600 hover:bg-gray-50 rounded-md border-l-2 border-gray-200"
+                                      onClick={() => setIsMenuOpen(false)}
+                                    >
+                                      {subsubcat.name}
+                                    </Link>
+                                  ))}
+                                </div>
+                              )}
                             </div>
+                          ) : (
+                            <Link
+                              to={`/kategori/${subcat.id}`}
+                              className="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              {subcat.name}
+                            </Link>
                           )}
                         </div>
                       ))}
