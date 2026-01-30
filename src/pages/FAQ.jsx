@@ -18,11 +18,7 @@ const FAQ = () => {
         },
         {
           question: 'Sa kushton dërgesa?',
-          answer: 'Dërgesa është falas për porosi mbi 5000 Lekë. Për porosi nën këtë shumë, kostoja e dërgimit është 300 Lekë për Tiranën dhe 500 Lekë për qytetet e tjera.'
-        },
-        {
-          question: 'Mund të ndryshoj adresen e dërgimit pas bërjes së porosisë?',
-          answer: 'Po, mund ta ndryshoni adresën deri sa produkti të mos jetë dërguar nga magazina jonë. Ju lutemi na kontaktoni sa më shpejt të jetë e mundur për të bërë ndryshimin.'
+          answer: 'Kostot e dërgimit janë si më poshtë: Tiranë brenda unazës - 200 Lekë, Tiranë jashtë unazës - 300 Lekë, Rrethet - 300 Lekë, dhe Kosovë - 600 Lekë.'
         }
       ]
     },
@@ -49,35 +45,6 @@ const FAQ = () => {
         {
           question: 'A janë të gjitha produktet origjinale?',
           answer: 'Po, të gjitha produktet që ofrojmë janë 100% origjinale dhe importohen drejtpërdrejt nga furnizues të autorizuar. Çdo produkt ka certifikatën përkatëse të autenticitetit.'
-        },
-        {
-          question: 'Si mund të verifikoj origjinalitetin e produktit?',
-          answer: 'Çdo produkt vjen me ambalazh origjinal të mbyllur dhe me etiketën e prodhuesit. Mund të verifikoni kodin e barkod në faqen e prodhuesit. Në rast dyshimi, na kontaktoni dhe ne do t\'ju ndihmojmë.'
-        },
-        {
-          question: 'Çfarë bëj nëse produkti nuk më përshtatet?',
-          answer: 'Nëse një produkt shkakton reaksion alergjik ose nuk përputhet me pritjet tuaja, na kontaktoni brenda 14 ditëve. Do të shqyrtojmë rastin dhe do të ofrojmë zëvendësim ose rimbursim sipas politikës sonë.'
-        },
-        {
-          question: 'A mund të marr këshilla për zgjedhjen e produkteve?',
-          answer: 'Po, ekipi ynë i farmacistëve është gati t\'ju ndihmojë. Mund të na kontaktoni në telefon, email ose përmes chat-it në faqe për konsultime falas.'
-        }
-      ]
-    },
-    {
-      category: 'Kthimi dhe Rimbursimi',
-      questions: [
-        {
-          question: 'Si funksionon politika e kthimit?',
-          answer: 'Mund të ktheni produktet e papërdorura dhe në ambalazh origjinal brenda 14 ditëve nga data e blerjes. Produktet e hapura nuk mund të kthehen për arsye higjienike, përveç nëse janë të dëmtuara ose të gabuara.'
-        },
-        {
-          question: 'Sa zgjat procesi i rimbursimit?',
-          answer: 'Pasi të kemi pranuar dhe verifikuar produktin e kthyer, rimbursimi do të bëhet brenda 7-10 ditëve pune. Ju do të njoftoheni me email kur rimbursimi të jetë procesuar.'
-        },
-        {
-          question: 'Kush e paguan koston e kthimit?',
-          answer: 'Nëse produkti është i dëmtuar ose i gabuar nga ana jonë, ne e mbulojmë koston e kthimit. Në raste të tjera, kostoja e kthimit mbulohet nga klienti.'
         }
       ]
     },
@@ -102,16 +69,8 @@ const FAQ = () => {
       category: 'Të Tjera',
       questions: [
         {
-          question: 'Ofroni konsultime online?',
-          answer: 'Po, farmacistët tanë ofrojnë konsultime falas online. Mund të na kontaktoni përmes telefonit, email-it ose chat-it në faqe gjatë orarit të punës.'
-        },
-        {
           question: 'A mund të rezervoj produkte?',
           answer: 'Po, nëse një produkt nuk është në stok, mund ta rezervoni dhe do t\'ju njoftojmë kur të jetë i disponueshëm përsëri.'
-        },
-        {
-          question: 'Ofroni shërbime të abonimit?',
-          answer: 'Aktualisht nuk ofrojmë abonime, por jemi duke punuar për të shtuar këtë shërbim së shpejti për produktet që përdoren rregullisht.'
         }
       ]
     }
