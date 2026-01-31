@@ -28,9 +28,9 @@ const Hero = () => {
   return (
     <section className="bg-gradient-to-r from-primary-50 to-secondary-50 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
           {/* Left Content */}
-          <div className="space-y-8">
+          <div className="space-y-8 lg:col-span-2">
             <div className="space-y-4">
               <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
                 Mirësevini në <span className="text-primary-600">Nabis Farmaci</span>
@@ -70,10 +70,10 @@ const Hero = () => {
           </div>
 
           {/* Right Content - Hero Image */}
-          <div className="relative">
+          <div className="relative lg:col-span-3">
             <div className="bg-gradient-to-br from-primary-100 to-secondary-100 rounded-3xl p-4 md:p-8 lg:p-12">
               {/* Hero Image or Placeholder */}
-              <div className="w-full rounded-2xl overflow-hidden">
+              <div className="w-full rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[16/10] lg:aspect-[16/9]">
                 {heroImage ? (
                   <img 
                     src={`${API_BASE_URL}${heroImage}`}
