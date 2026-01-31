@@ -53,16 +53,20 @@ const Shipping = () => {
               <div className="bg-gray-50 rounded-lg p-6">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-gray-200 pb-3">
-                    <span className="text-gray-700">Porosi mbi 5,000 Lekë</span>
-                    <span className="font-semibold text-green-600">FALAS</span>
+                    <span className="text-gray-700">Tiranë brenda unazës</span>
+                    <span className="font-semibold text-gray-900">200 Lekë</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-200 pb-3">
-                    <span className="text-gray-700">Tiranë (nën 5,000 Lekë)</span>
+                    <span className="text-gray-700">Tiranë jashtë unazës</span>
+                    <span className="font-semibold text-gray-900">300 Lekë</span>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-gray-200 pb-3">
+                    <span className="text-gray-700">Rrethet</span>
                     <span className="font-semibold text-gray-900">300 Lekë</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-700">Qytete të tjera (nën 5,000 Lekë)</span>
-                    <span className="font-semibold text-gray-900">500 Lekë</span>
+                    <span className="text-gray-700">Kosovë</span>
+                    <span className="font-semibold text-gray-900">600 Lekë</span>
                   </div>
                 </div>
               </div>
@@ -175,7 +179,7 @@ const Shipping = () => {
               <div className="bg-gray-50 rounded-lg p-6">
                 <ol className="list-decimal list-inside space-y-3 text-gray-700">
                   <li className="pl-2">
-                    <strong>Kontaktoni ne:</strong> Telefononi në +355 69 123 4567 ose dërgoni email në info@nabisfarmaci.al
+                    <strong>Kontaktoni ne:</strong> Telefononi në +355694397499 ose dërgoni email në farmacinabis@gmail.com
                   </li>
                   <li className="pl-2">
                     <strong>Merrni autorizimin:</strong> Do t'ju japim një numër autorizimi për kthimin
@@ -200,7 +204,7 @@ const Shipping = () => {
                 </div>
                 <div className="ml-3">
                   <p className="text-sm text-blue-700">
-                    <strong>Keni pyetje?</strong> Kontaktoni shërbimin tonë të klientit në +355 69 123 4567 ose info@nabisfarmaci.al
+                    <strong>Keni pyetje?</strong> Kontaktoni shërbimin tonë të klientit në +355694397499 ose farmacinabis@gmail.com
                   </p>
                 </div>
               </div>
