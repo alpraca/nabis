@@ -73,12 +73,12 @@ const Hero = () => {
           <div className="relative">
             <div className="bg-gradient-to-br from-primary-100 to-secondary-100 rounded-3xl p-4 md:p-8 lg:p-12">
               {/* Hero Image or Placeholder */}
-              <div className="w-full bg-white/70 rounded-2xl flex items-center justify-center overflow-hidden">
+              <div className="w-full rounded-2xl overflow-hidden">
                 {heroImage ? (
                   <img 
                     src={`${API_BASE_URL}${heroImage}`}
                     alt="Nabis Farmaci" 
-                    className="w-full h-auto rounded-2xl object-cover min-h-[300px] md:min-h-[400px] lg:min-h-[500px]"
+                    className="w-full h-full rounded-2xl object-contain"
                   />
                 ) : (
                   <div className="text-center py-32">
