@@ -86,7 +86,7 @@ const AboutUs = () => {
         <div className="bg-white rounded-lg shadow-md p-8 mt-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Ekipi Ynë</h2>
           <p className="text-gray-700 mb-6">
-            Nabis Farmaci drejtohet nga një ekip i përkushtuar profesionistësh të kujdesit shëndetësor, me Dr. Mahmoud Metwally si Farmacist Përgjegjës. 
+            Nabis Farmaci drejtohet nga një ekip i përkushtuar profesionistësh të kujdesit shëndetësor.
           </p>
           <p className="text-gray-700">
             Çdo anëtar i ekipit tonë është i trajnuar vazhdimisht për të qenë i informuar me zhvillimet më të fundit në industrinë farmaceutike dhe për t'ju ofruar ju ekspertizën më të mirë.
