@@ -27,7 +27,7 @@ const Hero = () => {
 
   return (
     <section className="bg-gradient-to-r from-primary-50 to-secondary-50 py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-3 lg:px-4">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8 lg:col-span-2">
