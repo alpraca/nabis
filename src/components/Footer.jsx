@@ -62,7 +62,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Clock className="h-5 w-5 text-primary-400" />
-                <span className="text-gray-300">E Hënë - E Diel: 08:00 - 22:00</span>
+                <span className="text-gray-300">E Hënë - E Shtunë: 08:00 - 22:00</span>
               </div>
             </div>
 
