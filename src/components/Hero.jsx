@@ -71,7 +71,7 @@ const Hero = () => {
 
           {/* Right Content - Hero Image */}
           <div className="relative lg:col-span-3">
-            <div className="bg-gradient-to-br from-primary-100 to-secondary-100 rounded-3xl p-4 md:p-8 lg:p-12">
+            <div className="bg-gradient-to-br from-primary-100 to-secondary-100 rounded-3xl p-2 md:p-3 lg:p-4">
               {/* Hero Image or Placeholder */}
               <div className="w-full rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[16/10] lg:aspect-[16/9]">
                 {heroImage ? (
